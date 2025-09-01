@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hand_by_hand/core/config/theme.dart';
+import 'core/config/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,7 +11,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: AppRoutes.router,
+      theme: AppTheme.darkTheme,
+      debugShowCheckedModeBanner: false,
+      title: "ايد بايد",
     );
   }
 }
