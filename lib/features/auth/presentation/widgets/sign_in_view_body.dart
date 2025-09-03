@@ -1,75 +1,35 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
+import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
 import 'package:hand_by_hand/features/auth/logic/auth_cubit.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
-import 'package:hand_by_hand/features/auth/presentation/widgets/birth_date_selector.dart';
-import 'package:hand_by_hand/features/auth/presentation/widgets/gender_selector.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/message_second_option.dart';
+import 'package:hand_by_hand/features/auth/presentation/widgets/remember_and_forget_message.dart';
 
-import '../../../../core/config/app_colors.dart';
 import '../../../../core/config/routes.dart';
-import '../../../../core/widgets/custom_snackbar.dart';
+import '../../../../generated/assets.dart';
 
-class SignUpViewBody extends StatefulWidget {
-  const SignUpViewBody({super.key});
+class SignInViewBody extends StatefulWidget {
+  const SignInViewBody({super.key});
 
   @override
-  State<SignUpViewBody> createState() => _SignUpViewBodyState();
+  State<SignInViewBody> createState() => _SignInViewBodyState();
 }
 
-class _SignUpViewBodyState extends State<SignUpViewBody> {
+class _SignInViewBodyState extends State<SignInViewBody> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  int? _day;
-  int? _month;
-  int? _year;
-  String? _gender;
-
-  int convertMonthToInt(String month){
-    switch(month){
-      case 'Jan':
-        return 1;
-      case 'Feb':
-        return 2;
-      case 'Mar':
-        return 3;
-      case 'Apr':
-        return 4;
-      case 'May':
-        return 5;
-        case 'Jun':
-        return 6;
-      case 'Jul':
-        return 7;
-      case 'Aug':
-        return 8;
-      case 'Sep':
-        return 9;
-      case 'Oct':
-        return 10;
-      case 'Nov':
-        return 11;
-        case 'Dec':
-        return 12;
-      default:
-        return 0;
-    }
-  }
-
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -93,11 +53,12 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
               icon: Icons.error,
               duration: const Duration(seconds: 3),
             );
+            print(state.errorMessage);
           }
           if (state is AuthSuccess) {
             CustomSnackBar.show(
-              context, // Assuming context is available in this scope
-              message: "Sign up successful, please verify your email.",
+              context,
+              message: "Login successful",
               backgroundColor: AppColors.success,
               textColor: AppColors.white,
               icon: Icons.check,
@@ -108,7 +69,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
           if (state is AuthLoading) {
             CustomSnackBar.show(
               context,
-              message: "Signing up...",
+              message: "Logging in...",
               backgroundColor: AppColors.primary,
               textColor: AppColors.white,
               icon: Icons.check,
@@ -122,7 +83,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
               CustomMessageContainer(
                 width: width,
                 height: height,
-                message: "Join us",
+                message: "Welcome back",
               ),
               SingleChildScrollView(
                 child: Form(
@@ -136,24 +97,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
-                                  hintText: "First name",
-                                  controller: _firstNameController,
-                                ),
-                              ),
-                              SizedBox(width: width * 0.05),
-                              Expanded(
-                                child: CustomTextFormField(
-                                  hintText: "Last name",
-                                  controller: _lastNameController,
-                                ),
-                              ),
-                            ],
+                          Padding(
+                            padding: EdgeInsets.only(bottom: height * 0.02),
+                            child: SvgPicture.asset(
+                              Assets.imagesLoginImage,
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                          SizedBox(height: height * 0.02),
                           CustomTextFormField(
                             hintText: "Email",
                             controller: _emailController,
@@ -166,47 +116,28 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                             obscureText: true,
                             suffixIcon: Icons.lock,
                           ),
-                          SizedBox(height: height * 0.015),
-                          BirthDateSelector(
-                            onChanged: (day, month, year) {
-                              _day = day;
-                              if (month != null) {
-                                _month = convertMonthToInt(month);
-                              }
-                              _year = year;
-                            },
-                          ),
-                          SizedBox(height: height * 0.015),
-                          GenderSelector(
-                            onChanged: (gender) => _gender = gender,
-                          ),
-                          SizedBox(height: height * 0.03),
+                          SizedBox(height: height * 0.01),
+                          const RememberAndForgetMessage(),
+                          SizedBox(height: height * 0.02),
                           CustomButton(
-                            text: "Sign Up",
+                            text: "Log In",
                             width: width,
                             onTap: () {
-                              if (_formKey.currentState!.validate() &&
-                                  _day != null &&
-                                  _month != null &&
-                                  _year != null &&
-                                  _gender != null) {
-                                final birthDate = DateTime(_year!, _month!, _day!);
-                                context.read<AuthCubit>().signUpWithEmailAndPassword(
+                              if (_formKey.currentState!.validate()) {
+                                context
+                                    .read<AuthCubit>()
+                                    .signInWithEmailAndPassword(
                                       email: _emailController.text,
                                       password: _passwordController.text,
-                                      firstName: _firstNameController.text,
-                                      lastName: _lastNameController.text,
-                                      birthDate: birthDate,
-                                      gender: _gender!,
                                     );
                               } else {
                                 CustomSnackBar.show(
                                   context,
-                                  message:
-                                      "Please fill in all fields correctly.",
+                                  message: "Please fill in all fields",
                                   backgroundColor: AppColors.error,
                                   textColor: AppColors.white,
                                   icon: Icons.error,
+                                  duration: const Duration(seconds: 3),
                                 );
                               }
                             },
@@ -214,13 +145,67 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           ),
                           SizedBox(height: height * 0.01),
                           MessageSecondOption(
-                            message: "Already have an account?",
-                            buttonText: "Log In",
+                            message: "Don't have an account?",
+                            buttonText: "Sign Up",
                             onTap: () {
                               GoRouter.of(
                                 context,
-                              ).pushReplacement(AppRoutes.kSignInView);
+                              ).pushReplacement(AppRoutes.kSignUpView);
                             },
+                          ),
+                          SizedBox(height: height * 0.015),
+                          Text(
+                            "Or",
+                            style: TextStyle(
+                              color: AppColors.greyDark,
+                              fontSize: 18,
+                            ),
+                          ),
+                          SizedBox(height: height * 0.015),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  context.read<AuthCubit>().signInWithGoogle();
+                                },
+                                child: SvgPicture.asset(
+                                  Assets.imagesGoogleImage,
+                                ),
+                              ),
+                              SizedBox(width: width * 0.05),
+                              SvgPicture.asset(Assets.imagesAppleImage),
+                              SizedBox(width: width * 0.05),
+                              GestureDetector(
+                                onTap: () {
+                                  context.read<AuthCubit>().signInWithFacebook();
+                                },
+                                child: Container(
+                                  width: 45.w, // more natural touch target size
+                                  height: 40.w, // keep square
+                                  padding: EdgeInsets.all(3.r),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    borderRadius: BorderRadius.circular(
+                                      12.r,
+                                    ), // smoother corners
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 6,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      Assets.imagesFasebookIcon,
+                                      width: 26.w,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

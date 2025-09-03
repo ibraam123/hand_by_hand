@@ -9,7 +9,7 @@ class AppTheme {
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
       cardColor: AppColors.card,
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         displayLarge: AppTextStyles.bold24,
         displayMedium: AppTextStyles.semiBold20,
         displaySmall: AppTextStyles.textStyle16,

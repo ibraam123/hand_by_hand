@@ -2,6 +2,11 @@
 class Assets {
   Assets._();
 
+  static const String imagesAppleImage = 'assets/images/apple_image.svg';
+  static const String imagesBackgroundImage = 'assets/images/background_image.svg';
+  static const String imagesFasebookIcon = 'assets/images/fasebook_icon.svg';
+  static const String imagesGoogleImage = 'assets/images/google_image.svg';
+  static const String imagesLoginImage = 'assets/images/login_image.svg';
   static const String imagesLogoImage = 'assets/images/logo_image.png';
 
 }
