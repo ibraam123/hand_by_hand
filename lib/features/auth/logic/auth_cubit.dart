@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:hand_by_hand/features/auth/data/models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_state.dart';
 
@@ -13,14 +14,28 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._auth, this._firestore) : super(AuthInitial());
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+  bool rememberMe = false;
 
+  Future<void> loadRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    rememberMe = prefs.getBool("remember_me") ?? false;
+    emit(RememberMe(isSelected: rememberMe));
+  }
+
+  Future<void> toggleRememberMe(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("remember_me", value);
+    rememberMe = value;
+    emit(RememberMe(isSelected: value));
+  }
 
   Future<void> signInWithFacebook() async {
     emit(AuthLoading());
     try {
       final LoginResult result = await FacebookAuth.instance.login();
-      final OAuthCredential credential =
-      FacebookAuthProvider.credential(result.accessToken!.tokenString);
+      final OAuthCredential credential = FacebookAuthProvider.credential(
+        result.accessToken!.tokenString,
+      );
       final userCred = await _auth.signInWithCredential(credential);
       final firebaseUser = userCred.user!;
       final userDoc = _firestore.collection('users').doc(firebaseUser.uid);
@@ -60,7 +75,7 @@ class AuthCubit extends Cubit<AuthState> {
       ); // for iOS: pass clientId
 
       final account = await signIn.authenticate();
-      final idToken = (await account.authentication).idToken;
+      final idToken = (account.authentication).idToken;
       if (idToken == null) throw Exception('Google idToken was null');
 
       final credential = GoogleAuthProvider.credential(idToken: idToken);
@@ -95,12 +110,56 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
-    emit(AuthLoading());
+    emit(ForgotPasswordLoading());
+    if (email.isEmpty) {
+      emit(ForgotPasswordError('Please enter your email address'));
+      return;
+    }
+
     try {
-      await _auth.sendPasswordResetEmail(email: email);
-      emit(AuthSuccess());
+      await _auth.sendPasswordResetEmail(email: email.trim());
+
+      emit(ForgotPasswordSuccess());
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'The email address is not valid.';
+          break;
+        case 'user-not-found':
+          errorMessage =
+              'No account found with this email address. Please check your email or sign up.';
+          break;
+        case 'user-disabled':
+          errorMessage =
+              'This user account has been disabled. Please contact support.';
+          break;
+        case 'missing-android-pkg-name':
+          errorMessage = 'Android package name is required for this operation.';
+          break;
+        case 'missing-continue-uri':
+          errorMessage = 'Continue URL is required for this operation.';
+          break;
+        case 'missing-ios-bundle-id':
+          errorMessage = 'iOS bundle ID is required for this operation.';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        case 'operation-not-allowed':
+          errorMessage =
+              'Password reset is not enabled. Please contact support.';
+          break;
+        default:
+          errorMessage =
+              'An error occurred while sending reset email. Please try again.';
+      }
+
+      emit(ForgotPasswordError(errorMessage));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(
+        ForgotPasswordError('An unexpected error occurred. Please try again.'),
+      );
     }
   }
 

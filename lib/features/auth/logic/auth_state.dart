@@ -18,3 +18,22 @@ final class AuthError extends AuthState {
   final String errorMessage;
   const AuthError(this.errorMessage);
 }
+
+class RememberMe extends AuthState {
+  final bool isSelected;
+  const RememberMe({required this.isSelected});
+}
+
+class ForgotPasswordLoading extends AuthState {
+
+}
+
+class ForgotPasswordSuccess extends AuthState {
+
+}
+
+class ForgotPasswordError extends AuthState {
+  final String errorMessage;
+  const ForgotPasswordError(this.errorMessage);
+}
+

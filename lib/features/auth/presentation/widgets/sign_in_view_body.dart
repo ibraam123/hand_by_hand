@@ -70,9 +70,8 @@ class _SignInViewBodyState extends State<SignInViewBody> {
             CustomSnackBar.show(
               context,
               message: "Logging in...",
-              backgroundColor: AppColors.primary,
-              textColor: AppColors.white,
-              icon: Icons.check,
+              backgroundColor: AppColors.white,
+              textColor: Colors.black,
               duration: const Duration(seconds: 3),
             );
           }

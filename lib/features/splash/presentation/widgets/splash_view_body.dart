@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math' as math;
 
 import '../../../../generated/assets.dart';
+import '../../../auth/logic/auth_cubit.dart';
 
 class SplashViewBody extends StatefulWidget {
   const SplashViewBody({super.key});
@@ -29,16 +32,21 @@ class _SplashViewBodyState extends State<SplashViewBody>
   void _navigateAfterSplash() async {
     await Future.delayed(const Duration(seconds: 4));
 
+    if (!mounted) return;
+
+    final authCubit = context.read<AuthCubit>();
+    await authCubit.loadRememberMe(); // هنا هيجيب القيمة من SharedPreferences
+
     final user = FirebaseAuth.instance.currentUser;
+    final rememberMeValue = authCubit.rememberMe; // القيمة اللي محملة من الكيوبت
 
-    if (!mounted) return; // prevents using context if widget is disposed
-
-    if (user == null) {
-      GoRouter.of(context).go(AppRoutes.kSignUpView);
-    } else {
+    if (rememberMeValue && user != null) {
       GoRouter.of(context).go(AppRoutes.kIdentificationView);
+    } else {
+      GoRouter.of(context).go(AppRoutes.kSignUpView);
     }
   }
+
 
   void _initAnimation() {
     _animationController = AnimationController(

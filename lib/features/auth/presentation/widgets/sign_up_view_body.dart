@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,8 +95,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
           }
           if (state is AuthSuccess) {
             CustomSnackBar.show(
-              context, // Assuming context is available in this scope
-              message: "Sign up successful, please verify your email.",
+              context,
+              message: "Sign up successful.",
               backgroundColor: AppColors.success,
               textColor: AppColors.white,
               icon: Icons.check,
@@ -109,9 +108,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
             CustomSnackBar.show(
               context,
               message: "Signing up...",
-              backgroundColor: AppColors.primary,
-              textColor: AppColors.white,
-              icon: Icons.check,
+              backgroundColor: AppColors.white,
+              textColor: Colors.black,
               duration: const Duration(seconds: 3),
             );
           }

@@ -16,7 +16,7 @@ class MessageSecondOption extends StatelessWidget {
           message,
           style: TextStyle(
             color: Colors.white,
-            fontSize: 16.sp,
+            fontSize: 12.sp,
           ),
         ),
         TextButton(
@@ -25,7 +25,7 @@ class MessageSecondOption extends StatelessWidget {
             buttonText,
             style: TextStyle(
               color: Color(0xff2195f1),
-              fontSize: 16.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.bold,
             ),
           ),

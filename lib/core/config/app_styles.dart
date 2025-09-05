@@ -29,7 +29,7 @@ class AppTextStyles {
   );
   static final TextStyle hintStyle = TextStyle(
     fontSize: 14.sp,
-    color: Color(0xff9db7a7),
+    color: Colors.white,
   );
 
   static final TextStyle button16 = TextStyle(
