@@ -48,6 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
         'Start your journey into sign language with our comprehensive lessons.',
         image: Assets.imagesF2,
         buttonText: "Start Learning",
+        onPress: (){
+          GoRouter.of(context).push(AppRoutes.kSignLanguage);
+        }
       ),
       FeatureModel(
         title: 'Role Models for Disability',

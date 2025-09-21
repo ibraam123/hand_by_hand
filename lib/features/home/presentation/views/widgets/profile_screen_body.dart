@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_option.dart';
 import '../../../../../core/config/routes.dart';
 import '../../logic/profile_cubit.dart';
 
@@ -93,47 +94,6 @@ class ProfileScreenBody extends StatelessWidget {
           }
           return const SizedBox.shrink();
         },
-      ),
-    );
-  }
-}
-
-class ProfileOptionTile extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final VoidCallback? onTap;
-
-  const ProfileOptionTile({
-    super.key,
-    required this.title,
-    required this.icon,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.blue, size: 30),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.grey),
-          ],
-        ),
       ),
     );
   }

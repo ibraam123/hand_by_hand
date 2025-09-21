@@ -12,6 +12,7 @@ import '../../features/onboarding/views/identification_view.dart';
 import '../../features/role_model/data/models/role_model.dart';
 import '../../features/role_model/presenatation/views/screens/role_model_datails_screen.dart';
 import '../../features/role_model/presenatation/views/screens/role_models_screen.dart';
+import '../../features/sign_language/presentation/views/screens/sign_language_screen.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
 
 class AppRoutes {
@@ -27,6 +28,7 @@ class AppRoutes {
   static const String kHelp = '/help';
   static const String kRoleModels = '/roleModels';
   static const String kRoleModelDetails = '/roleModelDetails';
+  static const String kSignLanguage = '/signLanguage';
 
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
@@ -84,6 +86,10 @@ class AppRoutes {
           final roleModel = state.extra as RoleModel;
           return RoleModelDetailsScreen(roleModel: roleModel);
         },
+      ),
+      GoRoute(
+        path: kSignLanguage,
+        builder: (context, state) => const SignLanguageScreen(),
       ),
     ],
   );

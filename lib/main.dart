@@ -10,6 +10,7 @@ import 'package:hand_by_hand/init_dependcies.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
 import 'features/role_model/presenatation/logic/role_model_cubit.dart';
+import 'features/sign_language/presentation/logic/sign_language_cubit.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => serviceLocator<AuthCubit>()),
             BlocProvider(create: (context) => serviceLocator<ProfileCubit>()..loadProfile()),
             BlocProvider(create: (context) => serviceLocator<RoleModelCubit>()..getRoleModels()),
+            BlocProvider(create: (context) => serviceLocator<SignLanguageCubit>()..fetchSignLessons()),
           ],
           child: const AppView(),
         );
@@ -58,7 +60,6 @@ class AppView extends StatelessWidget {
       routerConfig: AppRoutes.router,
       theme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
-
     );
   }
 }

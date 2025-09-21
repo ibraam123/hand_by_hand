@@ -20,7 +20,11 @@ class RoleModelsScreen extends StatelessWidget {
               itemCount: state.roleModels.length,
               itemBuilder: (context, index) {
                 final roleModel = state.roleModels[index];
-                return RoleModelCustomContainer(roleModel: roleModel);
+                if (roleModel.imageUrl.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return RoleModelCustomContainer(roleModel: roleModel);
+                }
               },
             );
           } else if (state is RoleModelError) {
