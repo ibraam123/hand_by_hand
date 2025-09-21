@@ -1,0 +1,62 @@
+{
+  "auth": {
+    "joinUs": "Join us",
+    "signUp": "Sign up",
+    "logIn": "log in",
+    "forgotPassword": "forget password?",
+    "rememberMe": "Remember me",
+    "welcomeBack": "wehomeback",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "E-mail Address",
+      "password": "Password",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender"
+    },
+    "dateFields": {
+      "day": "Day",
+      "month": "Mon",
+      "year": "Year"
+    },
+    "genders": {
+      "female": "Female",
+      "male": "Male"
+    },
+    "terms": "I have read and understand the {terms} and {policy} by clicking at the {action}.",
+    "termsLinks": {
+      "terms": "Terms of Use",
+      "policy": "Privacy Policy",
+      "action": "Sign up"
+    }
+  },
+  "onboarding": {
+    "whoAreYou": "Who are you?",
+    "chooseExperience": "Choose your experience to get the best recommendations.",
+    "userTypes": {
+      "livingWithDisability": "Me L.Living with a disability",
+      "regularUser": "I am a Regular User",
+      "helper": "I'm fine, just helping someone in my family"
+    },
+    "welcomeTitle": "Thank You for Caring and Wanting to Learn!",
+    "welcomeMessage": "People with disabilities often have the kindest and strongest souls. They want to connect, engage, and share life – just like anyone else. Treat them with respect. Give them equal chances. Include them in laughter, conversations, and experiences – not pity. Because what they truly want is simple: To be seen as equals. To be treated as humans first.",
+    "neverDoTitle": "Never Do This",
+    "disabilityNotDisease": "Disability # Disease",
+    "neverDoMessage": "Don’t treat someone with a disability like a patient waiting to be cured. A patient needs treatment. But a person with a disability needs to learn how to adapt and live fully. Don’t leave them isolated at home. Take them out, include them, support them...",
+    "toEveryoneTitle": "To Everyone Living with a Disability",
+    "toEveryoneMessage": "You are not alone. There are millions who share your journey, your strength, and your dreams. Check out our role models – people who prove every day that life with a disability can be powerful, inspiring, and full of possibilities. Together, we rise. Together, we thrive. ★ learners.",
+    "getStarted": "Get Started",
+    "askToEdit": "Ask to edit"
+  },
+  "profile": {
+    "title": "Profile",
+    "dataMode": "Data mode:",
+    "modes": {
+      "execution": "Execution",
+      "languagePerformance": "Language Performance",
+      "support": "Support",
+      "mapSupport": "Map & Support",
+      "feedback": "Feedback"
+    }
+  }
+}

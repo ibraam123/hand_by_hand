@@ -7,9 +7,9 @@ import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
-import 'package:hand_by_hand/features/auth/logic/auth_cubit.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
 import '../../../../core/config/routes.dart';
+import '../logic/auth_cubit.dart';
 
 class ForgetPasswordViewBody extends StatefulWidget {
   const ForgetPasswordViewBody({super.key});
@@ -36,6 +36,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
 
     return SafeArea(
       child: BlocConsumer<AuthCubit, AuthState>(
+        listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
           if (state is ForgotPasswordError) {
             CustomSnackBar.show(
@@ -88,10 +89,11 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          SizedBox(height: height * 0.05),
                           CustomTextFormField(
                             hintText: "Enter your email",
                             controller: _emailController,
-                            suffixIcon: Icons.email,
+                            prefixIcon: Icons.email,
                           ),
                           SizedBox(height: height * 0.03),
                           CustomButton(

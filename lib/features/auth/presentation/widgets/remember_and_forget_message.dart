@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/config/routes.dart';
-import '../../logic/auth_cubit.dart';
+import '../logic/auth_cubit.dart';
 
 class RememberAndForgetMessage extends StatelessWidget {
   const RememberAndForgetMessage({super.key});

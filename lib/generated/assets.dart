@@ -2,15 +2,34 @@
 class Assets {
   Assets._();
 
+  static const String iconsIconApp = 'assets/icons/icon_app.png';
   static const String images1 = 'assets/images/1.svg';
   static const String images2 = 'assets/images/2.svg';
   static const String images3 = 'assets/images/3.svg';
-  static const String imagesAppleImage = 'assets/images/apple_image.svg';
+  static const String imagesAccecibleLocations = 'assets/images/accecible_locations.svg';
+  static const String imagesAppleSvg = 'assets/images/apple-svg.svg';
   static const String imagesBackgroundImage = 'assets/images/background_image.svg';
-  static const String imagesFasebookIcon = 'assets/images/fasebook_icon.svg';
-  static const String imagesGoogleImage = 'assets/images/google_image.svg';
+  static const String imagesComunity = 'assets/images/comunity.svg';
+  static const String imagesEnginnering = 'assets/images/enginnering.svg';
+  static const String imagesF1 = 'assets/images/f1.png';
+  static const String imagesF2 = 'assets/images/f2.png';
+  static const String imagesF3 = 'assets/images/f3.png';
+  static const String imagesF4 = 'assets/images/f4.png';
+  static const String imagesF5 = 'assets/images/f5.png';
+  static const String imagesF6 = 'assets/images/f6.png';
+  static const String imagesF7 = 'assets/images/f7.png';
+  static const String imagesFacebookSvgrepoComResize = 'assets/images/facebook-svgrepo-com-resize.svg';
+  static const String imagesGoogleSvg = 'assets/images/google-svg.svg';
+  static const String imagesHandshakeSvgrepoCom = 'assets/images/handshake-svgrepo-com.svg';
+  static const String imagesKeyForget = 'assets/images/key_forget.svg';
+  static const String imagesKnowAboutUs = 'assets/images/know_about_us.svg';
   static const String imagesLoginImage = 'assets/images/login_image.svg';
   static const String imagesLogoImage = 'assets/images/logo_image.png';
+  static const String imagesRoleModels = 'assets/images/role_models.svg';
+  static const String imagesSignLangugae = 'assets/images/sign_langugae.svg';
+  static const String imagesTranslate = 'assets/images/translate.svg';
   static const String imagesUpImage = 'assets/images/upImage.png';
+  static const String translationsAr = 'assets/translations/ar.json';
+  static const String translationsEn = 'assets/translations/en.json';
 
 }

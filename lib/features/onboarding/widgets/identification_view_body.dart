@@ -57,7 +57,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
             style: TextStyle(fontSize: 16.sp, color: AppColors.white),
             textAlign: TextAlign.center, // centers the lines
           ),
-          SizedBox(height: 18.h),
+          SizedBox(height: 24),
           CustomButton(
             text: 'Me 💪 Living with a disability',
             onTap: () {
@@ -66,7 +66,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
             width: double.infinity,
             color: AppColors.primary,
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 16),
           CustomButton(
             text: 'I am a Regular User',
             onTap: () {
@@ -75,7 +75,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
             width: double.infinity,
             color: AppColors.primary,
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 16),
           CustomButton(
             text: 'I’m fine, just helping someone in my family 💖',
             onTap: () {
@@ -83,24 +83,6 @@ Because what they truly want is simple: To be seen as equals. To be treated as
             },
             width: double.infinity,
             color: AppColors.primary,
-          ),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomButton(
-                text: 'Back',
-                onTap: () {},
-                width: 100.w,
-                color: AppColors.backButton,
-              ),
-              CustomButton(
-                text: 'Continue',
-                onTap: () {},
-                width: 100.w,
-                color: AppColors.primary,
-              ),
-            ],
           ),
         ],
       ),

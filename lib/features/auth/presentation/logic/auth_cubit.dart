@@ -11,19 +11,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._auth, this._firestore) : super(AuthInitial());
+  AuthCubit(
+    this._auth,
+    this._firestore,
+    this._googleSignIn,
+    this._facebookAuth,
+  ) : super(AuthInitial());
+
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+  final GoogleSignIn _googleSignIn;
+  final FacebookAuth _facebookAuth;
   bool rememberMe = false;
 
   Future<void> loadRememberMe() async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     rememberMe = prefs.getBool("remember_me") ?? false;
     emit(RememberMe(isSelected: rememberMe));
   }
 
+
+
   Future<void> toggleRememberMe(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("remember_me", value);
     rememberMe = value;
     emit(RememberMe(isSelected: value));
@@ -32,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signInWithFacebook() async {
     emit(AuthLoading());
     try {
-      final LoginResult result = await FacebookAuth.instance.login();
+      final LoginResult result = await _facebookAuth.login();
       final OAuthCredential credential = FacebookAuthProvider.credential(
         result.accessToken!.tokenString,
       );
@@ -51,10 +61,18 @@ class AuthCubit extends Cubit<AuthState> {
           gender: 'unspecified', // same here
         );
         await userDoc.set(newUser.toMap());
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('firstName', newUser.firstName);
+        await prefs.setString('lastName', newUser.lastName);
+        await prefs.setString('email', newUser.email);
         emit(AuthSuccess(user: newUser));
       } else {
         final data = snapshot.data()!;
         final existingUser = UserModel.fromMap(data);
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('firstName', existingUser.firstName);
+        await prefs.setString('lastName', existingUser.lastName);
+        await prefs.setString('email', existingUser.email);
         emit(AuthSuccess(user: existingUser));
       }
     } catch (e) {
@@ -68,13 +86,12 @@ class AuthCubit extends Cubit<AuthState> {
       UserCredential userCred;
 
       // Mobile/Desktop: google_sign_in v7
-      final signIn = GoogleSignIn.instance;
-      await signIn.initialize(
+      await _googleSignIn.initialize(
         clientId:
             "1015696421423-th7o6o7iekmqanad9c9oood4jktnsp82.apps.googleusercontent.com",
       ); // for iOS: pass clientId
 
-      final account = await signIn.authenticate();
+      final account = await _googleSignIn.authenticate();
       final idToken = (account.authentication).idToken;
       if (idToken == null) throw Exception('Google idToken was null');
 
@@ -97,11 +114,19 @@ class AuthCubit extends Cubit<AuthState> {
           gender: 'unspecified', // same here
         );
         await userDoc.set(newUser.toMap());
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('firstName', newUser.firstName);
+        await prefs.setString('lastName', newUser.lastName);
+        await prefs.setString('email', newUser.email);
         emit(AuthSuccess(user: newUser));
       } else {
         // Load existing user from Firestore
         final data = snapshot.data()!;
         final existingUser = UserModel.fromMap(data);
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('firstName', existingUser.firstName);
+        await prefs.setString('lastName', existingUser.lastName);
+        await prefs.setString('email', existingUser.email);
         emit(AuthSuccess(user: existingUser));
       }
     } catch (e) {
@@ -169,8 +194,16 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthLoading());
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      emit(AuthSuccess());
+      final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final uid = cred.user!.uid;
+
+      final doc = await _firestore.collection('users').doc(uid).get();
+      final user = UserModel.fromMap(doc.data()!);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('firstName', user.firstName);
+      await prefs.setString('lastName', user.lastName);
+      await prefs.setString('email', user.email);
+      emit(AuthSuccess(user: user));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -201,7 +234,10 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       await _firestore.collection('users').doc(user.id).set(user.toMap());
-
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('firstName', user.firstName);
+      await prefs.setString('lastName', user.lastName);
+      await prefs.setString('email', user.email);
       emit(AuthSuccess(user: user));
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -212,7 +248,11 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _auth.signOut();
-      emit(AuthSuccess());
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('firstName');
+      await prefs.remove('lastName');
+      await prefs.remove('email');
+      emit(AuthLogout());
     } catch (e) {
       emit(AuthError(e.toString()));
     }

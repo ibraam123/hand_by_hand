@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary brand colors
-  static const Color primary = Color(0xff38de79); // green accent
+  static const Color primary = Color(0xff16a5fd); // green accent
   static const Color secondary = Color(0xFF1B1B1B); // dark background
   static const Color accent = Color(0xFF4CAF50); // softer green
   // Neutral colors

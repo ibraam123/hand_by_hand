@@ -1,10 +1,9 @@
-
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
-import 'package:hand_by_hand/features/auth/logic/auth_cubit.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/birth_date_selector.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/gender_selector.dart';
@@ -13,6 +12,7 @@ import 'package:hand_by_hand/features/auth/presentation/widgets/message_second_o
 import '../../../../core/config/app_colors.dart';
 import '../../../../core/config/routes.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
+import '../logic/auth_cubit.dart';
 
 class SignUpViewBody extends StatefulWidget {
   const SignUpViewBody({super.key});
@@ -32,9 +32,10 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
   int? _month;
   int? _year;
   String? _gender;
+  bool isObscure = true;
 
-  int convertMonthToInt(String month){
-    switch(month){
+  int convertMonthToInt(String month) {
+    switch (month) {
       case 'Jan':
         return 1;
       case 'Feb':
@@ -45,7 +46,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
         return 4;
       case 'May':
         return 5;
-        case 'Jun':
+      case 'Jun':
         return 6;
       case 'Jul':
         return 7;
@@ -57,13 +58,12 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
         return 10;
       case 'Nov':
         return 11;
-        case 'Dec':
+      case 'Dec':
         return 12;
       default:
         return 0;
     }
   }
-
 
   @override
   void dispose() {
@@ -82,6 +82,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
 
     return SafeArea(
       child: BlocConsumer<AuthCubit, AuthState>(
+        listenWhen: (previous, current) => previous != current,
+
         listener: (context, state) {
           if (state is AuthError) {
             CustomSnackBar.show(
@@ -129,7 +131,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     height: height,
                     width: width,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.15),
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.1),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -140,6 +142,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                 child: CustomTextFormField(
                                   hintText: "First name",
                                   controller: _firstNameController,
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return "Please enter a valid first name";
+                                    }
+                                  },
                                 ),
                               ),
                               SizedBox(width: width * 0.05),
@@ -147,6 +156,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                 child: CustomTextFormField(
                                   hintText: "Last name",
                                   controller: _lastNameController,
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return "Please enter a valid last name";
+                                    }
+                                  },
                                 ),
                               ),
                             ],
@@ -155,14 +171,42 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           CustomTextFormField(
                             hintText: "Email",
                             controller: _emailController,
-                            suffixIcon: Icons.email,
+                            prefixIcon: Icons.email,
+                            validator: (value) {
+                              if (EmailValidator.validate(value!) &&
+                                  value.isNotEmpty) {
+                                return null;
+                              } else {
+                                return "Please enter a valid email";
+                              }
+                            },
                           ),
                           SizedBox(height: height * 0.02),
                           CustomTextFormField(
                             hintText: "Password",
                             controller: _passwordController,
-                            obscureText: true,
-                            suffixIcon: Icons.lock,
+                            obscureText: isObscure,
+                            prefixIcon: Icons.lock,
+                            suffixIconButton: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isObscure = !isObscure;
+                                });
+                              },
+                              icon: Icon(
+                                isObscure
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value != null && value.length >= 6) {
+                                return null;
+                              } else {
+                                return "Password must be at least 6 characters";
+                              }
+                            },
                           ),
                           SizedBox(height: height * 0.015),
                           BirthDateSelector(
@@ -188,8 +232,14 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                   _month != null &&
                                   _year != null &&
                                   _gender != null) {
-                                final birthDate = DateTime(_year!, _month!, _day!);
-                                context.read<AuthCubit>().signUpWithEmailAndPassword(
+                                final birthDate = DateTime(
+                                  _year!,
+                                  _month!,
+                                  _day!,
+                                );
+                                context
+                                    .read<AuthCubit>()
+                                    .signUpWithEmailAndPassword(
                                       email: _emailController.text,
                                       password: _passwordController.text,
                                       firstName: _firstNameController.text,

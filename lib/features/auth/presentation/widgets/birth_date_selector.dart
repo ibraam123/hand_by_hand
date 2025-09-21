@@ -90,7 +90,7 @@ class _BirthDateSelectorState extends State<BirthDateSelector> {
     required ValueChanged<T?> onChanged,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6.w),
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
       decoration: BoxDecoration(
         color: AppColors.greyDark,
         borderRadius: BorderRadius.circular(10.r),

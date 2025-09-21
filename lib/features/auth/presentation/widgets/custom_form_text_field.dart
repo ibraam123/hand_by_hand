@@ -10,15 +10,19 @@ class CustomTextFormField extends StatelessWidget {
     required this.hintText,
     this.onChanged,
     this.obscureText = false,
-    this.suffixIcon,
+    this.prefixIcon,
     this.controller,
+    this.validator,
+    this.suffixIconButton,
   });
 
   final String hintText;
   final Function(String)? onChanged;
   final bool obscureText;
-  final IconData? suffixIcon;
+  final IconData? prefixIcon;
   final TextEditingController? controller;
+  final String? Function(String?)? validator;
+  final IconButton? suffixIconButton;
 
 
   @override
@@ -26,12 +30,7 @@ class CustomTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $hintText';
-        }
-        return null;
-      },
+      validator: validator,
       onChanged: onChanged,
       style: AppTextStyles.textStyle16,
       decoration: InputDecoration(
@@ -61,11 +60,13 @@ class CustomTextFormField extends StatelessWidget {
         ),
         hintText: hintText,
         hintStyle: AppTextStyles.hintStyle,
-        suffixIcon: suffixIcon != null ? Icon(
-          suffixIcon,
-          color: Colors.white,
-        ) : null,
+        suffixIcon: suffixIconButton,
+        prefixIcon: prefixIcon == null ? null : Icon(
+          prefixIcon,
+          color: AppColors.white,
+        ),
       ),
     );
   }
 }
+// suffex icon false null != null

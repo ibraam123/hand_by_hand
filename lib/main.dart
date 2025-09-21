@@ -7,7 +7,9 @@ import 'package:hand_by_hand/core/config/theme.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
 import 'package:hand_by_hand/init_dependcies.dart';
 
-import 'features/auth/logic/auth_cubit.dart';
+import 'features/auth/presentation/logic/auth_cubit.dart';
+import 'features/home/presentation/logic/profile_cubit.dart';
+import 'features/role_model/presenatation/logic/role_model_cubit.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -20,6 +22,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await serviceLocator.allReady();
   runApp(const MyApp());
 }
 
@@ -36,6 +39,8 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (context) => serviceLocator<AuthCubit>()),
+            BlocProvider(create: (context) => serviceLocator<ProfileCubit>()..loadProfile()),
+            BlocProvider(create: (context) => serviceLocator<RoleModelCubit>()..getRoleModels()),
           ],
           child: const AppView(),
         );

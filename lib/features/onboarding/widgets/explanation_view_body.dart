@@ -14,43 +14,66 @@ class ExplanationViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            explanationScreenModel.imageAssets,
-            width: size.width,
-            height: size.height * 0.3,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              explanationScreenModel.title,
-              style: AppTextStyles.bold24,
-              textAlign: TextAlign.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    explanationScreenModel.imageAssets,
+                    width: size.width,
+                    height: size.height * 0.3,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(height: size.height * 0.02), // Responsive spacing
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * 0.05,
+                    ), // Responsive padding
+                    child: Text(
+                      explanationScreenModel.title,
+                      style: AppTextStyles.bold24.copyWith(
+                        fontSize: size.width * 0.06,
+                      ), // Responsive font size
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: size.height * 0.02), // Responsive spacing
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * 0.05,
+                    ), // Responsive padding
+                    child: Text(
+                      explanationScreenModel.description,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.textStyle16.copyWith(
+                        fontSize: size.width * 0.04,
+                      ), // Responsive font size
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: EdgeInsets.all(
+                      size.width * 0.05,
+                    ), // Responsive padding
+                    child: CustomButton(
+                      text: "Get Started",
+                      color: AppColors.primary,
+                      onTap: () {
+                        GoRouter.of(context).go(AppRoutes.kMainScreen);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              explanationScreenModel.description,
-              textAlign: TextAlign.center,
-              style: AppTextStyles.textStyle16,
-            ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomButton(text: "Get Started", color: AppColors.primary , onTap: (){
-              GoRouter.of(context).push(AppRoutes.kOptionsView);
-            },),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

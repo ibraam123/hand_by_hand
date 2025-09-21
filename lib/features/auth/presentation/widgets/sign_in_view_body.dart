@@ -1,19 +1,19 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
-import 'package:hand_by_hand/features/auth/logic/auth_cubit.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/message_second_option.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/remember_and_forget_message.dart';
 
 import '../../../../core/config/routes.dart';
 import '../../../../generated/assets.dart';
+import '../logic/auth_cubit.dart';
 
 class SignInViewBody extends StatefulWidget {
   const SignInViewBody({super.key});
@@ -27,7 +27,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  bool isObscure = true;
   @override
   void dispose() {
     _emailController.dispose();
@@ -43,6 +43,8 @@ class _SignInViewBodyState extends State<SignInViewBody> {
 
     return SafeArea(
       child: BlocConsumer<AuthCubit, AuthState>(
+        listenWhen: (previous, current) => previous != current,
+
         listener: (context, state) {
           if (state is AuthError) {
             CustomSnackBar.show(
@@ -53,7 +55,6 @@ class _SignInViewBodyState extends State<SignInViewBody> {
               icon: Icons.error,
               duration: const Duration(seconds: 3),
             );
-            print(state.errorMessage);
           }
           if (state is AuthSuccess) {
             CustomSnackBar.show(
@@ -91,7 +92,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                     height: height,
                     width: width,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.15),
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.1),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,14 +107,42 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                           CustomTextFormField(
                             hintText: "Email",
                             controller: _emailController,
-                            suffixIcon: Icons.email,
+                            prefixIcon: Icons.email,
+                            validator: (value) {
+                              if (EmailValidator.validate(value!) &&
+                                  value.isNotEmpty) {
+                                return null;
+                              } else {
+                                return "Please enter a valid email";
+                              }
+                            },
                           ),
                           SizedBox(height: height * 0.02),
                           CustomTextFormField(
                             hintText: "Password",
                             controller: _passwordController,
-                            obscureText: true,
-                            suffixIcon: Icons.lock,
+                            obscureText: isObscure,
+                            prefixIcon: Icons.lock,
+                            suffixIconButton: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isObscure = !isObscure;
+                                });
+                              },
+                              icon: Icon(
+                                isObscure
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value != null && value.length >= 6) {
+                                return null;
+                              } else {
+                                return "Password must be at least 6 characters";
+                              }
+                            },
                           ),
                           SizedBox(height: height * 0.01),
                           const RememberAndForgetMessage(),
@@ -168,41 +197,16 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                                 onTap: () {
                                   context.read<AuthCubit>().signInWithGoogle();
                                 },
-                                child: SvgPicture.asset(
-                                  Assets.imagesGoogleImage,
-                                ),
+                                child: SvgPicture.asset(Assets.imagesGoogleSvg),
                               ),
                               SizedBox(width: width * 0.05),
-                              SvgPicture.asset(Assets.imagesAppleImage),
+                              SvgPicture.asset(Assets.imagesAppleSvg),
                               SizedBox(width: width * 0.05),
                               GestureDetector(
                                 onTap: () {
-                                  context.read<AuthCubit>().signInWithFacebook();
+                                  context.read<AuthCubit>().signInWithGoogle();
                                 },
-                                child: Container(
-                                  width: 45.w, // more natural touch target size
-                                  height: 40.w, // keep square
-                                  padding: EdgeInsets.all(3.r),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary,
-                                    borderRadius: BorderRadius.circular(
-                                      12.r,
-                                    ), // smoother corners
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        blurRadius: 6,
-                                        offset: Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: SvgPicture.asset(
-                                      Assets.imagesFasebookIcon,
-                                      width: 26.w,
-                                    ),
-                                  ),
-                                ),
+                                child: SvgPicture.asset(Assets.imagesFacebookSvgrepoComResize , ),
                               ),
                             ],
                           ),
