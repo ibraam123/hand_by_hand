@@ -7,6 +7,7 @@ import 'package:hand_by_hand/core/config/theme.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
 import 'package:hand_by_hand/init_dependcies.dart';
 
+import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
 import 'features/role_model/presenatation/logic/role_model_cubit.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => serviceLocator<ProfileCubit>()..loadProfile()),
             BlocProvider(create: (context) => serviceLocator<RoleModelCubit>()..getRoleModels()),
             BlocProvider(create: (context) => serviceLocator<SignLanguageCubit>()..fetchSignLessons()),
+            BlocProvider(create: (context) => serviceLocator<PlaceCubit>()..fetchPlaces()),
           ],
           child: const AppView(),
         );

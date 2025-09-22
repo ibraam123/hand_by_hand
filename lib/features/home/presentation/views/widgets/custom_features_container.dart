@@ -21,16 +21,19 @@ class CustomFeaturesContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDarkMode
+                ? Colors.white.withOpacity(0.05)
+                : Colors.black.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -59,17 +62,18 @@ class CustomFeaturesContainer extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: isDarkMode ? Colors.white70 : Colors.grey,
                   ),
                 ),
                 const SizedBox(height: 16),

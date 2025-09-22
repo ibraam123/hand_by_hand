@@ -3,9 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hand_by_hand/features/accessible_places/domain/repos/place_repo.dart';
 import 'package:hand_by_hand/features/home/presentation/logic/profile_cubit.dart';
 import 'package:hand_by_hand/features/sign_language/domain/repos/sign_lesson_repo.dart';
 
+import 'features/accessible_places/data/repos/place_repo_impl.dart';
+import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/role_model/data/data_sources/role_model_remote_data_source.dart';
 import 'features/role_model/data/repos/roole_model_repo_impl.dart';
@@ -61,6 +64,12 @@ Future<void> init() async {
     ),
   );
 
+  serviceLocator.registerLazySingleton<PlaceRepository>(
+        () => PlaceRepositoryImpl(
+      serviceLocator<FirebaseFirestore>(),
+    ),
+  );
+
 
   // ✅ Cubits / Blocs
   serviceLocator.registerFactory<AuthCubit>(
@@ -85,6 +94,12 @@ Future<void> init() async {
   serviceLocator.registerFactory<SignLanguageCubit>(
         () => SignLanguageCubit(
       serviceLocator<SignLessonRepo>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<PlaceCubit>(
+        () => PlaceCubit(
+      serviceLocator<PlaceRepository>(),
     ),
   );
 }

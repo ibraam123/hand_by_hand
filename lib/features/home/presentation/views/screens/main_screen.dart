@@ -40,13 +40,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       drawer: CustomDrawer(
         name: _fullName,
         email: _email,
       ),
       appBar: AppBar(
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.white,
         actions: [
           IconButton(onPressed: (){}, icon: const Icon(
             Icons.notifications,
@@ -63,18 +63,18 @@ class _MainScreenState extends State<MainScreen> {
                   ? 'Favorites'
                   : 'Profile',
           style: const TextStyle(
-            color: Colors.black,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
       ) ,
       body: _screens[currentIndex],
       bottomNavigationBar: GNav(
-
-        backgroundColor: Colors.white,
-        color: Colors.black,
-        activeColor: Colors.white,
-        tabBackgroundColor: AppColors.primary,
+        backgroundColor: Colors.black, // Dark background for the Nav Bar
+        color: Colors.white54, // Color for inactive icons and text
+        activeColor: AppColors.primary, // Color for active icon and text (using your primary color)
+        tabBackgroundColor: Colors.grey[800]!, // Background color for the selected tab
+        // iconSize: 24, // Optional: Adjust icon size
         gap: 8,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         padding: EdgeInsetsGeometry.all(16),
@@ -87,7 +87,6 @@ class _MainScreenState extends State<MainScreen> {
           GButton(
             icon: Icons.home,
             text: 'Home',
-
           ),
           GButton(
             icon: Icons.favorite,

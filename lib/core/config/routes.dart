@@ -1,9 +1,11 @@
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/edit_profile_screen_body.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/help_screen.dart';
+import '../../features/accessible_places/presentation/views/screens/places_screen.dart';
 import '../../features/auth/presentation/views/forget_password_view.dart';
 import '../../features/auth/presentation/views/sign_in_view.dart';
 import '../../features/auth/presentation/views/sign_up_view.dart';
+import '../../features/community/presenation/views/comunity_chat_screen.dart';
 import '../../features/home/presentation/views/screens/main_screen.dart';
 import '../../features/home/presentation/views/widgets/feedback_screen.dart';
 import '../../features/onboarding/models/explanation_screen_model.dart';
@@ -14,6 +16,7 @@ import '../../features/role_model/presenatation/views/screens/role_model_datails
 import '../../features/role_model/presenatation/views/screens/role_models_screen.dart';
 import '../../features/sign_language/presentation/views/screens/sign_language_screen.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
+import '../../features/know_about_us/presenatation/views/know_about_us _view.dart';
 
 class AppRoutes {
   static const String kSplashView = '/';
@@ -29,6 +32,9 @@ class AppRoutes {
   static const String kRoleModels = '/roleModels';
   static const String kRoleModelDetails = '/roleModelDetails';
   static const String kSignLanguage = '/signLanguage';
+  static const String kKnowAboutUs = '/knowAboutUs';
+  static const String kCommunity = '/community';
+  static const String kPlaces = '/places';
 
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
@@ -90,6 +96,18 @@ class AppRoutes {
       GoRoute(
         path: kSignLanguage,
         builder: (context, state) => const SignLanguageScreen(),
+      ),
+      GoRoute(
+        path: kKnowAboutUs,
+        builder: (context, state) => const AboutUsScreen(),
+      ),
+      GoRoute(
+        path: kCommunity,
+        builder: (context, state) => const CommunityChatScreen(),
+      ),
+      GoRoute(
+        path: kPlaces,
+        builder: (context, state) => const AccessibleLocationScreen(),
       ),
     ],
   );

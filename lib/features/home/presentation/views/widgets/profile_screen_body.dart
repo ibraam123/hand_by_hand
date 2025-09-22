@@ -29,9 +29,9 @@ class ProfileScreenBody extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 45,
-                        backgroundColor: Colors.black,
+                        backgroundColor: Colors.white,
                         child: const Icon(Icons.person,
-                            size: 60, color: Colors.white),
+                            size: 60, color: Colors.black),
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -39,7 +39,7 @@ class ProfileScreenBody extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -58,14 +58,6 @@ class ProfileScreenBody extends StatelessWidget {
                   icon: Icons.edit,
                   onTap: () {
                     GoRouter.of(context).push(AppRoutes.kEditProfile);
-                  },
-                ),
-                const SizedBox(height: 15),
-                ProfileOptionTile(
-                  title: "Languages",
-                  icon: Icons.language,
-                  onTap: () {
-                    // Show language dialog
                   },
                 ),
                 const SizedBox(height: 15),

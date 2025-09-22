@@ -31,7 +31,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Feedback")),
+      appBar: AppBar(
+        title: const Text(
+          "Feedback",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -45,8 +54,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   labelText: "Your Feedback",
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                value == null || value.isEmpty ? "Enter your feedback" : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? "Enter your feedback"
+                    : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(

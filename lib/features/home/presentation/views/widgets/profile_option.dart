@@ -31,11 +31,12 @@ class ProfileOptionTile extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white
                 ),
               ),
             ),
             const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.grey),
+                size: 16, color: Colors.white ),
           ],
         ),
       ),

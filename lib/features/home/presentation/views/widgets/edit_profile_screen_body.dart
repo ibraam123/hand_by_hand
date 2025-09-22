@@ -51,7 +51,11 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Edit Profile"),
+        title: const Text("Edit Profile" , style: TextStyle(color: Colors.white  , fontWeight: FontWeight.bold) , ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

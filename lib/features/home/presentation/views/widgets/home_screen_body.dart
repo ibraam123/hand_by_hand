@@ -40,7 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
         subtitle: 'Find places that are accessible for the disability community.',
         image: Assets.imagesF1,
         buttonText: "Explore Places",
-
+        onPress: () {
+          GoRouter.of(context).push(AppRoutes.kPlaces);
+        },
       ),
       FeatureModel(
         title: 'Sign Language Lessons',
@@ -67,6 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
         'Discover our mission and meet inspiring figures in the deaf community.',
         image: Assets.imagesF4,
         buttonText: "Learn More",
+        onPress: () {
+          GoRouter.of(context).push(AppRoutes.kKnowAboutUs);
+        },
       ),
       FeatureModel(
         title: 'Community ',
@@ -74,12 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
         'Communicate to the disability community and know about their rights.',
         image: Assets.imagesF5,
         buttonText: "Join Community",
-      ),
-      FeatureModel(
-        title: 'Translate sign language ',
-        subtitle: 'Instantly translate sign language to text and vice-versa.',
-        image: Assets.imagesF7,
-        buttonText: "Translate Now",
+        onPress: () {
+          GoRouter.of(context).push(AppRoutes.kCommunity);
+        },
       ),
     ];
     return Padding(
@@ -112,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : "Loading...",
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: Colors.white,
       ),
     );
   }
