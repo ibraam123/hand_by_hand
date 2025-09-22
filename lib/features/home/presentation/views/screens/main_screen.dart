@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_screen_body.dart';
 import '../widgets/custom_drawer.dart';
+import '../widgets/favorites_screen_body.dart';
 import '../widgets/home_screen_body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -102,15 +103,5 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class FavoritesScreen extends StatelessWidget {
-  const FavoritesScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Favorites Screen'),
-    );
-  }
-}
 
 

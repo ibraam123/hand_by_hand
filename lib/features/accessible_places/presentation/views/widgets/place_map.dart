@@ -47,6 +47,7 @@ class PlacesMap extends StatelessWidget {
               );
             }).toList(),
           ),
+
         ],
       ),
     );

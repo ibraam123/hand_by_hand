@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../domain/entities/place_entitiy.dart';
 
-class PlacesList extends StatelessWidget {
+class PlacesList extends StatefulWidget {
   final List<PlaceEntitiy> places;
   final MapController mapController;
 
@@ -15,43 +16,99 @@ class PlacesList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: places.length,
-      itemBuilder: (context, index) {
-        final place = places[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: ListTile(
-            leading: const Icon(Icons.place, color: Colors.blue),
-            title: Text(place.name),
-            subtitle: Text("Type: ${place.type}"),
-            onTap: () {
-              final latLng = LatLng(place.lat, place.lng);
-              mapController.move(latLng, 15);
+  State<PlacesList> createState() => _PlacesListState();
+}
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Centered on ${place.name}" , style: const TextStyle(color: Colors.white)),
-                  duration: const Duration(seconds: 2),
-                  backgroundColor: Colors.blueAccent,
-                  action: SnackBarAction(
-                    label: "Close",
-                    onPressed: () {},
-                    textColor: Colors.white,
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 6,
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
+class _PlacesListState extends State<PlacesList> {
+  late final Box<bool> favoritesBox;
 
-                ),
-              );
-            },
+  @override
+  void initState() {
+    super.initState();
+    favoritesBox = Hive.box<bool>('favorites');
+  }
+
+  String _placeKey(PlaceEntitiy place) {
+    return (place.name.toString().trim().isNotEmpty == true)
+        ? place.name
+        : place.name;
+  }
+
+  void _showTopMessage(BuildContext context, String message,
+      {Color background = Colors.blue}) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    // remove old banner if exists
+    messenger.hideCurrentMaterialBanner();
+
+    messenger.showMaterialBanner(
+      MaterialBanner(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+        leading: const Icon(Icons.info, color: Colors.white),
+        backgroundColor: background,
+        actions: [
+          TextButton(
+            onPressed: () => messenger.hideCurrentMaterialBanner(),
+            child: const Text("DISMISS", style: TextStyle(color: Colors.white)),
           ),
+        ],
+      ),
+    );
+
+    // auto dismiss after 2 seconds
+    Future.delayed(const Duration(seconds: 2), () {
+      messenger.hideCurrentMaterialBanner();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Box<bool>>(
+      valueListenable: favoritesBox.listenable(),
+      builder: (context, box, _) {
+        return ListView.builder(
+          itemCount: widget.places.length,
+          itemBuilder: (context, index) {
+            final place = widget.places[index];
+            final key = _placeKey(place);
+            final isFavorite = box.get(key, defaultValue: false) ?? false;
+
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: ListTile(
+                leading: const Icon(Icons.place, color: Colors.blue),
+                title: Text(place.name),
+                subtitle: Text("Type: ${place.type}"),
+                trailing: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : null,
+                  ),
+                  onPressed: () {
+                    if (isFavorite) {
+                      favoritesBox.delete(key);
+                      _showTopMessage(context, "Removed from favorites",
+                          background: Colors.red);
+                    } else {
+                      favoritesBox.put(key, true);
+                      _showTopMessage(context, "Added to favorites",
+                          background: Colors.green);
+                    }
+                  },
+                ),
+                onTap: () {
+                  final latLng = LatLng(place.lat, place.lng);
+                  widget.mapController.move(latLng, 15);
+
+                  _showTopMessage(context, "Centered on ${place.name}",
+                      background: Colors.blueAccent);
+                },
+              ),
+            );
+          },
         );
       },
     );

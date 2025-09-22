@@ -6,7 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/core/config/theme.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
 import 'package:hand_by_hand/init_dependcies.dart';
-
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
@@ -24,6 +25,9 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await Hive.initFlutter();
+  await Hive.openBox<bool>('favorites');
+
   await serviceLocator.allReady();
   runApp(const MyApp());
 }
