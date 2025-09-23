@@ -46,67 +46,80 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          /// --- Real-time Chat Messages
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection("messages")
-                  .orderBy("createdAt", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            children: [
+              /// --- Real-time Chat Messages
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection("messages")
+                      .orderBy("createdAt", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                final docs = snapshot.data!.docs;
+                    final docs = snapshot.data!.docs;
 
-                return ListView.builder(
-                  reverse: true, // newest at bottom
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    final data = docs[index].data() as Map<String, dynamic>;
-                    final isMe = data["id"] == currentUserId;
+                    return ListView.builder(
+                      reverse: true, // newest at bottom
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        final data = docs[index].data() as Map<String, dynamic>;
+                        final isMe = data["id"] == currentUserId;
 
-                    return Align(
-                      alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 12),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isMe
-                              ? Colors.deepPurpleAccent
-                              : Colors.blue,
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(16),
-                            topRight: const Radius.circular(16),
-                            bottomLeft: Radius.circular(isMe ? 16 : 0),
-                            bottomRight: Radius.circular(isMe ? 0 : 16),
+                        return Align(
+                          alignment:
+                              isMe ? Alignment.centerRight : Alignment.centerLeft,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth * 0.75, // Max width of message bubble
+                            ),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isMe
+                                  ? Colors.deepPurpleAccent
+                                  : Colors.blue,
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(16),
+                                topRight: const Radius.circular(16),
+                                bottomLeft: Radius.circular(isMe ? 16 : 0),
+                                bottomRight: Radius.circular(isMe ? 0 : 16),
+                              ),
+                            ),
+                            child: Text(
+                              data["text"] ?? "",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: constraints.maxWidth < 600 ? 14 : 16, // Responsive font size
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          data["text"] ?? "",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
-          ),
+                ),
+              ),
 
-          /// --- Input Field
-          CustomTextField(controller: _controller, onSend: _sendMessage),
-        ],
+              /// --- Input Field
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: constraints.maxWidth * 0.02), // Responsive padding
+                  child: CustomTextField(
+                      controller: _controller, onSend: _sendMessage),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

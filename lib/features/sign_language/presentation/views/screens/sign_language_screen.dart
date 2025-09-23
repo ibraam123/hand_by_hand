@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand/features/sign_language/domain/entities/sign_lesson_entitiy.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../logic/sign_language_cubit.dart';
 
@@ -12,7 +13,7 @@ class SignLanguageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Language' , style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold),),
+        title: Text('Sign Language' , style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold, fontSize: 20.sp),),
         centerTitle: true,
       ),
       body: BlocBuilder<SignLanguageCubit, SignLanguageState>(
@@ -21,7 +22,7 @@ class SignLanguageScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is SignLanguageLoaded) {
             return ListView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.w),
               itemCount: state.signLessons.length,
               itemBuilder: (context, index) {
                 final signLesson = state.signLessons[index];
@@ -48,18 +49,16 @@ class SignLessonCustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Card(
-      elevation: 4.0,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      elevation: 4.0.r,
+      margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.circular(15.0.r),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.w),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center, // Align items vertically in the center
           children: [
             /// --- Left: Text Content
             Expanded(
@@ -71,39 +70,39 @@ class SignLessonCustomContainer extends StatelessWidget {
                     signLessonModel.title,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     signLessonModel.description,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     ),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
+                    maxLines: 2, // Reduced max lines for description
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
 
             /// --- Right: Image
             Flexible(
               child: AspectRatio(
                 aspectRatio: 1, // Ensures the image container is a square
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(12.0.r),
                   child: Image.network(
                     signLessonModel.imageUrl,
                     fit: BoxFit.contain, // Changed to contain to show the whole image
                     errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.broken_image, size: screenWidth * 0.22, color: Colors.grey),
+                        Icon(Icons.broken_image, size: 80.w, color: Colors.grey), // Adjusted size with screen util
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Center(

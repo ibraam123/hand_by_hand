@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/custom_features_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -85,14 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ];
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0.w),
       child: ListView(
         children: [
           _buildWelcomeMessage(_firstName),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           ..._featuresData.map((feature) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+              padding: EdgeInsets.only(bottom: 16.0.h),
               child: CustomFeaturesContainer(
                 title: feature.title,
                 subtitle: feature.subtitle,
@@ -111,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Text(
       firstNameUser != null
           ? "Welcome, $firstNameUser"
-          : "Loading...",
+          : "Loading...", //TODO: ADD SKELETON LOADING
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
         color: Colors.white,

@@ -10,7 +10,9 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
+import 'features/community/presenation/logic/posts_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
+import 'features/notification/firebase_api.dart';
 import 'features/role_model/presenatation/logic/role_model_cubit.dart';
 import 'features/sign_language/presentation/logic/sign_language_cubit.dart';
 import 'firebase_options.dart';
@@ -21,6 +23,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await init();
+  await FirebaseApi().initNotifications();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -49,6 +52,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => serviceLocator<RoleModelCubit>()..getRoleModels()),
             BlocProvider(create: (context) => serviceLocator<SignLanguageCubit>()..fetchSignLessons()),
             BlocProvider(create: (context) => serviceLocator<PlaceCubit>()..fetchPlaces()),
+            BlocProvider(create: (context) => serviceLocator<PostsCubit>()..fetchPosts()),
           ],
           child: const AppView(),
         );

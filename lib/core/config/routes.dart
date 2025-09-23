@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:hand_by_hand/features/community/presenation/views/main_community_screen.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/edit_profile_screen_body.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/help_screen.dart';
 import '../../features/accessible_places/presentation/views/screens/places_screen.dart';
@@ -6,6 +7,7 @@ import '../../features/auth/presentation/views/forget_password_view.dart';
 import '../../features/auth/presentation/views/sign_in_view.dart';
 import '../../features/auth/presentation/views/sign_up_view.dart';
 import '../../features/community/presenation/views/comunity_chat_screen.dart';
+import '../../features/community/presenation/views/posts_screen.dart';
 import '../../features/home/presentation/views/screens/main_screen.dart';
 import '../../features/home/presentation/views/widgets/feedback_screen.dart';
 import '../../features/onboarding/models/explanation_screen_model.dart';
@@ -34,6 +36,8 @@ class AppRoutes {
   static const String kSignLanguage = '/signLanguage';
   static const String kKnowAboutUs = '/knowAboutUs';
   static const String kCommunity = '/community';
+  static const String kCommunityChat = '/communityChat';
+  static const String kCommunityPosts = '/communityPosts';
   static const String kPlaces = '/places';
 
   static final GoRouter router = GoRouter(
@@ -103,7 +107,15 @@ class AppRoutes {
       ),
       GoRoute(
         path: kCommunity,
+        builder: (context, state) => const MainCommunityScreen(),
+      ),
+      GoRoute(
+        path: kCommunityChat,
         builder: (context, state) => const CommunityChatScreen(),
+      ),
+      GoRoute(
+        path: kCommunityPosts,
+        builder: (context, state) => const PostsScreen(),
       ),
       GoRoute(
         path: kPlaces,

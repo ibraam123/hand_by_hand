@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../accessible_places/domain/entities/place_entitiy.dart';
 
@@ -20,17 +21,17 @@ class FavoritesScreen extends StatelessWidget {
         builder: (context, Box box, _) {
           final keys = box.keys.cast<String>().toList();
           if (keys.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 "No favorite places yet 🌌",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(color: Colors.white70, fontSize: 16.sp),
               ),
             );
           }
 
           return ListView.builder(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             itemCount: keys.length,
             itemBuilder: (context, index) {
               final key = keys[index];
@@ -41,9 +42,9 @@ class FavoritesScreen extends StatelessWidget {
               // Normally you’d fetch place details from Firestore/local DB.
               // For demo: we only show the key as name.
               return Card(
-                margin: const EdgeInsets.only(bottom: 16),
+                margin: EdgeInsets.only(bottom: 16.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
                 color: const Color(0xFF1E1E2C),
                 elevation: 4,
@@ -66,16 +67,16 @@ class FavoritesScreen extends StatelessWidget {
                       box.delete(key);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("❌ Removed from favorites" , style: TextStyle(color: Colors.white)),
+                          content: Text("❌ Removed from favorites", style: TextStyle(color: Colors.white)),
                           duration: Duration(seconds: 1),
                           backgroundColor: Colors.red,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           ),
                           elevation: 6,
-                          margin: EdgeInsets.all(10),
-                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.all(10.0),
+                          padding: EdgeInsets.all(10.0),
                         ),
                       );
                     },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/config/routes.dart';
 import '../../../domain/entities/role_model_entity.dart';
@@ -16,7 +17,7 @@ class RoleModelCustomContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Card(
         elevation: 4,
         child: GestureDetector(
@@ -27,15 +28,15 @@ class RoleModelCustomContainer extends StatelessWidget {
             );
           },
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-            padding: const EdgeInsets.all(12),
+            margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+            padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 4),
+                  blurRadius: 6.r,
+                  offset: Offset(0, 4.h),
                 ),
               ],
             ),
@@ -50,29 +51,29 @@ class RoleModelCustomContainer extends StatelessWidget {
                         roleModel.name,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 18, // Adjusted based on screen size if needed
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6.h),
                       Text(
                         roleModel.story,
                         maxLines: 3, // show only 4 lines
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 14, // Adjusted based on screen size if needed
                           color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 // Right side (image)
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0.w),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                     child: Image.network(
                       roleModel.imageUrl,
                       width: 100,

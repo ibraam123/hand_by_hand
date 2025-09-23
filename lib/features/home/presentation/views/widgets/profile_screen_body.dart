@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_option.dart';
 import '../../../../../core/config/routes.dart';
@@ -21,23 +22,23 @@ class ProfileScreenBody extends StatelessWidget {
             return ListView(
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.w),
               children: [
                 // Profile header
                 Center(
                   child: Column(
                     children: [
                       CircleAvatar(
-                        radius: 45,
+                        radius: 45.r,
                         backgroundColor: Colors.white,
-                        child: const Icon(Icons.person,
-                            size: 60, color: Colors.black),
+                        child: Icon(Icons.person,
+                            size: 60.sp, color: Colors.black),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       Text(
                         "${state.firstName} ${state.lastName}",
-                        style: const TextStyle(
-                          fontSize: 24,
+                        style: TextStyle(
+                          fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -45,13 +46,13 @@ class ProfileScreenBody extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 Divider(
                   color: theme.dividerColor,
-                  thickness: 2,
-                  height: 1,
+                  thickness: 2.h,
+                  height: 1.h,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
 
                 ProfileOptionTile(
                   title: "Edit Profile",
@@ -60,7 +61,7 @@ class ProfileScreenBody extends StatelessWidget {
                     GoRouter.of(context).push(AppRoutes.kEditProfile);
                   },
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
 
                 ProfileOptionTile(
                   title: "Help & Support",
@@ -69,7 +70,7 @@ class ProfileScreenBody extends StatelessWidget {
                     GoRouter.of(context).push(AppRoutes.kHelp);
                   },
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: 15.h),
 
                 ProfileOptionTile(
                   title: "Feedback",
