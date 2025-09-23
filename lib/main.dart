@@ -23,7 +23,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await init();
-  await FirebaseApi().initNotifications();
+  FirebaseApi firebaseApi = FirebaseApi();
+  await firebaseApi.initNotifications();
+  firebaseApi.initPushNotifications();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

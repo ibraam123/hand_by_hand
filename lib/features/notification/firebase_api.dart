@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseApi {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -12,14 +13,13 @@ class FirebaseApi {
       sound: true,
     );
 
-    // Check if permission granted
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
     } else {
       print('User declined or has not accepted permission');
     }
 
-    // Set foreground notification presentation options (iOS only)
+    // Foreground notification options (iOS)
     await _firebaseMessaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
@@ -33,13 +33,19 @@ class FirebaseApi {
     }
   }
 
-  /// Handle incoming notifications
+  /// Handle incoming notifications and save to Firestore
   void handleNotifications(RemoteMessage message) {
     if (message.notification != null) {
       final notification = message.notification!;
       print('Notification Title: ${notification.title}');
       print('Notification Body: ${notification.body}');
-      // You can also trigger local notifications here if needed
+
+      // Save to Firestore
+      FirebaseFirestore.instance.collection('notifications').add({
+        'title': notification.title ?? 'No Title',
+        'body': notification.body ?? 'No Body',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
     }
   }
 

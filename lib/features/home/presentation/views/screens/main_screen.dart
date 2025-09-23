@@ -7,6 +7,8 @@ import '../widgets/favorites_screen_body.dart';
 import '../widgets/home_screen_body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../widgets/notification_screen_body.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -19,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const FavoritesScreen(),
+    const NotificationsScreen(),
     const ProfileScreenBody(),
   ];
   String _fullName = '';
@@ -48,21 +51,10 @@ class _MainScreenState extends State<MainScreen> {
       ),
       appBar: AppBar(
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(onPressed: (){}, icon: const Icon(
-            Icons.notifications,
-            color: Color(0xfffdbf07),
-            size: 30,
-          ),)
-        ],
         backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text(
-          currentIndex == 0
-              ? 'Home'
-              : currentIndex == 1
-                  ? 'Favorites'
-                  : 'Profile',
+          currentIndex == 0 ? 'Home' : currentIndex == 1 ? 'Favorites' : currentIndex == 2 ? 'Notifications' : 'Profile',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -92,6 +84,10 @@ class _MainScreenState extends State<MainScreen> {
           GButton(
             icon: Icons.favorite,
             text: 'Favorites',
+          ),
+          GButton(
+            icon: Icons.notifications,
+            text: 'Notifications',
           ),
           GButton(
             icon: Icons.person,
