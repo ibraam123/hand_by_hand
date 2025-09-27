@@ -83,40 +83,23 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
     return SafeArea(
       child: BlocConsumer<AuthCubit, AuthState>(
         listenWhen: (previous, current) => previous != current,
-
         listener: (context, state) {
           if (state is AuthError) {
             CustomSnackBar.show(
               context,
               message: state.errorMessage,
-              backgroundColor: AppColors.error,
-              textColor: AppColors.white,
+              backgroundColor: Theme.of(context).colorScheme.error,
+              textColor: Theme.of(context).colorScheme.onError,
               icon: Icons.error,
-              duration: const Duration(seconds: 3),
             );
           }
           if (state is AuthSuccess) {
-            CustomSnackBar.show(
-              context,
-              message: "Sign up successful.",
-              backgroundColor: AppColors.success,
-              textColor: AppColors.white,
-              icon: Icons.check,
-              duration: const Duration(seconds: 3),
-            );
             GoRouter.of(context).go(AppRoutes.kIdentificationView);
-          }
-          if (state is AuthLoading) {
-            CustomSnackBar.show(
-              context,
-              message: "Signing up...",
-              backgroundColor: AppColors.white,
-              textColor: Colors.black,
-              duration: const Duration(seconds: 3),
-            );
           }
         },
         builder: (context, state) {
+          final isLoading = state is AuthLoading;
+
           return Stack(
             children: [
               CustomMessageContainer(
@@ -133,7 +116,6 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: width * 0.1),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Row(
@@ -197,7 +179,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                 isObscure
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                color: AppColors.white,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             validator: (value) {
@@ -226,6 +208,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           CustomButton(
                             text: "Sign Up",
                             width: width,
+                            isLoading: isLoading,
                             onTap: () {
                               if (_formKey.currentState!.validate() &&
                                   _day != null &&
@@ -237,23 +220,20 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                   _month!,
                                   _day!,
                                 );
-                                context
-                                    .read<AuthCubit>()
-                                    .signUpWithEmailAndPassword(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                      firstName: _firstNameController.text,
-                                      lastName: _lastNameController.text,
-                                      birthDate: birthDate,
-                                      gender: _gender!,
-                                    );
+                                context.read<AuthCubit>().signUpWithEmailAndPassword(
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  firstName: _firstNameController.text,
+                                  lastName: _lastNameController.text,
+                                  birthDate: birthDate,
+                                  gender: _gender!,
+                                );
                               } else {
                                 CustomSnackBar.show(
                                   context,
-                                  message:
-                                      "Please fill in all fields correctly.",
-                                  backgroundColor: AppColors.error,
-                                  textColor: AppColors.white,
+                                  message: "Please fill in all fields correctly.",
+                                  backgroundColor: Theme.of(context).colorScheme.error,
+                                  textColor: Theme.of(context).colorScheme.onError,
                                   icon: Icons.error,
                                 );
                               }
@@ -265,9 +245,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                             message: "Already have an account?",
                             buttonText: "Log In",
                             onTap: () {
-                              GoRouter.of(
-                                context,
-                              ).pushReplacement(AppRoutes.kSignInView);
+                              GoRouter.of(context)
+                                  .pushReplacement(AppRoutes.kSignInView);
                             },
                           ),
                         ],

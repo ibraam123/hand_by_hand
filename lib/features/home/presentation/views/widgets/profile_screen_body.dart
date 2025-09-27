@@ -12,6 +12,7 @@ class ProfileScreenBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return SafeArea(
       child: BlocBuilder<ProfileCubit, ProfileState>(
@@ -30,17 +31,27 @@ class ProfileScreenBody extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 45.r,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person,
-                            size: 60.sp, color: Colors.black),
+                        backgroundColor: isDark
+                            ? theme.colorScheme.surface
+                            : theme.colorScheme.onSurface.withValues(
+                          green: 0.2,
+                          red: 0.2,
+                          blue: 0.2,
+                          alpha: 0.2,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: 60.sp,
+                          color: theme.colorScheme.onSurface,
+                        ),
                       ),
                       SizedBox(height: 12.h),
                       Text(
                         "${state.firstName} ${state.lastName}",
-                        style: TextStyle(
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -79,11 +90,17 @@ class ProfileScreenBody extends StatelessWidget {
                     GoRouter.of(context).push(AppRoutes.kFeedback);
                   },
                 ),
-
               ],
             );
           } else if (state is ProfileError) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: Text(
+                state.message,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            );
           }
           return const SizedBox.shrink();
         },

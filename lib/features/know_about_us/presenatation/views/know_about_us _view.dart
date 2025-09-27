@@ -44,10 +44,8 @@ class AboutUsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Know More About Us",
-          style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
-        backgroundColor: Colors.transparent,
         centerTitle: true,
       ),
       body: ListView.builder(

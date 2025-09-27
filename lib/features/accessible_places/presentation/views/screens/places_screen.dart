@@ -21,10 +21,11 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
   String selectedType = "all";
 
   void _showAddPlaceBottomSheet(BuildContext context) {
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.black, // Dark background
+      backgroundColor: theme.bottomSheetTheme.backgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -53,20 +54,25 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _showAddPlaceBottomSheet(context);
         },
-        label: Text("Add Place", style: TextStyle(color: Colors.white)),
-        icon: const Icon(Icons.add_location_alt),
-        backgroundColor: Colors.blue,
+        label: Text(
+          "Add Place",
+          style: TextStyle(color: theme.colorScheme.onSecondary),
+        ),
+        icon: Icon(Icons.add_location_alt,
+            color: theme.colorScheme.onSecondary),
+        backgroundColor: theme.colorScheme.secondary,
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text(
+      appBar: AppBar( // Using theme for AppBar
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        title: Text(
           "Accessible Locations",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: theme.appBarTheme.titleTextStyle,
         ),
         centerTitle: true,
       ),
@@ -90,7 +96,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
                   places: filteredPlaces,
                   fallback: allPlaces.isNotEmpty
                       ? LatLng(allPlaces.first.lat, allPlaces.first.lng)
-                      : LatLng(30.0444, 31.2357),
+                      : const LatLng(30.0444, 31.2357),
                 ),
 
                 // Category Chips

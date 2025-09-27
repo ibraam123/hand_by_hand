@@ -4,11 +4,11 @@ import 'package:hand_by_hand/features/accessible_places/domain/entities/place_en
 
 class PlaceModel extends PlaceEntitiy {
   PlaceModel({
-    required String name,
-    required double lat,
-    required double lng,
-    required String type,
-  }) : super(name: name, lat: lat, lng: lng, type: type);
+    required super.name,
+    required super.lat,
+    required super.lng,
+    required super.type,
+  });
 
   factory PlaceModel.fromFirestore(Map<String, dynamic> data) {
     return PlaceModel(

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hand_by_hand/core/config/app_colors.dart';
-import 'package:hand_by_hand/core/config/app_styles.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/features/onboarding/models/explanation_screen_model.dart';
 
+import '../../../core/config/app_colors.dart';
 import '../../../core/config/routes.dart';
 
 class ExplanationViewBody extends StatelessWidget {
@@ -14,6 +13,7 @@ class ExplanationViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SafeArea(
@@ -36,7 +36,7 @@ class ExplanationViewBody extends StatelessWidget {
                     ), // Responsive padding
                     child: Text(
                       explanationScreenModel.title,
-                      style: AppTextStyles.bold24.copyWith(
+                      style: theme.textTheme.headlineMedium!.copyWith(
                         fontSize: size.width * 0.06,
                       ), // Responsive font size
                       textAlign: TextAlign.center,
@@ -50,8 +50,8 @@ class ExplanationViewBody extends StatelessWidget {
                     child: Text(
                       explanationScreenModel.description,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.textStyle16.copyWith(
-                        fontSize: size.width * 0.04,
+                      style: theme.textTheme.bodyLarge!.copyWith(
+                        fontSize: size.width * 0.035,
                       ), // Responsive font size
                     ),
                   ),

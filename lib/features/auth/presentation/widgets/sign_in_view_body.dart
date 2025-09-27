@@ -28,6 +28,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool isObscure = true;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -42,184 +43,162 @@ class _SignInViewBodyState extends State<SignInViewBody> {
     final width = size.width;
 
     return SafeArea(
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listenWhen: (previous, current) => previous != current,
-
-        listener: (context, state) {
-          if (state is AuthError) {
-            CustomSnackBar.show(
-              context,
-              message: state.errorMessage,
-              backgroundColor: AppColors.error,
-              textColor: AppColors.white,
-              icon: Icons.error,
-              duration: const Duration(seconds: 3),
-            );
-          }
-          if (state is AuthSuccess) {
-            CustomSnackBar.show(
-              context,
-              message: "Login successful",
-              backgroundColor: AppColors.success,
-              textColor: AppColors.white,
-              icon: Icons.check,
-              duration: const Duration(seconds: 3),
-            );
-            GoRouter.of(context).go(AppRoutes.kIdentificationView);
-          }
-          if (state is AuthLoading) {
-            CustomSnackBar.show(
-              context,
-              message: "Logging in...",
-              backgroundColor: AppColors.white,
-              textColor: Colors.black,
-              duration: const Duration(seconds: 3),
-            );
-          }
-        },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              CustomMessageContainer(
-                width: width,
+      child: Stack(
+        children: [
+          CustomMessageContainer(
+            width: width,
+            height: height,
+            message: "Welcome back",
+          ),
+          SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: SizedBox(
                 height: height,
-                message: "Welcome back",
-              ),
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: SizedBox(
-                    height: height,
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.1),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(bottom: height * 0.02),
-                            child: SvgPicture.asset(
-                              Assets.imagesLoginImage,
-                              fit: BoxFit.contain,
-                            ),
+                width: width,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.1),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.02),
+                        child: SvgPicture.asset(Assets.imagesLoginImage),
+                      ),
+                      // Email Field
+                      CustomTextFormField(
+                        hintText: "Email",
+                        controller: _emailController,
+                        prefixIcon: Icons.email,
+                        validator: (value) {
+                          if (value != null &&
+                              value.isNotEmpty &&
+                              EmailValidator.validate(value)) {
+                            return null;
+                          } else {
+                            return "Please enter a valid email";
+                          }
+                        },
+                      ),
+                      SizedBox(height: height * 0.02),
+                      // Password Field
+                      CustomTextFormField(
+                        hintText: "Password",
+                        controller: _passwordController,
+                        obscureText: isObscure,
+                        prefixIcon: Icons.lock,
+                        suffixIconButton: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isObscure = !isObscure;
+                            });
+                          },
+                          icon: Icon(
+                            isObscure ? Icons.visibility : Icons.visibility_off,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
-                          CustomTextFormField(
-                            hintText: "Email",
-                            controller: _emailController,
-                            prefixIcon: Icons.email,
-                            validator: (value) {
-                              if (EmailValidator.validate(value!) &&
-                                  value.isNotEmpty) {
-                                return null;
-                              } else {
-                                return "Please enter a valid email";
-                              }
-                            },
-                          ),
-                          SizedBox(height: height * 0.02),
-                          CustomTextFormField(
-                            hintText: "Password",
-                            controller: _passwordController,
-                            obscureText: isObscure,
-                            prefixIcon: Icons.lock,
-                            suffixIconButton: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isObscure = !isObscure;
-                                });
-                              },
-                              icon: Icon(
-                                isObscure
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: AppColors.white,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value != null && value.length >= 6) {
-                                return null;
-                              } else {
-                                return "Password must be at least 6 characters";
-                              }
-                            },
-                          ),
-                          SizedBox(height: height * 0.01),
-                          const RememberAndForgetMessage(),
-                          SizedBox(height: height * 0.02),
-                          CustomButton(
-                            text: "Log In",
-                            width: width,
-                            onTap: () {
-                              if (_formKey.currentState!.validate()) {
-                                context
-                                    .read<AuthCubit>()
-                                    .signInWithEmailAndPassword(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                    );
-                              } else {
-                                CustomSnackBar.show(
-                                  context,
-                                  message: "Please fill in all fields",
-                                  backgroundColor: AppColors.error,
-                                  textColor: AppColors.white,
-                                  icon: Icons.error,
-                                  duration: const Duration(seconds: 3),
-                                );
-                              }
-                            },
-                            color: AppColors.primary,
-                          ),
-                          SizedBox(height: height * 0.01),
-                          MessageSecondOption(
-                            message: "Don't have an account?",
-                            buttonText: "Sign Up",
-                            onTap: () {
-                              GoRouter.of(
-                                context,
-                              ).pushReplacement(AppRoutes.kSignUpView);
-                            },
-                          ),
-                          SizedBox(height: height * 0.015),
-                          Text(
-                            "Or",
-                            style: TextStyle(
-                              color: AppColors.greyDark,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(height: height * 0.015),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ),
+                        validator: (value) {
+                          if (value != null && value.length >= 6) {
+                            return null;
+                          } else {
+                            return "Password must be at least 6 characters";
+                          }
+                        },
+                      ),
+                      SizedBox(height: height * 0.01),
+                      const RememberAndForgetMessage(),
+                      SizedBox(height: height * 0.02),
+
+                      // BlocConsumer handles both login + google buttons
+                      BlocConsumer<AuthCubit, AuthState>(
+                        listener: _authListener,
+                        builder: (context, state) {
+                          final isEmailLoading = state is AuthLoading && state.action == AuthAction.email;
+                          final isGoogleLoading = state is AuthLoading && state.action == AuthAction.google;
+
+                          return Column(
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  context.read<AuthCubit>().signInWithGoogle();
-                                },
-                                child: SvgPicture.asset(Assets.imagesGoogleSvg),
+                              CustomButton(
+                                isLoading: isEmailLoading,
+                                text: "Log In",
+                                width: width,
+                                onTap: _signInWithEmailAndPassword,
+                                color: AppColors.primary,
                               ),
-                              SizedBox(width: width * 0.05),
-                              SvgPicture.asset(Assets.imagesAppleSvg),
-                              SizedBox(width: width * 0.05),
-                              GestureDetector(
-                                onTap: () {
-                                  context.read<AuthCubit>().signInWithGoogle();
-                                },
-                                child: SvgPicture.asset(Assets.imagesFacebookSvgrepoComResize , ),
+                              SizedBox(height: height * 0.01),
+                              MessageSecondOption(
+                                message: "Don't have an account?",
+                                buttonText: "Sign Up",
+                                onTap: _navigateToSignUp,
+                              ),
+                              SizedBox(height: height * 0.015),
+                              Text(
+                                "Or",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(color: AppColors.greyDark),
+                              ),
+                              SizedBox(height: height * 0.015),
+                              CustomButton(
+                                isLoading: isGoogleLoading,
+                                text: "Continue with Google",
+                                width: width,
+                                onTap: _signInWithGoogle,
+                                color: AppColors.primary,
+                                iconAssets: Assets.imagesGoogleSvg,
                               ),
                             ],
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  void _authListener(BuildContext context, AuthState state) {
+    if (state is AuthError) {
+      CustomSnackBar.show(
+        context,
+        message: state.errorMessage,
+        backgroundColor: AppColors.error,
+        icon: Icons.error,
+      );
+    }
+    if (state is AuthSuccess) {
+      GoRouter.of(context).go(AppRoutes.kIdentificationView);
+    }
+  }
+
+  void _signInWithEmailAndPassword() {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthCubit>().signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+    } else {
+      CustomSnackBar.show(
+        context,
+        message: "Please fill in all fields",
+        backgroundColor: AppColors.error,
+        icon: Icons.error,
+      );
+    }
+  }
+
+  void _navigateToSignUp() {
+    GoRouter.of(context).pushReplacement(AppRoutes.kSignUpView);
+  }
+
+  void _signInWithGoogle() {
+    context.read<AuthCubit>().signInWithGoogle();
   }
 }

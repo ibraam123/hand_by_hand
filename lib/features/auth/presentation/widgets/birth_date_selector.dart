@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hand_by_hand/core/config/app_styles.dart';
 
 class BirthDateSelector extends StatefulWidget {
   final Function(int? day, String? month, int? year) onChanged;
@@ -24,12 +22,13 @@ class _BirthDateSelectorState extends State<BirthDateSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Date of Birth',
-          style: AppTextStyles.button16,
+          style: theme.textTheme.labelLarge,
         ),
         SizedBox(height: 15.h),
         Row(
@@ -89,21 +88,25 @@ class _BirthDateSelectorState extends State<BirthDateSelector> {
     required List<T> items,
     required ValueChanged<T?> onChanged,
   }) {
+    final theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 4.w),
       decoration: BoxDecoration(
-        color: AppColors.greyDark,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<T>(
+          style: theme.textTheme.bodyMedium,
+          dropdownColor: theme.colorScheme.surfaceContainerHighest,
           isExpanded: true,
           value: value,
-          hint: Text(hint),
+          hint: Text(hint, style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor)),
           items: items.map((e) {
             return DropdownMenuItem<T>(
               value: e,
-              child: Text(e.toString(), style: TextStyle(fontSize: 14.sp)),
+              child: Text(e.toString(),
+                  style: theme.textTheme.bodyMedium),
             );
           }).toList(),
           onChanged: onChanged,

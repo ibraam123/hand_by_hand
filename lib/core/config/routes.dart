@@ -16,6 +16,8 @@ import '../../features/onboarding/views/identification_view.dart';
 import '../../features/role_model/data/models/role_model.dart';
 import '../../features/role_model/presenatation/views/screens/role_model_datails_screen.dart';
 import '../../features/role_model/presenatation/views/screens/role_models_screen.dart';
+import '../../features/sign_language/domain/entities/sign_lesson_entitiy.dart';
+import '../../features/sign_language/presentation/views/screens/sign_language_lesson_video_screen.dart';
 import '../../features/sign_language/presentation/views/screens/sign_language_screen.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
 import '../../features/know_about_us/presenatation/views/know_about_us _view.dart';
@@ -39,6 +41,7 @@ class AppRoutes {
   static const String kCommunityChat = '/communityChat';
   static const String kCommunityPosts = '/communityPosts';
   static const String kPlaces = '/places';
+  static const String kSignLanguageLessonVideo = '/signLanguageLessonVideo';
 
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
@@ -121,6 +124,17 @@ class AppRoutes {
         path: kPlaces,
         builder: (context, state) => const AccessibleLocationScreen(),
       ),
+      GoRoute(
+        path: kSignLanguageLessonVideo,
+        builder: (context, state) {
+          final SignLanguageEntity = state.extra as SignLessonEntitiy;
+          return SignLanguageLessonVideoScreen(
+            videoUrl: SignLanguageEntity.videoUrl,
+            title: SignLanguageEntity.title,
+            description: SignLanguageEntity.description,
+          );
+        },
+      )
     ],
   );
 }

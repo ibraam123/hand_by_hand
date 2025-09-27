@@ -48,13 +48,21 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Edit Profile" , style: TextStyle(color: Colors.white  , fontWeight: FontWeight.bold) , ),
+        title: Text(
+          "Edit Profile",
+          style: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        foregroundColor: isDarkMode ? Colors.white : Colors.black,
         centerTitle: true,
       ),
       body: Padding(
@@ -65,22 +73,44 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
             children: [
               TextFormField(
                 controller: _firstNameController,
-                decoration: const InputDecoration(
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                decoration: InputDecoration(
                   labelText: "First Name",
-                  border: OutlineInputBorder(),
+                  labelStyle:
+                      TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
+                  border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: isDarkMode ? Colors.white54 : Colors.black38),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: isDarkMode ? Colors.white : Colors.blue),
+                  ),
                 ),
                 validator: (value) =>
-                value == null || value.isEmpty ? "Enter first name" : null,
+                    value == null || value.isEmpty ? "Enter first name" : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _lastNameController,
-                decoration: const InputDecoration(
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                decoration: InputDecoration(
                   labelText: "Last Name",
-                  border: OutlineInputBorder(),
+                  labelStyle:
+                      TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
+                  border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: isDarkMode ? Colors.white54 : Colors.black38),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: isDarkMode ? Colors.white : Colors.blue),
+                  ),
                 ),
                 validator: (value) =>
-                value == null || value.isEmpty ? "Enter last name" : null,
+                    value == null || value.isEmpty ? "Enter last name" : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -88,9 +118,11 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text(
+                child: Text(
                   "Save",
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: isDarkMode ? Colors.black : Colors.white),
                 ),
               )
             ],

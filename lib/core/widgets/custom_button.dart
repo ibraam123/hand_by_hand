@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hand_by_hand/core/config/app_styles.dart';
-
 class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
@@ -22,8 +20,15 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    final theme = Theme.of(context);
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r))
+      ),
       child: FractionallySizedBox(
         widthFactor: width == null
             ? 1
@@ -33,7 +38,7 @@ class CustomButton extends StatelessWidget {
           width: width,
           height: 50.h, // Adjusted height for better responsiveness
           decoration: BoxDecoration(
-            color: color,
+            color: onTap == null ? theme.colorScheme.secondaryContainer : color,
             borderRadius: BorderRadius.circular(25.r), // Adjusted border radius
           ),
           child: Center(
@@ -41,7 +46,8 @@ class CustomButton extends StatelessWidget {
                 ? SizedBox(
                     height: 24.h,
                     width: 24.w,
-                    child: CircularProgressIndicator(color: color),
+                    child: CircularProgressIndicator(
+                        color: theme.colorScheme.onPrimary),
                   )
                 : FittedBox(
                     fit: BoxFit.scaleDown,
@@ -50,15 +56,17 @@ class CustomButton extends StatelessWidget {
                       children: [
                         if (iconAssets != null)
                         iconAssets == 'icon_location'
-                            ? Icon(Icons.location_on_outlined)
+                            ? Icon(Icons.location_on_outlined,
+                                color: onTap == null ? theme.colorScheme.onSecondaryContainer : theme.colorScheme.onPrimary)
                             : SvgPicture.asset(iconAssets!)
                         else
-                          SizedBox.shrink(),
+                          const SizedBox.shrink(),
                         SizedBox(width: 8.w),
                         Text(
                           text,
-                          style: AppTextStyles.semiBold20.copyWith(
-                            fontSize: 18.sp,
+                          style: theme.textTheme.titleLarge!.copyWith(
+                            color: onTap == null ? theme.colorScheme.onSecondaryContainer :theme.colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
                           ), // Adjusted font size
                         ),
                       ],

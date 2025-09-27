@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/config/app_colors.dart';
-import '../../../../core/config/app_styles.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
@@ -27,43 +25,45 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final bool isDarkMode = theme.brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       validator: validator,
       onChanged: onChanged,
-      style: AppTextStyles.textStyle16,
+      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold ,           color: isDarkMode ? Colors.white : Colors.black,
+      ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppColors.greyDark,
+        fillColor: theme.colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: const BorderSide(
             color: Colors.transparent,
-            style: BorderStyle.solid,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: const BorderSide(
             color: Colors.transparent,
-            style: BorderStyle.solid,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: BorderSide(
-            color: AppColors.primary,
+            color: theme.primaryColor,
             width: 2.w,
-            style: BorderStyle.solid,
           ),
         ),
         hintText: hintText,
-        hintStyle: AppTextStyles.hintStyle,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurface,
+        ),
         suffixIcon: suffixIconButton,
         prefixIcon: prefixIcon == null ? null : Icon(
           prefixIcon,
-          color: AppColors.white,
+          color: theme.colorScheme.onSurface,
         ),
       ),
     );

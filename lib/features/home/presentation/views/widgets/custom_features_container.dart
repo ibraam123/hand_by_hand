@@ -21,19 +21,19 @@ class CustomFeaturesContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
 
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode
-                ? Colors.white.withOpacity(0.05)
-                : Colors.black.withOpacity(0.05),
+            color: theme.brightness == Brightness.dark
+                ? Colors.grey.withValues(alpha: 0.5)
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -63,17 +63,15 @@ class CustomFeaturesContainer extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                  ),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: theme.textTheme.bodyLarge!.color),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isDarkMode ? Colors.white70 : Colors.grey,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.textTheme.bodyLarge!.color,
                   ),
                 ),
                 const SizedBox(height: 16),

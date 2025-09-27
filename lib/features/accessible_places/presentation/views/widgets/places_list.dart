@@ -66,6 +66,7 @@ class _PlacesListState extends State<PlacesList> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ValueListenableBuilder<Box<bool>>(
       valueListenable: favoritesBox.listenable(),
       builder: (context, box, _) {
@@ -79,32 +80,36 @@ class _PlacesListState extends State<PlacesList> {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: ListTile(
-                leading: const Icon(Icons.place, color: Colors.blue),
+                leading: Icon(Icons.place, color: theme.colorScheme.secondary),
                 title: Text(place.name),
                 subtitle: Text("Type: ${place.type}"),
                 trailing: IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : null,
+                    color: isFavorite
+                        ? Colors.red
+                        : theme.iconTheme.color,
                   ),
                   onPressed: () {
                     if (isFavorite) {
                       favoritesBox.delete(key);
                       _showTopMessage(context, "Removed from favorites",
-                          background: Colors.red);
+                          background: theme.colorScheme.error);
                     } else {
                       favoritesBox.put(key, true);
                       _showTopMessage(context, "Added to favorites",
-                          background: Colors.green);
+                          background: theme.colorScheme.primary);
                     }
                   },
                 ),
                 onTap: () {
                   final latLng = LatLng(place.lat, place.lng);
                   widget.mapController.move(latLng, 15);
-
-                  _showTopMessage(context, "Centered on ${place.name}",
-                      background: Colors.blueAccent);
+                  _showTopMessage(
+                    context,
+                    "Centered on ${place.name}",
+                    background: theme.colorScheme.secondary,
+                  );
                 },
               ),
             );

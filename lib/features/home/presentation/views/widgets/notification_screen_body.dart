@@ -1,91 +1,85 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 
-class NotificationsScreen extends StatelessWidget {
+import '../../../../../init_dependcies.dart';
+import '../../../../notification/data/models/notification_model.dart';
+import '../../../../notification/firebase_api.dart';
+
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  final NotificationRepository _notificationRepository = serviceLocator<NotificationRepository>();
+  List<NotificationModel> _notifications = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  void _loadNotifications() {
+    final notifications = _notificationRepository.getNotifications();
+    notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+    setState(() {
+      _notifications = notifications;
+    });
+  }
+
+  Future<void> _deleteNotification(String notificationId) async {
+    await _notificationRepository.removeNotification(notificationId);
+    _loadNotifications();
+
+    CustomSnackBar.show(
+      context,
+      message: 'Notification deleted successfully',
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 2),
+      icon: Icons.remove_circle_outline,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      // Listen to the 'notifications' collection in Firestore
-      stream: FirebaseFirestore.instance
-          .collection('notifications')
-          .orderBy('timestamp', descending: true) // newest first
-          .limit(20)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return _buildBody(context);
+  }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(
-            child: Text(
-              'No notifications yet',
-              style: TextStyle(color: Colors.grey),
+  Widget _buildBody(BuildContext context) {
+    final theme = Theme.of(context);
+    if (_notifications.isEmpty) {
+      return Center(
+        child: Text('No notifications yet',
+            style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey)),
+      );
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.all(16.w),
+      itemCount: _notifications.length,
+      itemBuilder: (context, index) {
+        final notification = _notifications[index];
+
+        return Card(
+          color: theme.cardColor,
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          child: ListTile(
+            title: Text(notification.title,
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+            subtitle:
+                Text(notification.body, style: theme.textTheme.bodyMedium),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _deleteNotification(notification.id),
             ),
-          );
-        }
-
-        final docs = snapshot.data!.docs;
-
-        return ListView.builder(
-          padding: EdgeInsets.all(16.w),
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
-
-            return Card(
-              color: const Color(0xFF1E1E2C),
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                title: Text(
-                  data['title'] ?? 'No Title',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  data['body'] ?? 'No message body',
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: (){
-                    // Delete the notification from Firestore
-                    FirebaseFirestore.instance
-                        .collection('notifications')
-                        .doc(docs[index].id)
-                        .delete();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("❌ Notification deleted",
-                            style: TextStyle(color: Colors.white)),
-                        duration: Duration(seconds: 1),
-                        backgroundColor: Colors.red,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        elevation: 6,
-                        margin: EdgeInsets.all(10.0),
-                        padding: EdgeInsets.all(10.0),
-                      )
-                    );
-                  },
-                ),
-                leading: const Icon(
-                  Icons.notifications,
-                  color: Colors.blueAccent,
-                ),
-              ),
-            );
-          },
+            leading: Icon(Icons.notifications, color: theme.primaryColor),
+          ),
         );
       },
     );

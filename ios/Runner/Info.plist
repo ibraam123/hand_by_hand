@@ -17,7 +17,25 @@
 		</array>
 	</dict>
 </array>
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>https</string>
+    <string>http</string>
+    <string>tel</string>
+    <string>sms</string>
+    <string>mailto</string>
+</array>
 <!-- End of the Google Sign-in Section -->
+    <key>NSContactsUsageDescription</key>
+    <string>This app needs access to contacts to display phone numbers</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs camera access for video calls</string>
+
+    <key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>tel</string>
+    <string>telprompt</string>
+</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -7,7 +7,10 @@ sealed class AuthState {
 
 final class AuthInitial extends AuthState {}
 
-final class AuthLoading extends AuthState {}
+final class AuthLoading extends AuthState {
+  final AuthAction? action;
+  const AuthLoading({this.action});
+}
 
 final class AuthSuccess extends AuthState {
   final UserModel? user;
@@ -20,6 +23,9 @@ final class AuthError extends AuthState {
 }
 
 final class AuthLogout extends AuthState {}
+
+
+enum AuthAction { email, google, signup, logout, forgotPassword }
 
 
 

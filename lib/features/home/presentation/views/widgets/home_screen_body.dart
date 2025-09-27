@@ -1,44 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hand_by_hand/features/home/presentation/logic/profile_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/custom_features_container.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/config/routes.dart';
 import '../../../../../generated/assets.dart';
 import '../../../domain/feature_model.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-
-
-  String? _firstName;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFirstName();
-  }
-
-  Future<void> _loadFirstName() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _firstName = prefs.getString('firstName');
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    final List<FeatureModel> _featuresData = [
+    final List<FeatureModel> featuresData = [
       FeatureModel(
         title: 'Accessible Places',
-        subtitle: 'Find places that are accessible for the disability community.',
+        subtitle:
+        'Find places that are accessible for the disability community.',
         image: Assets.imagesF1,
         buttonText: "Explore Places",
         onPress: () {
@@ -51,9 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
         'Start your journey into sign language with our comprehensive lessons.',
         image: Assets.imagesF2,
         buttonText: "Start Learning",
-        onPress: (){
+        onPress: () {
           GoRouter.of(context).push(AppRoutes.kSignLanguage);
-        }
+        },
       ),
       FeatureModel(
         title: 'Role Models for Disability',
@@ -62,16 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
         buttonText: "Get Inspired",
         onPress: () {
           GoRouter.of(context).push(AppRoutes.kRoleModels);
-        },
-      ),
-      FeatureModel(
-        title: 'Know More About Us',
-        subtitle:
-        'Discover our mission and meet inspiring figures in the deaf community.',
-        image: Assets.imagesF4,
-        buttonText: "Learn More",
-        onPress: () {
-          GoRouter.of(context).push(AppRoutes.kKnowAboutUs);
         },
       ),
       FeatureModel(
@@ -85,37 +56,65 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     ];
+    context.read<ProfileCubit>().loadProfile();
     return Padding(
       padding: EdgeInsets.all(16.0.w),
-      child: ListView(
-        children: [
-          _buildWelcomeMessage(_firstName),
-          SizedBox(height: 16.h),
-          ..._featuresData.map((feature) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: 16.0.h),
-              child: CustomFeaturesContainer(
-                title: feature.title,
-                subtitle: feature.subtitle,
-                image: feature.image,
-                buttonText: feature.buttonText,
-                onPress: feature.onPress,
-              ),
-            );
-          }).toList(),
-        ],
+      child: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) {
+          String? firstName;
+          if (state is ProfileLoading) {
+            firstName = null;
+          } else if (state is ProfileLoaded) {
+            firstName = state.firstName;
+          } else if (state is ProfileError) {
+            firstName = "Error";
+          }
+
+          return ListView.builder(
+            itemCount: featuresData.length + 1, // 1 for welcome message
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // Welcome message at the top
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildWelcomeMessage(context, firstName),
+                    SizedBox(height: 16.h),
+                  ],
+                );
+              }
+
+              final feature = featuresData[index - 1];
+              return Padding(
+                padding: EdgeInsets.only(bottom: 16.0.h),
+                child: CustomFeaturesContainer(
+                  title: feature.title,
+                  subtitle: feature.subtitle,
+                  image: feature.image,
+                  buttonText: feature.buttonText,
+                  onPress: feature.onPress,
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
-  Widget _buildWelcomeMessage(String? firstNameUser) {
+  Widget _buildWelcomeMessage(BuildContext context, String? firstNameUser) {
+    String message;
+    if (firstNameUser == null) {
+      message = "Loading...";
+    } else if (firstNameUser == "Error") {
+      message = "Error loading profile";
+    } else {
+      message = "Welcome, $firstNameUser";
+    }
     return Text(
-      firstNameUser != null
-          ? "Welcome, $firstNameUser"
-          : "Loading...", //TODO: ADD SKELETON LOADING
+      message,
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: Colors.white,
       ),
     );
   }

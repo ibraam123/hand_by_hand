@@ -1,12 +1,13 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:dartz/dartz.dart';
-import '../../../../core/errors/error.dart';
+
 import '../../domain/entities/post_entity.dart';
 import '../../domain/repos/posts_repo.dart';
 import '../../domain/usecases/add_comment_usecase.dart';
 import '../../domain/usecases/add_like_usecase.dart';
-import '../../domain/usecases/add_post_usecase.dart';
+import '../../domain/usecases/add_post_usecase.dart'; // Add this import
 
 part 'posts_state.dart';
 
@@ -16,75 +17,73 @@ class PostsCubit extends Cubit<PostsState> {
   final AddCommentUseCase addCommentUseCase;
   final AddPostUseCase addPostUseCase;
 
+  StreamSubscription? _postsSubscription;
+
   PostsCubit({
     required this.repo,
     required this.addLikeUseCase,
     required this.addCommentUseCase,
     required this.addPostUseCase,
-  }) : super(PostsInitial());
+  }) : super(PostsLoading()) {
+    _listenToPosts();
+  }
 
-  /// Fetch all posts
-  Future<void> fetchPosts() async {
+  void _listenToPosts() {
+    _postsSubscription?.cancel();
+
     emit(PostsLoading());
-    final Either<Failure, List<PostEntity>> result = await repo.getPosts();
 
-    result.fold(
-          (failure) => emit(PostsError(failure.message)),
-          (posts) => emit(PostsLoaded(posts)),
+    _postsSubscription = repo.getPostsStream().listen(
+          (posts) {
+        emit(PostsLoaded(posts));
+      },
+      onError: (error) {
+        emit(PostsError("Stream error: $error"));
+      },
     );
   }
 
-  /// Like a post
   Future<void> likePost(String postId) async {
-    if (state is! PostsLoaded) return;
-
-    final currentState = state as PostsLoaded;
-    final Either<Failure, int> result = await addLikeUseCase.call(postId);
-
+    final result = await addLikeUseCase(postId);
     result.fold(
-          (failure) => emit(PostsError(failure.message)),
-          (likes) {
-        final updatedPosts = currentState.posts.map((post) {
-          if (post.id == postId) {
-            return post.copyWith(likes: likes);
-          }
-          return post;
-        }).toList();
-
-        emit(PostsLoaded(updatedPosts));
+          (failure) {
+        // ❌ Don’t replace PostsLoaded → instead notify user
+        // Maybe use a SnackBar or keep an error flag
+        emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
+      },
+          (_) {
+        // Stream handles update
       },
     );
   }
 
-  /// Add comment to a post
   Future<void> addComment(String postId, String comment) async {
-    if (state is! PostsLoaded) return;
-
-    final currentState = state as PostsLoaded;
-    final params = CommentParams(postId, comment);
-    final Either<Failure, void> result = await addCommentUseCase.call(params);
-
+    final result = await addCommentUseCase(CommentParams(postId, comment));
     result.fold(
-          (failure) => emit(PostsError(failure.message)),
-          (_) {
-        // For simplicity, refetch all posts
-        fetchPosts();
+          (failure) {
+        emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
       },
+          (_) {},
     );
   }
 
-  /// Add a new post
   Future<void> addPost(PostEntity post) async {
-    if (state is! PostsLoaded) return;
-
-    final Either<Failure, void> result = await addPostUseCase.call(post);
-
+    final result = await addPostUseCase(post);
     result.fold(
-          (failure) => emit(PostsError(failure.message)),
-          (_) {
-        // After adding a post, refetch all posts
-        fetchPosts();
+          (failure) {
+        emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
       },
+          (_) {},
     );
+  }
+
+  void refreshPosts() {
+    _listenToPosts();
+  }
+
+  @override
+  Future<void> close() {
+    _postsSubscription?.cancel();
+    return super.close();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_screen_body.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/favorites_screen_body.dart';
@@ -36,64 +35,70 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _fullName = prefs.getString('firstName')! + ' ' + prefs.getString('lastName')!;
+      _fullName = '${prefs.getString('firstName')!} ${prefs.getString('lastName')!}';
       _email = prefs.getString('email') ?? 'N/A';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      drawer: CustomDrawer(
-        name: _fullName,
-        email: _email,
-      ),
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        title: Text(
-          currentIndex == 0 ? 'Home' : currentIndex == 1 ? 'Favorites' : currentIndex == 2 ? 'Notifications' : 'Profile',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+    final ThemeData theme = Theme.of(context);
+    return SafeArea(
+      child: Scaffold(
+        drawer: CustomDrawer(
+          name: _fullName,
+          email: _email,
         ),
-      ) ,
-      body: _screens[currentIndex],
-      bottomNavigationBar: GNav(
-        backgroundColor: Colors.black, // Dark background for the Nav Bar
-        color: Colors.white54, // Color for inactive icons and text
-        activeColor: AppColors.primary, // Color for active icon and text (using your primary color)
-        tabBackgroundColor: Colors.grey[800]!, // Background color for the selected tab
-        // iconSize: 24, // Optional: Adjust icon size
-        gap: 8,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        padding: EdgeInsetsGeometry.all(16),
-        onTabChange: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        tabs: const [
-          GButton(
-            icon: Icons.home,
-            text: 'Home',
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            currentIndex == 0 ? 'Home' : currentIndex == 1 ? 'Favorites' : currentIndex == 2 ? 'Notifications' : 'Profile',
+            style: TextStyle(
+              color: theme.appBarTheme.titleTextStyle?.color ?? theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          GButton(
-            icon: Icons.favorite,
-            text: 'Favorites',
-          ),
-          GButton(
-            icon: Icons.notifications,
-            text: 'Notifications',
-          ),
-          GButton(
-            icon: Icons.person,
-            text: 'Profile',
-          ),
-        ],
+        ) ,
+        body: _screens[currentIndex],
+        bottomNavigationBar: GNav(
+          color: theme.bottomNavigationBarTheme.unselectedItemColor ?? Color.alphaBlend(theme.colorScheme.onSurface.withAlpha(153), Colors.transparent), // 0.6 opacity
+          activeColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+          tabBackgroundColor: theme.bottomNavigationBarTheme.selectedItemColor != null ? Color.alphaBlend(theme.bottomNavigationBarTheme.selectedItemColor!.withAlpha(26), Colors.transparent) : Color.alphaBlend(theme.colorScheme.primary.withAlpha(26), Colors.transparent), // 0.1 opacity
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          // iconSize: 24, // Optional: Adjust icon size
+          gap: 8,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // padding: EdgeInsetsGeometry.all(16),
+          onTabChange: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          tabs: [
+            GButton(
+              icon: Icons.home,
+              text: 'Home',
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+            ),
+            GButton(
+              icon: Icons.favorite,
+              text: 'Favorites',
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+            ),
+            GButton(
+              icon: Icons.notifications,
+              text: 'Notifications',
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+            ),
+            const GButton(
+              icon: Icons.person,
+              text: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

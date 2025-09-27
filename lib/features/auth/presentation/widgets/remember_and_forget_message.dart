@@ -29,23 +29,22 @@ class RememberAndForgetMessage extends StatelessWidget {
                       context.read<AuthCubit>().toggleRememberMe(value);
                     }
                   },
-                  activeColor: Colors.blue,
-                  checkColor: Colors.white,
+                  activeColor: Theme.of(context).primaryColor,
+                  checkColor: Theme.of(context).colorScheme.onPrimary,
                   side: BorderSide(
-                    color: rememberMe ? Colors.blue : Colors.grey,
+                    color: rememberMe
+                        ? Theme.of(context).primaryColor
+                        : Theme.of(context).hintColor,
                     width: 2,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
-                Text(
-                  "Remember me",
-                  style: TextStyle(
-                    color: Colors.yellow,
-                    fontSize: 10.sp,
-                  ),
-                ),
+                Text("Remember me",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 10.sp,
+                        color: Theme.of(context).hintColor)),
               ],
             ),
             TextButton(
@@ -53,12 +52,10 @@ class RememberAndForgetMessage extends StatelessWidget {
                 GoRouter.of(context).push(AppRoutes.kForgetPasswordView);
               },
               child: Text(
-                "Forgot password?",
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                "Forgot Password?",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 10.sp,
+                    color: Theme.of(context).colorScheme.error),
               ),
             ),
           ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/config/app_styles.dart';
 
 class GenderSelector extends StatefulWidget {
   final Function(String gender) onChanged;
@@ -17,12 +16,13 @@ class _GenderSelectorState extends State<GenderSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Gender',
-          style: AppTextStyles.button16,
+          'Gender', // Consider localizing this string
+          style: theme.textTheme.labelLarge,
         ),
         SizedBox(height: 15.h),
         Row(
@@ -38,6 +38,7 @@ class _GenderSelectorState extends State<GenderSelector> {
 
   Expanded _buildOption(String gender, IconData icon, Color color) {
     final isSelected = _selectedGender == gender;
+    final theme = Theme.of(context);
 
     return Expanded(
       child: GestureDetector(
@@ -48,7 +49,7 @@ class _GenderSelectorState extends State<GenderSelector> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 15.h),
           decoration: BoxDecoration(
-            color: isSelected ? color.withOpacity(0.1) : const Color(0xff414141),
+            color: isSelected ? color.withValues(alpha: 0.1) : theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
               color: isSelected ? color : Colors.transparent,
@@ -58,13 +59,13 @@ class _GenderSelectorState extends State<GenderSelector> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: isSelected ? color : Colors.grey),
+              Icon(icon, color: isSelected ? color : theme.colorScheme.onSurfaceVariant),
               SizedBox(width: 8.w),
               Text(
                 gender,
-                style: TextStyle(
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? color : Colors.white,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: isSelected ? color : theme.colorScheme.onSurfaceVariant,
+                  fontSize: 16.sp,
                 ),
               ),
             ],

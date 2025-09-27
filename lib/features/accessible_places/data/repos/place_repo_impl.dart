@@ -14,6 +14,7 @@ class PlaceRepositoryImpl implements PlaceRepository {
     final snapshot = await firestore.collection("accessible_location").get();
     return snapshot.docs.map((doc) => PlaceModel.fromFirestore(doc.data())).toList();
   }
+  @override
   Future<void> addPlace(PlaceModel place) async {
     await firestore.collection("accessible_location").add(place.toFirestore());
   }

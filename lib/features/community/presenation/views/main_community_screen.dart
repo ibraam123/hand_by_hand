@@ -10,13 +10,11 @@ class MainCommunityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Community",
-          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),

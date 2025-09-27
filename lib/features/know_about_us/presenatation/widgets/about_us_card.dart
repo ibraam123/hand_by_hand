@@ -5,7 +5,7 @@ import '../../models/know_about_us_model.dart';
 class AboutUsSectionCard extends StatelessWidget {
   final AboutUsSection section;
 
-  const AboutUsSectionCard({Key? key, required this.section}) : super(key: key);
+  const AboutUsSectionCard({super.key, required this.section});
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +29,19 @@ class AboutUsSectionCard extends StatelessWidget {
                     section.title,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.textTheme.titleLarge?.color
-                          ?.withOpacity(0.85),
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Divider(color: theme.dividerColor.withOpacity(0.5)),
+            Divider(color: theme.dividerColor.withValues(
+              alpha: 0.5
+            )),
             const SizedBox(height: 16),
             Text(
               section.content,
-              style: const TextStyle(
-                color: Colors.grey,
-              ),
+              style: theme.textTheme.bodyMedium,
             ),
           ],
         ),

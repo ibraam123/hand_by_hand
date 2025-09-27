@@ -8,8 +8,10 @@ class RoleModelDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: Text(roleModel.name , style: const TextStyle(color: Colors.white , fontWeight: FontWeight.bold)) , centerTitle: true),
+      appBar: AppBar(title: Text(roleModel.name , style: TextStyle(color: isDarkMode ? Colors.white : Colors.black , fontWeight: FontWeight.bold)) , centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -27,8 +29,8 @@ class RoleModelDetailsScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               roleModel.name,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -36,9 +38,9 @@ class RoleModelDetailsScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               roleModel.story,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey,
+                color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
                 height: 1.6, // more spacing between lines
                 letterSpacing: 0.3, // smoother reading
               ),

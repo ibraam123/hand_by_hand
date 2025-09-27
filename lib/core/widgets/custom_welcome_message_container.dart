@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../config/app_colors.dart';
-import '../config/app_styles.dart';
-
-
 class CustomMessageContainer extends StatelessWidget {
   const CustomMessageContainer({
     super.key,
@@ -26,7 +22,7 @@ class CustomMessageContainer extends StatelessWidget {
             vertical: height * 0.01,
           ),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.only(
               bottomRight: Radius.circular(width * 0.05),
               topRight: Radius.circular(width * 0.05),
@@ -34,9 +30,11 @@ class CustomMessageContainer extends StatelessWidget {
           ),
           child: Text(
             message,
-            style: AppTextStyles.semiBold20.copyWith(
-              fontSize: width * 0.045, // still responsive
-            ),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+              fontSize: width * 0.04,
+              fontWeight: FontWeight.bold,
+            )
           ),
         ),
       ),

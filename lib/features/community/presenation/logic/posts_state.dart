@@ -11,6 +11,11 @@ final class PostsLoaded extends PostsState {
   final List<PostEntity> posts;
   PostsLoaded(this.posts);
 }
+class PostsActionError extends PostsState {
+  final String message;
+  final List<PostEntity> posts; // keep old posts
+  PostsActionError(this.message, this.posts);
+}
 
 final class PostsError extends PostsState {
   final String message;

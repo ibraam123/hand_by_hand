@@ -5,6 +5,13 @@ abstract class Failure {
   Failure(this.message);
 }
 
+class FailureHandler {
+  static String mapException(dynamic error) {
+    final failure = ServerFailure.fromAuthError(error);
+    return failure.message;
+  }
+}
+
 class ServerFailure extends Failure {
   ServerFailure(super.message);
 
@@ -21,16 +28,29 @@ class ServerFailure extends Failure {
 
   factory ServerFailure.fromAuthError(dynamic error) {
     if (error is FirebaseAuthException) {
-      return ServerFailure(error.message ?? 'An unknown authentication error occurred.');
-    } else if (error is Exception) {
-      String errorString = error.toString();
-      if (errorString.contains('Exception: ')) {
-        return ServerFailure(errorString.split('Exception: ')[1]);
+      switch (error.code) {
+        case 'invalid-email':
+          return ServerFailure('The email address is badly formatted.');
+        case 'user-disabled':
+          return ServerFailure('This account has been disabled. Contact support.');
+        case 'user-not-found':
+          return ServerFailure('No account found for this email.');
+        case 'wrong-password':
+          return ServerFailure('Incorrect password. Please try again.');
+        case 'email-already-in-use':
+          return ServerFailure('This email is already registered.');
+        case 'weak-password':
+          return ServerFailure('Your password is too weak. Try a stronger one.');
+        default:
+          return ServerFailure(error.message ?? 'Authentication failed.');
       }
-
-      return ServerFailure(errorString);
+    } else if (error is FirebaseException) {
+      return ServerFailure(error.message ?? 'A Firebase service error occurred.');
+    } else if (error is Exception) {
+      return ServerFailure(error.toString().replaceFirst('Exception: ', ''));
     } else {
-      return ServerFailure('Authentication failed. Please try again.');
+      return ServerFailure('Something went wrong. Please try again.');
     }
   }
+
 }

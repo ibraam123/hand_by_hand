@@ -16,6 +16,7 @@ class ProfileOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -23,20 +24,20 @@ class ProfileOptionTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blue, size: 30),
+            Icon(icon, color: theme.colorScheme.primary, size: 30),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.white ),
+            Icon(Icons.arrow_forward_ios,
+                size: 16, color: theme.colorScheme.onSurface),
           ],
         ),
       ),

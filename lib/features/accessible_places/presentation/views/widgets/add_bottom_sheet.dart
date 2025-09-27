@@ -42,13 +42,14 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
         top: 16,
         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-      ),
+      ).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom + 16),
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -58,13 +59,12 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
             children: [
               const BottomSheetHandle(),
               const SizedBox(height: 12),
-
-              const Text(
+              Text(
                 "Add New Place",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 16),
@@ -103,6 +103,8 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
               const SizedBox(height: 20),
 
               SaveButton(
+                label: "Save",
+                icon: Icons.save,
                 onSave: () {
                   if (_formKey.currentState!.validate()) {
                     final place = PlaceModel(
@@ -116,18 +118,20 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
                     Navigator.pop(context);
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("✅ Place added successfully" , style: TextStyle(color: Colors.white),),
+                      SnackBar(
+                        content: Text(
+                          "✅ Place added successfully",
+                          style: TextStyle(color: theme.colorScheme.onError),
+                        ),
                         backgroundColor: Colors.green,
                         behavior: SnackBarBehavior.floating,
-                        margin: EdgeInsets.all(16),
+                        margin: const EdgeInsets.all(16),
                         elevation: 0,
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
-                        duration: Duration(seconds: 2),
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-
+                        duration: const Duration(seconds: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
                     );
                   }

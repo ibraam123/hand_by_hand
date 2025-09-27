@@ -3,10 +3,10 @@ import 'package:hand_by_hand/features/sign_language/domain/entities/sign_lesson_
 
 class SignLessonModel extends SignLessonEntitiy {
   SignLessonModel({
-    required String title,
-    required String description,
-    required String imageUrl,
-  }) : super(title: title, description: description, imageUrl: imageUrl);
+    required super.title,
+    required super.description,
+    required super.videoUrl
+  });
 
   @override
   bool operator ==(Object other) {
@@ -14,22 +14,22 @@ class SignLessonModel extends SignLessonEntitiy {
     return other is SignLessonModel &&
         other.title == title &&
         other.description == description &&
-        other.imageUrl == imageUrl;
+        other.videoUrl == videoUrl;
   }
 
   @override
-  int get hashCode => title.hashCode ^ description.hashCode ^ imageUrl.hashCode;
+  int get hashCode => title.hashCode ^ description.hashCode;
 
   @override
   String toString() {
-    return 'SignLessonModel(title: $title, description: $description, imageUrl: $imageUrl)';
+    return 'SignLessonModel(title: $title, description: $description , videoUrl: $videoUrl)';
   }
 
   Map<String, dynamic> toMap() {
     return {
       'titile': title,
       'descreption': description,
-      'image_url': imageUrl, // keep Firestore key as snake_case
+      'video_url': videoUrl
     };
   }
 
@@ -37,7 +37,7 @@ class SignLessonModel extends SignLessonEntitiy {
     return SignLessonModel(
       title: map['titile'] ?? '',
       description: map['descreption'] ?? '',
-      imageUrl: map['image_url'] ?? '',
+      videoUrl: map['video_url'] ?? ''
     );
   }
 }

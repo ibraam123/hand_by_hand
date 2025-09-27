@@ -7,7 +7,7 @@ class CustomTextFieldPlaces extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
 
-  const CustomTextFieldPlaces({
+  const CustomTextFieldPlaces({super.key, 
     required this.controller,
     required this.label,
     required this.icon,
@@ -17,19 +17,28 @@ class CustomTextFieldPlaces extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: TextFormField(
         controller: controller,
-        style: const TextStyle(color: Colors.white),
+        style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold ,           color: isDarkMode ? Colors.white : Colors.black,
+        ),
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
-          prefixIcon: Icon(icon, color: Colors.blue),
+          labelStyle: TextStyle(
+            color: isDarkMode ? Colors.white70 : Colors.black54,
+          ),
+          prefixIcon: Icon(icon, color: theme.colorScheme.primary),
           filled: true,
-          fillColor: const Color(0xFF2C2C3E),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          fillColor: isDarkMode ? const Color(0xFF2C2C3E) : Colors.grey[200],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
         ),
         validator: validator,
       ),

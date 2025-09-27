@@ -5,7 +5,7 @@ class CategoryDropdown extends StatelessWidget {
   final List<String> categories;
   final ValueChanged<String?> onChanged;
 
-  const CategoryDropdown({
+  const CategoryDropdown({super.key, 
     required this.value,
     required this.categories,
     required this.onChanged,
@@ -13,28 +13,31 @@ class CategoryDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DropdownButtonFormField<String>(
       value: value,
-      dropdownColor: const Color(0xFF2C2C3E),
-      style: const TextStyle(color: Colors.white),
+      dropdownColor: theme.colorScheme.surface,
+      style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: "Category",
-        labelStyle: const TextStyle(color: Colors.white70),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
         filled: true,
-        fillColor: const Color(0xFF2C2C3E),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        fillColor: theme.colorScheme.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
+        ),
       ),
       items: categories
           .map(
             (cat) => DropdownMenuItem(
           value: cat,
-          child: Text(
-            cat.toUpperCase(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: Text(cat.toUpperCase(),
+              style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.bold)),
         ),
       )
           .toList(),

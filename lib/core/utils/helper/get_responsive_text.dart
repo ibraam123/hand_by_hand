@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+
 double getResponsiveFontSize(BuildContext context, {required double fontSize}) {
-  double scaleFactor = getScaleFactor(context);
-  double responsiveFontSize = fontSize * scaleFactor;
-  double lowerLimit = fontSize * 0.8;
-  double upperLimit = fontSize * 1.2;
+  final double scaleFactor = getScaleFactor(context);
+  final double responsiveFontSize = fontSize * scaleFactor;
+  final double lowerLimit = fontSize * 0.8;
+  final double upperLimit = fontSize * 1.2;
   return responsiveFontSize.clamp(lowerLimit, upperLimit);
 }
 
 double getScaleFactor(BuildContext context) {
-  double width = MediaQuery.sizeOf(context).width;
+  final double width = MediaQuery.sizeOf(context).width;
   if (width < 600) {
     return width / 400;
   }
@@ -19,3 +20,4 @@ double getScaleFactor(BuildContext context) {
     return width / 1000;
   }
 }
+

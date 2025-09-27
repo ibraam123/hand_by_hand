@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:hand_by_hand/core/errors/error.dart';
 import 'package:hand_by_hand/features/auth/data/models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,13 +15,11 @@ class AuthCubit extends Cubit<AuthState> {
     this._auth,
     this._firestore,
     this._googleSignIn,
-    this._facebookAuth,
   ) : super(AuthInitial());
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
   final GoogleSignIn _googleSignIn;
-  final FacebookAuth _facebookAuth;
   bool rememberMe = false;
 
   Future<void> loadRememberMe() async {
@@ -39,49 +37,11 @@ class AuthCubit extends Cubit<AuthState> {
     emit(RememberMe(isSelected: value));
   }
 
-  Future<void> signInWithFacebook() async {
-    emit(AuthLoading());
-    try {
-      final LoginResult result = await _facebookAuth.login();
-      final OAuthCredential credential = FacebookAuthProvider.credential(
-        result.accessToken!.tokenString,
-      );
-      final userCred = await _auth.signInWithCredential(credential);
-      final firebaseUser = userCred.user!;
-      final userDoc = _firestore.collection('users').doc(firebaseUser.uid);
-      final snapshot = await userDoc.get();
-      if (!snapshot.exists) {
-        final parts = (firebaseUser.displayName ?? '').trim().split(' ');
-        final newUser = UserModel(
-          id: firebaseUser.uid,
-          email: firebaseUser.email ?? '',
-          firstName: parts.isNotEmpty ? parts.first : '',
-          lastName: parts.length > 1 ? parts.sublist(1).join(' ') : '',
-          birthDate: DateTime.now(), // you may want to ask user later
-          gender: 'unspecified', // same here
-        );
-        await userDoc.set(newUser.toMap());
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('firstName', newUser.firstName);
-        await prefs.setString('lastName', newUser.lastName);
-        await prefs.setString('email', newUser.email);
-        emit(AuthSuccess(user: newUser));
-      } else {
-        final data = snapshot.data()!;
-        final existingUser = UserModel.fromMap(data);
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('firstName', existingUser.firstName);
-        await prefs.setString('lastName', existingUser.lastName);
-        await prefs.setString('email', existingUser.email);
-        emit(AuthSuccess(user: existingUser));
-      }
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
 
   Future<void> signInWithGoogle() async {
-    emit(AuthLoading());
+    emit(AuthLoading(
+      action: AuthAction.google
+    ));
     try {
       UserCredential userCred;
 
@@ -130,14 +90,16 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthSuccess(user: existingUser));
       }
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(
+        FailureHandler.mapException(e)
+      ));
     }
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
     emit(ForgotPasswordLoading());
     if (email.isEmpty) {
-      emit(ForgotPasswordError('Please enter your email address'));
+      emit(const ForgotPasswordError('Please enter your email address'));
       return;
     }
 
@@ -145,46 +107,10 @@ class AuthCubit extends Cubit<AuthState> {
       await _auth.sendPasswordResetEmail(email: email.trim());
 
       emit(ForgotPasswordSuccess());
-    } on FirebaseAuthException catch (e) {
-      String errorMessage;
-      switch (e.code) {
-        case 'invalid-email':
-          errorMessage = 'The email address is not valid.';
-          break;
-        case 'user-not-found':
-          errorMessage =
-              'No account found with this email address. Please check your email or sign up.';
-          break;
-        case 'user-disabled':
-          errorMessage =
-              'This user account has been disabled. Please contact support.';
-          break;
-        case 'missing-android-pkg-name':
-          errorMessage = 'Android package name is required for this operation.';
-          break;
-        case 'missing-continue-uri':
-          errorMessage = 'Continue URL is required for this operation.';
-          break;
-        case 'missing-ios-bundle-id':
-          errorMessage = 'iOS bundle ID is required for this operation.';
-          break;
-        case 'too-many-requests':
-          errorMessage = 'Too many attempts. Please try again later.';
-          break;
-        case 'operation-not-allowed':
-          errorMessage =
-              'Password reset is not enabled. Please contact support.';
-          break;
-        default:
-          errorMessage =
-              'An error occurred while sending reset email. Please try again.';
-      }
-
-      emit(ForgotPasswordError(errorMessage));
     } catch (e) {
-      emit(
-        ForgotPasswordError('An unexpected error occurred. Please try again.'),
-      );
+      emit(ForgotPasswordError((
+      FailureHandler.mapException(e)
+      )));
     }
   }
 
@@ -192,7 +118,9 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) async {
-    emit(AuthLoading());
+    emit(AuthLoading(
+      action: AuthAction.email
+    ));
     try {
       final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
       final uid = cred.user!.uid;
@@ -205,7 +133,9 @@ class AuthCubit extends Cubit<AuthState> {
       await prefs.setString('email', user.email);
       emit(AuthSuccess(user: user));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(
+      FailureHandler.mapException(e)
+      ));
     }
   }
 
@@ -217,7 +147,9 @@ class AuthCubit extends Cubit<AuthState> {
     required DateTime birthDate,
     required String gender,
   }) async {
-    emit(AuthLoading());
+    emit(AuthLoading(
+      action: AuthAction.signup
+    ));
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -240,12 +172,16 @@ class AuthCubit extends Cubit<AuthState> {
       await prefs.setString('email', user.email);
       emit(AuthSuccess(user: user));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(
+      FailureHandler.mapException(e)
+      ));
     }
   }
 
   Future<void> signOut() async {
-    emit(AuthLoading());
+    emit(AuthLoading(
+      action: AuthAction.logout
+    ));
     try {
       await _auth.signOut();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -254,7 +190,9 @@ class AuthCubit extends Cubit<AuthState> {
       await prefs.remove('email');
       emit(AuthLogout());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(
+      FailureHandler.mapException(e)
+      ));
     }
   }
 }

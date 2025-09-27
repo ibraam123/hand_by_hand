@@ -8,8 +8,18 @@ class RoleModelsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Role Models' , style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold),), centerTitle: true),
+      appBar: AppBar(
+        title: Text(
+          "Role Models",
+          style: TextStyle(
+            color: theme.colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: BlocBuilder<RoleModelCubit, RoleModelState>(
         builder: (context, state) {
           if (state is RoleModelLoading) {

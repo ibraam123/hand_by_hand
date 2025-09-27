@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,9 +44,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
               context,
               message: state.errorMessage,
               backgroundColor: AppColors.error,
-              textColor: AppColors.white,
               icon: Icons.error,
-              duration: const Duration(seconds: 3),
             );
           }
           if (state is ForgotPasswordSuccess) {
@@ -53,24 +52,14 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
               context,
               message: "Password reset email sent!",
               backgroundColor: AppColors.success,
-              textColor: AppColors.white,
               icon: Icons.check,
-              duration: const Duration(seconds: 3),
             );
             GoRouter.of(context).go(AppRoutes.kSignInView);
           }
-          if (state is ForgotPasswordLoading) {
-            CustomSnackBar.show(
-              context,
-              message: "Sending reset email...",
-              backgroundColor: AppColors.white,
-              textColor: Colors.black,
-              icon: Icons.email,
-              duration: const Duration(seconds: 3),
-            );
-          }
         },
         builder: (context, state) {
+          final isLoading = state is ForgotPasswordLoading;
+
           return Stack(
             children: [
               CustomMessageContainer(
@@ -85,18 +74,27 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                     height: height,
                     width: width,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.15),
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.1),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(height: height * 0.05),
                           CustomTextFormField(
                             hintText: "Enter your email",
                             controller: _emailController,
                             prefixIcon: Icons.email,
+                            validator: (value) {
+                              if (value != null &&
+                                  value.isNotEmpty &&
+                                  EmailValidator.validate(value)) {
+                                return null;
+                              } else {
+                                return "Please enter a valid email";
+                              }
+                            },
                           ),
                           SizedBox(height: height * 0.03),
                           CustomButton(
+                            isLoading: isLoading,
                             text: "Send Reset Link",
                             width: width,
                             onTap: () {
@@ -111,9 +109,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                                   context,
                                   message: "Please enter a valid email",
                                   backgroundColor: AppColors.error,
-                                  textColor: AppColors.white,
                                   icon: Icons.error,
-                                  duration: const Duration(seconds: 3),
                                 );
                               }
                             },

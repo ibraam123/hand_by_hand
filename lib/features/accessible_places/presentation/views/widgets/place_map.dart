@@ -26,7 +26,6 @@ class PlacesMap extends StatelessWidget {
           initialCenter: places.isNotEmpty
               ? LatLng(places.first.lat, places.first.lng)
               : fallback,
-          initialZoom: 13,
         ),
         children: [
           TileLayer(

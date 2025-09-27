@@ -5,11 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/core/config/theme.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
+import 'package:hand_by_hand/core/utils/helper/theme_cubit.dart';
+import 'package:hand_by_hand/features/community/presenation/logic/comments_cubit.dart';
 import 'package:hand_by_hand/init_dependcies.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
+import 'features/community/presenation/logic/message_cubit.dart';
 import 'features/community/presenation/logic/posts_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
 import 'features/notification/firebase_api.dart';
@@ -19,21 +20,22 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await init();
-  FirebaseApi firebaseApi = FirebaseApi();
+
+  final firebaseApi = serviceLocator<FirebaseApi>();
   await firebaseApi.initNotifications();
   firebaseApi.initPushNotifications();
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await Hive.initFlutter();
-  await Hive.openBox<bool>('favorites');
 
   await serviceLocator.allReady();
+
   runApp(const MyApp());
 }
 
@@ -50,11 +52,32 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (context) => serviceLocator<AuthCubit>()),
-            BlocProvider(create: (context) => serviceLocator<ProfileCubit>()..loadProfile()),
-            BlocProvider(create: (context) => serviceLocator<RoleModelCubit>()..getRoleModels()),
-            BlocProvider(create: (context) => serviceLocator<SignLanguageCubit>()..fetchSignLessons()),
-            BlocProvider(create: (context) => serviceLocator<PlaceCubit>()..fetchPlaces()),
-            BlocProvider(create: (context) => serviceLocator<PostsCubit>()..fetchPosts()),
+            BlocProvider(
+              create: (context) =>
+                  serviceLocator<ProfileCubit>()..loadProfile(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  serviceLocator<RoleModelCubit>()..getRoleModels(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  serviceLocator<SignLanguageCubit>()..fetchSignLessons(),
+            ),
+            BlocProvider(
+              create: (context) => serviceLocator<PlaceCubit>()..fetchPlaces(),
+            ),
+            BlocProvider(
+              create: (context) => serviceLocator<PostsCubit>(),
+            ),
+            BlocProvider(
+              create: (context) => serviceLocator<CommentsCubit>(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  serviceLocator<MessageCubit>()..loadMessages(),
+            ),
+            BlocProvider(create: (context) => serviceLocator<ThemeCubit>()),
           ],
           child: const AppView(),
         );
@@ -68,10 +91,17 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: AppRoutes.router,
-      theme: AppTheme.darkTheme,
-      debugShowCheckedModeBanner: false,
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, state) {
+        return MaterialApp.router(
+          routerConfig: AppRoutes.router,
+          theme: AppTheme.lightTheme,
+          debugShowCheckedModeBanner: false,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: state.themeMode,
+          title: 'Hand By Hand',
+        );
+      },
     );
   }
 }

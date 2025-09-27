@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hand_by_hand/features/community/presenation/widgets/custom_text_field.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/features/community/presenation/logic/message_cubit.dart';
+import '../widgets/custom_text_field.dart';
 
 class CommunityChatScreen extends StatefulWidget {
   const CommunityChatScreen({super.key});
@@ -12,109 +13,116 @@ class CommunityChatScreen extends StatefulWidget {
 
 class _CommunityChatScreenState extends State<CommunityChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  late String currentUserId;
 
   @override
-  void initState() {
-    super.initState();
-    // safely get the logged-in user email
-    currentUserId = _auth.currentUser?.email ?? "unknown";
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
-
-  void _sendMessage() async {
-    if (_controller.text.trim().isEmpty) return;
-
-    await _firestore.collection("messages").add({
-      "text": _controller.text.trim(),
-      "id": currentUserId,
-      "createdAt": FieldValue.serverTimestamp(),
-    });
-
-    _controller.clear();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Community Chat",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Community Chat",),
         centerTitle: true,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
             children: [
-              /// --- Real-time Chat Messages
+              /// Messages
               Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection("messages")
-                      .orderBy("createdAt", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
+                child: BlocBuilder<MessageCubit, MessageState>(
+                  builder: (context, state) {
+                    if (state is MessageLoading) {
                       return const Center(child: CircularProgressIndicator());
+                    } else if (state is MessageError) {
+                      return Center(child: Text("Error: ${state.message}"));
+                    } else if (state is MessageLoaded) {
+                      final messages = state.messages;
+                      if (messages.isEmpty) {
+                        return const Center(child: Text("No messages yet"));
+                      }
+                      return ListView.builder(
+                        reverse: true,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = messages[index];
+                          final isMe = msg.id ==
+                              FirebaseAuth.instance.currentUser?.email;
+                          return Align(
+                            alignment: isMe
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              constraints: BoxConstraints(
+                                maxWidth: constraints.maxWidth * 0.75,
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isMe
+                                    ? Colors.deepPurpleAccent
+                                    : Colors.blue,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(16),
+                                  topRight: const Radius.circular(16),
+                                  bottomLeft: Radius.circular(isMe ? 16 : 0),
+                                  bottomRight: Radius.circular(isMe ? 0 : 16),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: isMe
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    msg.name,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    msg.text,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: constraints.maxWidth < 600 ? 14 : 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     }
-
-                    final docs = snapshot.data!.docs;
-
-                    return ListView.builder(
-                      reverse: true, // newest at bottom
-                      itemCount: docs.length,
-                      itemBuilder: (context, index) {
-                        final data = docs[index].data() as Map<String, dynamic>;
-                        final isMe = data["id"] == currentUserId;
-
-                        return Align(
-                          alignment:
-                              isMe ? Alignment.centerRight : Alignment.centerLeft,
-                          child: Container(
-                            constraints: BoxConstraints(
-                              maxWidth: constraints.maxWidth * 0.75, // Max width of message bubble
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 12),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: isMe
-                                  ? Colors.deepPurpleAccent
-                                  : Colors.blue,
-                              borderRadius: BorderRadius.only(
-                                topLeft: const Radius.circular(16),
-                                topRight: const Radius.circular(16),
-                                bottomLeft: Radius.circular(isMe ? 16 : 0),
-                                bottomRight: Radius.circular(isMe ? 0 : 16),
-                              ),
-                            ),
-                            child: Text(
-                              data["text"] ?? "",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: constraints.maxWidth < 600 ? 14 : 16, // Responsive font size
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                    return const Center(child: Text("Start chatting..."));
                   },
                 ),
               ),
 
-              /// --- Input Field
+              /// Input
               SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: constraints.maxWidth * 0.02), // Responsive padding
+                  padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * 0.02),
                   child: CustomTextField(
-                      controller: _controller, onSend: _sendMessage),
+                    controller: _controller,
+                    onSend: () {
+                      if (_controller.text.isNotEmpty) {
+                        context
+                            .read<MessageCubit>()
+                            .sendMessage(_controller.text);
+                        _controller.clear();
+                      }
+                    },
+                  ),
                 ),
               ),
             ],

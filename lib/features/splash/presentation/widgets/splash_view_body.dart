@@ -25,7 +25,7 @@ class _SplashViewBodyState extends State<SplashViewBody>
     _navigateAfterSplash();
   }
 
-  void _navigateAfterSplash() async {
+  Future<void> _navigateAfterSplash() async {
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
@@ -37,7 +37,7 @@ class _SplashViewBodyState extends State<SplashViewBody>
     final rememberMeValue = authCubit.rememberMe; // القيمة اللي محملة من الكيوبت
 
     if (rememberMeValue && user != null) {
-      GoRouter.of(context).go(AppRoutes.kIdentificationView);
+      GoRouter.of(context).go(AppRoutes.kMainScreen);
     } else {
       GoRouter.of(context).go(AppRoutes.kSignUpView);
     }
@@ -46,12 +46,6 @@ class _SplashViewBodyState extends State<SplashViewBody>
 
 
 
-  @override
-  void dispose() {
-
-
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

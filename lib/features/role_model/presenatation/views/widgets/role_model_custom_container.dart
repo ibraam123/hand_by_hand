@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,29 +17,27 @@ class RoleModelCustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
-      child: Card(
-        elevation: 4,
-        child: GestureDetector(
-          onTap: () {
-            GoRouter.of(context).push(
-              AppRoutes.kRoleModelDetails,
-              extra: roleModel,
-            );
-          },
+      child: GestureDetector(
+        onTap: () {
+          GoRouter.of(context).push(
+            AppRoutes.kRoleModelDetails,
+            extra: roleModel,
+          );
+        },
+        child: Card(
+          elevation: 4.0, // Added elevation
+          margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
           child: Container(
-            margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6.r,
-                  offset: Offset(0, 4.h),
-                ),
-              ],
+              color: theme.cardColor,
             ),
             child: Row(
               children: [
@@ -49,9 +48,9 @@ class RoleModelCustomContainer extends StatelessWidget {
                     children: [
                       Text(
                         roleModel.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18, // Adjusted based on screen size if needed
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -60,9 +59,9 @@ class RoleModelCustomContainer extends StatelessWidget {
                         roleModel.story,
                         maxLines: 3, // show only 4 lines
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14, // Adjusted based on screen size if needed
-                          color: Colors.grey,
+                        style: TextStyle(
+                          fontSize: 14.sp, // Adjusted based on screen size if needed
+                          color: theme.textTheme.bodyMedium!.color,
                         ),
                       ),
                     ],
@@ -71,22 +70,20 @@ class RoleModelCustomContainer extends StatelessWidget {
                 SizedBox(width: 12.w),
                 // Right side (image)
                 Padding(
-                  padding: EdgeInsets.all(8.0.w),
+                  padding: EdgeInsets.all(8.w),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.r),
-                    child: Image.network(
-                      roleModel.imageUrl,
+                    borderRadius: BorderRadius.circular(10.0.r),
+                    child: CachedNetworkImage(
+                      imageUrl: roleModel.imageUrl,
                       width: 100,
                       height: 100,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                            child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                    : null));
-                      }
+                      fit: BoxFit.cover, // Changed to contain to show the whole image
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.broken_image, size: 80.w, color: theme.colorScheme.error), // Adjusted size with screen util
                     ),
                   ),
                 ),

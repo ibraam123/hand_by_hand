@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class SaveButton extends StatelessWidget {
   final VoidCallback onSave;
+  final String label;
+  final IconData icon;
 
-  const SaveButton({required this.onSave});
+  const SaveButton({super.key, required this.onSave, required this.label, required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +20,10 @@ class SaveButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         onPressed: onSave,
-        icon: const Icon(Icons.save, color: Colors.white),
-        label: const Text(
-          "Save",
-          style: TextStyle(
+        icon: Icon(icon, color: Colors.white),
+        label: Text(
+          label,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,

@@ -9,13 +9,14 @@ class MessageSecondOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           message,
-          style: TextStyle(
-            color: Colors.white,
+          style: theme.textTheme.bodySmall!.copyWith(
+            color: theme.colorScheme.onSurface,
             fontSize: 12.sp,
           ),
         ),
@@ -23,8 +24,8 @@ class MessageSecondOption extends StatelessWidget {
           onPressed: onTap,
           child: Text(
             buttonText,
-            style: TextStyle(
-              color: Color(0xff2195f1),
+            style: theme.textTheme.bodySmall!.copyWith(
+              color: theme.colorScheme.primary,
               fontSize: 12.sp,
               fontWeight: FontWeight.bold,
             ),

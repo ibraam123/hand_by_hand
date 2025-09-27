@@ -19,10 +19,10 @@ class CustomSnackBar {
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
-            BoxShadow(
+            const BoxShadow(
               color: Colors.black26,
               blurRadius: 6,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),
