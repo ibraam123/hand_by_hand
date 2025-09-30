@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/config/app_keys_localization.dart';
 import '../../logic/role_model_cubit.dart';
 import '../widgets/role_model_custom_container.dart';
 
@@ -12,7 +14,7 @@ class RoleModelsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Role Models",
+          Home.roleModels.tr(),
           style: TextStyle(
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold,

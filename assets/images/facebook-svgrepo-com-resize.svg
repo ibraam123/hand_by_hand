@@ -1,7 +1,0 @@
-<svg width="50" height="46" viewBox="0 0 50 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Blue rounded background -->
-    <rect width="50" height="46" rx="12" fill="#16A6FF"/>
-
-    <!-- White Facebook "F" -->
-    <path fill="#FFFFFF" d="M34 12H26c-1 0-1 0.6-1 1.3v5.5h6L33 21h-6v12h-5v-12h-3v-5.5h3v-3.2c0-2.7 1.4-4.4 4-4.4h5v4.4z"/>
-</svg>

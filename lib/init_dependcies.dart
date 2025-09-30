@@ -46,6 +46,7 @@ Future<void> init() async {
     () => NotificationLocalDataSourceImpl(),
   );
 
+
   serviceLocator.registerLazySingleton<NotificationRepository>(
     () => NotificationRepository(localDataSource: serviceLocator()),
   );

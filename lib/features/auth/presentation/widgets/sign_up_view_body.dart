@@ -1,7 +1,9 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
@@ -34,35 +36,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
   String? _gender;
   bool isObscure = true;
 
+
+  static const _monthMap = {
+    'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+    'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+  };
   int convertMonthToInt(String month) {
-    switch (month) {
-      case 'Jan':
-        return 1;
-      case 'Feb':
-        return 2;
-      case 'Mar':
-        return 3;
-      case 'Apr':
-        return 4;
-      case 'May':
-        return 5;
-      case 'Jun':
-        return 6;
-      case 'Jul':
-        return 7;
-      case 'Aug':
-        return 8;
-      case 'Sep':
-        return 9;
-      case 'Oct':
-        return 10;
-      case 'Nov':
-        return 11;
-      case 'Dec':
-        return 12;
-      default:
-        return 0;
-    }
+    return _monthMap[month]!;
   }
 
   @override
@@ -105,7 +85,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
               CustomMessageContainer(
                 width: width,
                 height: height,
-                message: "Join us",
+                message: AuthKeys.joinUs.tr(),
               ),
               SingleChildScrollView(
                 child: Form(
@@ -122,13 +102,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                             children: [
                               Expanded(
                                 child: CustomTextFormField(
-                                  hintText: "First name",
+                                  hintText: AuthKeys.firstName.tr(),
                                   controller: _firstNameController,
                                   validator: (value) {
                                     if (value != null && value.isNotEmpty) {
                                       return null;
                                     } else {
-                                      return "Please enter a valid first name";
+                                      return AuthKeys.enterFirstName.tr();
                                     }
                                   },
                                 ),
@@ -136,13 +116,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               SizedBox(width: width * 0.05),
                               Expanded(
                                 child: CustomTextFormField(
-                                  hintText: "Last name",
+                                  hintText: AuthKeys.lastName.tr(),
                                   controller: _lastNameController,
                                   validator: (value) {
                                     if (value != null && value.isNotEmpty) {
                                       return null;
                                     } else {
-                                      return "Please enter a valid last name";
+                                      return AuthKeys.enterLastName.tr();
                                     }
                                   },
                                 ),
@@ -151,7 +131,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           ),
                           SizedBox(height: height * 0.02),
                           CustomTextFormField(
-                            hintText: "Email",
+                            hintText: AuthKeys.email.tr(),
                             controller: _emailController,
                             prefixIcon: Icons.email,
                             validator: (value) {
@@ -159,7 +139,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                   value.isNotEmpty) {
                                 return null;
                               } else {
-                                return "Please enter a valid email";
+                                return AuthKeys.pleaseEnterValidEmail.tr();
                               }
                             },
                           ),
@@ -186,7 +166,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               if (value != null && value.length >= 6) {
                                 return null;
                               } else {
-                                return "Password must be at least 6 characters";
+                                return AuthKeys.passwordMustBeAtLeast6Characters.tr();
                               }
                             },
                           ),
@@ -206,7 +186,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           ),
                           SizedBox(height: height * 0.03),
                           CustomButton(
-                            text: "Sign Up",
+                            text: AuthKeys.signUp.tr(),
                             width: width,
                             isLoading: isLoading,
                             onTap: () {
@@ -231,7 +211,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               } else {
                                 CustomSnackBar.show(
                                   context,
-                                  message: "Please fill in all fields correctly.",
+                                  message: AuthKeys.pleaseFillInAllFields.tr(),
                                   backgroundColor: Theme.of(context).colorScheme.error,
                                   textColor: Theme.of(context).colorScheme.onError,
                                   icon: Icons.error,
@@ -242,8 +222,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           ),
                           SizedBox(height: height * 0.01),
                           MessageSecondOption(
-                            message: "Already have an account?",
-                            buttonText: "Log In",
+                            message: AuthKeys.alreadyHaveAccount.tr(),
+                            buttonText: AuthKeys.logIn.tr(),
                             onTap: () {
                               GoRouter.of(context)
                                   .pushReplacement(AppRoutes.kSignInView);

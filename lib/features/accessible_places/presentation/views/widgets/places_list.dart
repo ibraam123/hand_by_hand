@@ -71,6 +71,7 @@ class _PlacesListState extends State<PlacesList> {
       valueListenable: favoritesBox.listenable(),
       builder: (context, box, _) {
         return ListView.builder(
+          key: ValueKey('places_list_${widget.places.length}_${widget.places.hashCode}'),
           itemCount: widget.places.length,
           itemBuilder: (context, index) {
             final place = widget.places[index];
@@ -80,6 +81,7 @@ class _PlacesListState extends State<PlacesList> {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: ListTile(
+                key: ValueKey('place_${place.name}_${place.lat}_${place.lng}'),
                 leading: Icon(Icons.place, color: theme.colorScheme.secondary),
                 title: Text(place.name),
                 subtitle: Text("Type: ${place.type}"),

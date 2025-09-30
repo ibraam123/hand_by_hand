@@ -8,6 +8,7 @@ class SignUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      key: ValueKey('sign_up_view'),
       body: SignUpViewBody(),
     );
   }

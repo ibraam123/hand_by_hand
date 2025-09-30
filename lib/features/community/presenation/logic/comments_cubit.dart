@@ -54,8 +54,6 @@ class CommentsCubit extends Cubit<CommentsState> {
   }
 
   Future<void> addComment(String postId, String comment) async {
-    emit(CommentsLoading());
-
     final result = await postsRemote.addComment(postId, comment);
 
     result.fold(

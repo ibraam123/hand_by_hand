@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -10,6 +14,7 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackScreenState extends State<FeedbackScreen> {
   final _formKey = GlobalKey<FormState>();
   final _feedbackController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void dispose() {
@@ -17,23 +22,35 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     super.dispose();
   }
 
-  void _submitFeedback() {
+  void _submitFeedback() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Send feedback to API / Firebase / Email, etc.
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        try {
+          await _firestore.collection('feedbacks').add({
+            'userId': user.email,
+            'feedback': _feedbackController.text,
+            'timestamp': FieldValue.serverTimestamp(),
+          });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("✅ Thank you for your feedback!"),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
-
-      Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(General.thanksFeedback.tr()),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              behavior: SnackBarBehavior.floating,
+              margin: const EdgeInsets.all(12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+          Navigator.pop(context);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to submit feedback: $e')),
+          );
+        }
+      }
     }
   }
 
@@ -45,7 +62,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Feedback",
+          Profile.feedback.tr(),
           style: TextStyle(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.bold,
@@ -67,7 +84,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 maxLines: 5,
                 style: TextStyle(color: colorScheme.onSurface),
                 decoration: InputDecoration(
-                  labelText: "Your Feedback",
+                  labelText: Profile.feedback.tr(),
                   labelStyle: TextStyle(color: colorScheme.onSurface),
                   border: const OutlineInputBorder(),
                   enabledBorder: OutlineInputBorder(
@@ -78,7 +95,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   ),
                 ),
                 validator: (value) =>
-                value == null || value.isEmpty ? "Enter your feedback" : null,
+                value == null || value.isEmpty ? General.enterYourFeedback.tr() : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -88,7 +105,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   backgroundColor: colorScheme.primary,
                   foregroundColor: colorScheme.onPrimary,
                 ),
-                child: const Text("Submit"),
+                child: Text(General.submit.tr()),
               ),
             ],
           ),

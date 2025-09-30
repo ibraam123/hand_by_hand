@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 
 import '../../logic/sign_language_cubit.dart';
 import '../widgets/sign_lesson_container.dart';
@@ -13,7 +15,7 @@ class SignLanguageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Language Lessons' , style: TextStyle(color: Theme.of(context).colorScheme.onSurface , fontWeight: FontWeight.bold),),
+        title: Text(Home.signLessons.tr() , style: TextStyle(color: Theme.of(context).colorScheme.onSurface , fontWeight: FontWeight.bold),),
         centerTitle: true,
       ),
       body: BlocBuilder<SignLanguageCubit, SignLanguageState>(

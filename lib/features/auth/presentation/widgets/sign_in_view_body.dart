@@ -1,9 +1,11 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/config/app_colors.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
@@ -48,7 +50,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
           CustomMessageContainer(
             width: width,
             height: height,
-            message: "Welcome back",
+            message: AuthKeys.welcomeBack.tr(),
           ),
           SingleChildScrollView(
             child: Form(
@@ -67,7 +69,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                       ),
                       // Email Field
                       CustomTextFormField(
-                        hintText: "Email",
+                        hintText: AuthKeys.email.tr(),
                         controller: _emailController,
                         prefixIcon: Icons.email,
                         validator: (value) {
@@ -76,14 +78,14 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                               EmailValidator.validate(value)) {
                             return null;
                           } else {
-                            return "Please enter a valid email";
+                            return AuthKeys.pleaseEnterValidEmail.tr();
                           }
                         },
                       ),
                       SizedBox(height: height * 0.02),
                       // Password Field
                       CustomTextFormField(
-                        hintText: "Password",
+                        hintText: AuthKeys.password.tr(),
                         controller: _passwordController,
                         obscureText: isObscure,
                         prefixIcon: Icons.lock,
@@ -102,7 +104,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                           if (value != null && value.length >= 6) {
                             return null;
                           } else {
-                            return "Password must be at least 6 characters";
+                            return AuthKeys.passwordMustBeAtLeast6Characters.tr();
                           }
                         },
                       ),
@@ -121,20 +123,20 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                             children: [
                               CustomButton(
                                 isLoading: isEmailLoading,
-                                text: "Log In",
+                                text: AuthKeys.logIn.tr(),
                                 width: width,
                                 onTap: _signInWithEmailAndPassword,
                                 color: AppColors.primary,
                               ),
                               SizedBox(height: height * 0.01),
                               MessageSecondOption(
-                                message: "Don't have an account?",
-                                buttonText: "Sign Up",
+                                message: AuthKeys.dontHaveAccount.tr(),
+                                buttonText: AuthKeys.signUp.tr(),
                                 onTap: _navigateToSignUp,
                               ),
                               SizedBox(height: height * 0.015),
                               Text(
-                                "Or",
+                                AuthKeys.or.tr(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
@@ -142,8 +144,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                               ),
                               SizedBox(height: height * 0.015),
                               CustomButton(
-                                isLoading: isGoogleLoading,
-                                text: "Continue with Google",
+                                isLoading: isGoogleLoading, text: AuthKeys.continueWithGoogle.tr(),
                                 width: width,
                                 onTap: _signInWithGoogle,
                                 color: AppColors.primary,
@@ -187,7 +188,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
     } else {
       CustomSnackBar.show(
         context,
-        message: "Please fill in all fields",
+        message: AuthKeys.pleaseFillInAllFields.tr(),
         backgroundColor: AppColors.error,
         icon: Icons.error,
       );

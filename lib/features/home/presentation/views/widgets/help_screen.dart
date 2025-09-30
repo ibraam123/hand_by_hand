@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/faq_help_item.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/section_help_titile.dart';
 
@@ -15,7 +17,7 @@ class HelpSupportScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Help & Support" , style: TextStyle(color: isDarkMode ? Colors.white : Colors.black  , fontWeight: FontWeight.bold) ,),
+        title: Text(Profile.helpSupport.tr() , style: TextStyle(color: isDarkMode ? Colors.white : Colors.black  , fontWeight: FontWeight.bold) ,),
         elevation: 0,
         backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: isDarkMode ? Colors.white : Colors.black,
@@ -25,34 +27,34 @@ class HelpSupportScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const SectionHelpTitle(title:"Frequently Asked Questions"),
+            SectionHelpTitle(title: HelpSupport.faq.tr()),
             const SizedBox(height: 16),
-            const FaqHelpItem(
-              question: "How do I use the Sign Language Learning feature?",
+            FaqHelpItem(
+              question: HelpSupport.faq1.tr() ,
               answer:
-                  "Navigate to the 'Learn Sign Language' section from the main menu. You'll find interactive lessons and quizzes to help you learn.",
+                HelpSupport.freq1desc.tr(),
             ),
-            const FaqHelpItem(
-              question: "How does the accessible messaging work?",
+            FaqHelpItem(
+              question: HelpSupport.faq2.tr() ,
               answer:
-                  "The messaging feature is designed with accessibility in mind, offering options like larger text, voice-to-text, and screen reader compatibility. You can find it under 'Messages'.",
+                  HelpSupport.freq2desc.tr(),
             ),
-            const FaqHelpItem(
-              question: "How can I find role models in the app?",
+            FaqHelpItem(
+              question: HelpSupport.faq3.tr() ,
               answer:
-                  "The 'Role Models' section showcases inspiring individuals from the disability community. You can read their stories and connect with them if they have chosen to share contact information.",
+                  HelpSupport.freq3desc.tr(),
             ),
-            const FaqHelpItem(
-              question: "How do I find disability-friendly places?",
+            FaqHelpItem(
+              question: HelpSupport.faq4.tr() ,
               answer:
-                  "Use the 'Accessible Places' feature. You can search for locations and filter by accessibility features. Users can also contribute by adding and rating places.",
+                  HelpSupport.freq4desc.tr(),
             ),
             const SizedBox(height: 24),
-            const SectionHelpTitle(title: "Contact Support"),
+            SectionHelpTitle(title: HelpSupport.contactSupport.tr()),
             const SizedBox(height: 16),
             ContactUsCard(
               icon: Icons.phone,
-              title: "Phone",
+              title: HelpSupport.phone.tr(),
               subtitle: "+20 120 138 2622",
               uri: Uri(scheme: 'tel', path: '+201201382622'),
               errorMessage: 'Could not launch phone dialer',
@@ -60,7 +62,7 @@ class HelpSupportScreen extends StatelessWidget {
             const SizedBox(height: 12),
             ContactUsCard(
               icon: Icons.email,
-              title: "Email",
+              title: HelpSupport.email.tr(),
               subtitle: "ibraam.software@gmail.com",
               uri: Uri(scheme: 'mailto', path: 'ibraam.software@gmail.com'),
               errorMessage: 'Could not launch email app',
@@ -68,18 +70,18 @@ class HelpSupportScreen extends StatelessWidget {
             const SizedBox(height: 12),
             ContactUsCard(
               icon: Icons.facebook,
-              title: "Facebook",
+              title: HelpSupport.facebook.tr(),
               subtitle: "Visit our Facebook page",
               uri: Uri(
                     scheme: 'https',
                     host: 'www.facebook.com',
-                    path: 'https://www.facebook.com/ibraam.magdy.848247', // Replace with your actual page
+                    path: '/ibraam.magdy.848247', // Replace with your actual page
                   ),
               errorMessage: 'Could not launch Facebook',
             ),
             const SizedBox(height: 24),
             Text(
-              "\nIf you can't find the answer you're looking for, please don't hesitate to reach out to our support team. We're here to help!",
+              HelpSupport.supportMessage.tr(),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(color: isDarkMode ? Colors.grey[400] : Colors.grey[600]),
             )

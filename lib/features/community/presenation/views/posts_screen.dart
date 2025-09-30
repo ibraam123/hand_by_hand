@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 
 import '../../../../core/utils/helper/open_add_post_sheet.dart';
 import '../logic/posts_cubit.dart';
@@ -21,7 +23,7 @@ class PostsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surface,
         title: Text(
-          "Posts",
+          Community.post.tr(),
           style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
         ),
         centerTitle: true,
@@ -68,18 +70,18 @@ class PostsScreen extends StatelessWidget {
             final posts = state.posts;
 
             if (posts.isEmpty) {
-              return const Center(
+              return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.feed, size: 64, color: Colors.grey), // Consider using theme.colorScheme.secondary
-                    SizedBox(height: 16),
+                    const Icon(Icons.feed, size: 64, color: Colors.grey), // Consider using theme.colorScheme.secondary
+                    const SizedBox(height: 16),
                     Text(
-                      "No posts yet",
+                      General.noPostsYet.tr(),
                       style: TextStyle(fontSize: 18, color: Colors.grey), // Consider using theme.colorScheme.secondary
                     ),
                     Text(
-                      "Be the first to share something!",
+                      General.beTheFirstToShare.tr(),
                       style: TextStyle(color: Colors.grey), // Consider using theme.colorScheme.secondary
                     ),
                   ],

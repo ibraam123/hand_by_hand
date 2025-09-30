@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 
 import '../../../../../init_dependcies.dart';
@@ -38,7 +40,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     CustomSnackBar.show(
       context,
-      message: 'Notification deleted successfully',
+      message: Notifications.remove.tr(),
       backgroundColor: Colors.red,
       duration: const Duration(seconds: 2),
       icon: Icons.remove_circle_outline,
@@ -54,7 +56,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final theme = Theme.of(context);
     if (_notifications.isEmpty) {
       return Center(
-        child: Text('No notifications yet',
+        child: Text(Notifications.noNotifications.tr(),
             style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey)),
       );
     }

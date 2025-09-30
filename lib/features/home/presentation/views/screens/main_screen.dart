@@ -4,9 +4,11 @@ import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_sc
 import '../widgets/custom_drawer.dart';
 import '../widgets/favorites_screen_body.dart';
 import '../widgets/home_screen_body.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../widgets/notification_screen_body.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../../../../../core/config/app_keys_localization.dart'; // فيه NavigationKeys
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -35,7 +37,8 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _fullName = '${prefs.getString('firstName')!} ${prefs.getString('lastName')!}';
+      _fullName =
+      '${prefs.getString('firstName')!} ${prefs.getString('lastName')!}';
       _email = prefs.getString('email') ?? 'N/A';
     });
   }
@@ -52,23 +55,40 @@ class _MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            currentIndex == 0 ? 'Home' : currentIndex == 1 ? 'Favorites' : currentIndex == 2 ? 'Notifications' : 'Profile',
+            currentIndex == 0
+                ? NavigationKeys.home.tr()
+                : currentIndex == 1
+                ? NavigationKeys.favorites.tr()
+                : currentIndex == 2
+                ? NavigationKeys.notifications.tr()
+                : NavigationKeys.profile.tr(),
             style: TextStyle(
-              color: theme.appBarTheme.titleTextStyle?.color ?? theme.colorScheme.onPrimary,
+              color: theme.appBarTheme.titleTextStyle?.color ??
+                  theme.colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
-        ) ,
+        ),
         body: _screens[currentIndex],
         bottomNavigationBar: GNav(
-          color: theme.bottomNavigationBarTheme.unselectedItemColor ?? Color.alphaBlend(theme.colorScheme.onSurface.withAlpha(153), Colors.transparent), // 0.6 opacity
-          activeColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
-          tabBackgroundColor: theme.bottomNavigationBarTheme.selectedItemColor != null ? Color.alphaBlend(theme.bottomNavigationBarTheme.selectedItemColor!.withAlpha(26), Colors.transparent) : Color.alphaBlend(theme.colorScheme.primary.withAlpha(26), Colors.transparent), // 0.1 opacity
+          color: theme.bottomNavigationBarTheme.unselectedItemColor ??
+              Color.alphaBlend(
+                  theme.colorScheme.onSurface.withAlpha(153), Colors.transparent),
+          activeColor:
+          theme.bottomNavigationBarTheme.selectedItemColor ??
+              theme.colorScheme.primary,
+          tabBackgroundColor:
+          theme.bottomNavigationBarTheme.selectedItemColor != null
+              ? Color.alphaBlend(
+              theme.bottomNavigationBarTheme.selectedItemColor!
+                  .withAlpha(26),
+              Colors.transparent)
+              : Color.alphaBlend(
+              theme.colorScheme.primary.withAlpha(26),
+              Colors.transparent),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          // iconSize: 24, // Optional: Adjust icon size
           gap: 8,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          // padding: EdgeInsetsGeometry.all(16),
           onTabChange: (index) {
             setState(() {
               currentIndex = index;
@@ -77,25 +97,35 @@ class _MainScreenState extends State<MainScreen> {
           tabs: [
             GButton(
               icon: Icons.home,
-              text: 'Home',
-              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
-              textColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+              text: NavigationKeys.home.tr(),
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
             ),
             GButton(
               icon: Icons.favorite,
-              text: 'Favorites',
-              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
-              textColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+              text: NavigationKeys.favorites.tr(),
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
             ),
             GButton(
               icon: Icons.notifications,
-              text: 'Notifications',
-              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
-              textColor: theme.bottomNavigationBarTheme.selectedItemColor ?? theme.colorScheme.primary,
+              text: NavigationKeys.notifications.tr(),
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
             ),
-            const GButton(
+            GButton(
               icon: Icons.person,
-              text: 'Profile',
+              text: NavigationKeys.profile.tr(),
+              iconActiveColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
+              textColor: theme.bottomNavigationBarTheme.selectedItemColor ??
+                  theme.colorScheme.primary,
             ),
           ],
         ),
@@ -103,6 +133,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
-
-

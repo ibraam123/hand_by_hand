@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
+import '../../../../core/config/app_keys_localization.dart';
 import '../../../../core/config/routes.dart';
 import '../logic/auth_cubit.dart';
 
@@ -22,6 +24,7 @@ class ForgetPasswordViewBody extends StatefulWidget {
 class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+
 
   @override
   void dispose() {
@@ -50,7 +53,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
           if (state is ForgotPasswordSuccess) {
             CustomSnackBar.show(
               context,
-              message: "Password reset email sent!",
+              message: AuthKeys.forgotPassword.tr(), // ✅ localized via AppKeys
               backgroundColor: AppColors.success,
               icon: Icons.check,
             );
@@ -65,7 +68,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
               CustomMessageContainer(
                 width: width,
                 height: height,
-                message: "Forgot Password?",
+                message: AuthKeys.forgotPassword.tr(), // ✅ from AppKeys
               ),
               SingleChildScrollView(
                 child: Form(
@@ -79,7 +82,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CustomTextFormField(
-                            hintText: "Enter your email",
+                            hintText: AuthKeys.enterYourEmail.tr(), // ✅ hint text
                             controller: _emailController,
                             prefixIcon: Icons.email,
                             validator: (value) {
@@ -88,14 +91,14 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                                   EmailValidator.validate(value)) {
                                 return null;
                               } else {
-                                return "Please enter a valid email";
+                                return AuthKeys.enterYourPassword.tr(); // ✅ error msg
                               }
                             },
                           ),
                           SizedBox(height: height * 0.03),
                           CustomButton(
                             isLoading: isLoading,
-                            text: "Send Reset Link",
+                            text: AuthKeys.sendResetLink.tr(), // ✅ button text
                             width: width,
                             onTap: () {
                               if (_formKey.currentState!.validate()) {
@@ -107,7 +110,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                               } else {
                                 CustomSnackBar.show(
                                   context,
-                                  message: "Please enter a valid email",
+                                  message: AuthKeys.enterYourEmail.tr(), // ✅ error
                                   backgroundColor: AppColors.error,
                                   icon: Icons.error,
                                 );
@@ -122,7 +125,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                                   .pushReplacement(AppRoutes.kSignInView);
                             },
                             child: Text(
-                              "Back to Sign In",
+                              AuthKeys.logIn.tr(), // ✅ back to sign-in
                               style: TextStyle(
                                 color: AppColors.primary,
                                 fontSize: 16.sp,

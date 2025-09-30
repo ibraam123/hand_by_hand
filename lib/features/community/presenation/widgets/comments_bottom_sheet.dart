@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import '../logic/comments_cubit.dart';
 import 'comment_tile.dart';
 
@@ -21,6 +23,8 @@ class CommentsBottomSheet extends StatefulWidget {
 class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  bool _isAddingComment = false; // ADD: Track comment state
+
 
   @override
   void initState() {
@@ -38,6 +42,12 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   }
 
   void _addComment() async {
+
+    if (_isAddingComment) return; // ADD: Prevent multiple calls
+    setState(() {
+      _isAddingComment = true;
+    });
+
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
@@ -71,8 +81,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                const Text(
-                  "Comments",
+                Text(
+                  Community.comments.tr(),
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
@@ -87,6 +97,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
           ),
           Expanded(
             child: BlocBuilder<CommentsCubit, CommentsState>(
+              buildWhen: (previous, current) => previous != current,
               builder: (context, state) {
                 if (state is CommentsLoading && state is! CommentsLoaded) {
                   return const Center(child: CircularProgressIndicator());
@@ -111,7 +122,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
                 if (state is CommentsLoaded) {
                   if (state.comments.isEmpty) {
-                    return const Center(child: Text("No comments yet"));
+                    return Center(child: Text(General.noCommentsYet.tr()));
                   }
 
                   return ListView.builder(
@@ -145,7 +156,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   );
                 }
 
-                return const Center(child: Text("No comments yet"));
+                return Center(child: Text(General.noCommentsYet.tr()));
               },
             ),
           ),
@@ -156,8 +167,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: "Add a comment...",
+                    decoration: InputDecoration(
+                      hintText: Community.addComment.tr(),
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     ),
@@ -167,7 +178,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                 const SizedBox(width: 8),
                 IconButton(
                   icon: Icon(Icons.send, color: theme.colorScheme.primary),
-                  onPressed: _addComment,
+                  onPressed: _isAddingComment ? null : _addComment,
                 ),
               ],
             ),

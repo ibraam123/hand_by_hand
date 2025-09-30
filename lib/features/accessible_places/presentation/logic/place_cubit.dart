@@ -14,6 +14,8 @@ class PlaceCubit extends Cubit<PlaceState> {
   final PlaceRepository placeRepository;
 
   Future<void> fetchPlaces() async {
+    if (state is PlacesLoading) return; // ← THIS MATTERS
+
     emit(PlacesLoading());
     try {
       final places = await placeRepository.getPlaces();
@@ -24,6 +26,7 @@ class PlaceCubit extends Cubit<PlaceState> {
   }
 
   Future<void> addPlace(PlaceModel place) async {
+    emit(PlacesLoading());
     try {
       await placeRepository.addPlace(place);
       fetchPlaces(); // refresh places after adding

@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import '../../logic/profile_cubit.dart';
 
 class EditProfileScreenBody extends StatefulWidget {
@@ -55,7 +57,7 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "Edit Profile",
+          Profile.editProfile.tr(),
           style: TextStyle(
               color: isDarkMode ? Colors.white : Colors.black,
               fontWeight: FontWeight.bold),
@@ -75,7 +77,7 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
                 controller: _firstNameController,
                 style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                 decoration: InputDecoration(
-                  labelText: "First Name",
+                  labelText: AuthKeys.firstName.tr(),
                   labelStyle:
                       TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
                   border: const OutlineInputBorder(),
@@ -89,14 +91,14 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
                   ),
                 ),
                 validator: (value) =>
-                    value == null || value.isEmpty ? "Enter first name" : null,
+                    value == null || value.isEmpty ? AuthKeys.enterFirstName.tr() : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _lastNameController,
                 style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                 decoration: InputDecoration(
-                  labelText: "Last Name",
+                  labelText: AuthKeys.lastName.tr(),
                   labelStyle:
                       TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
                   border: const OutlineInputBorder(),
@@ -110,7 +112,7 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
                   ),
                 ),
                 validator: (value) =>
-                    value == null || value.isEmpty ? "Enter last name" : null,
+                    value == null || value.isEmpty ? AuthKeys.enterLastName.tr() : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -119,7 +121,7 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 child: Text(
-                  "Save",
+                  General.save.tr(),
                   style: TextStyle(
                       fontSize: 18,
                       color: isDarkMode ? Colors.black : Colors.white),

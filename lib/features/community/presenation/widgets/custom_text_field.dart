@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -29,7 +31,7 @@ class CustomTextField extends StatelessWidget {
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
-                hintText: "Type a message...",
+                hintText: Community.typeMessage.tr(),
                 hintStyle: TextStyle(
                     color: isDarkMode ? Colors.grey[400] : Colors.grey[600]),
                 filled: true,

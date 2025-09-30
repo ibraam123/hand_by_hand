@@ -9,6 +9,7 @@ class SignInView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      key: ValueKey('sign_in_view'),
       body: SignInViewBody(),
     );
   }

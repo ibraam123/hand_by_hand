@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -21,7 +23,7 @@ class FavoritesScreen extends StatelessWidget {
           if (keys.isEmpty) {
             return Center(
               child: Text(
-                "No favorite places yet 🌌",
+                Favorites.empty.tr(),
                 style: TextStyle(
                   color: theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54,
                   fontSize: 16.sp,

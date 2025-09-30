@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand/features/accessible_places/presentation/views/widgets/custom_text_field.dart';
 import 'package:hand_by_hand/features/accessible_places/presentation/views/widgets/save_button.dart';
+import '../../../../../core/config/app_keys_localization.dart';
 import '../../../data/models/place_model.dart';
+import '../../../domain/entities/category_entitiy.dart';
 import '../../logic/place_cubit.dart';
 import 'bottom_sheet_handle.dart';
 import 'category_drop_menu.dart';
@@ -30,15 +33,17 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
     super.dispose();
   }
 
-  final categories = [
-    "cafe",
-    "restaurant",
-    "hospital",
-    "pharmacy",
-    "park",
-    "clinic",
-    "mall"
+  final List<CategoryEntity> categories = [
+    CategoryEntity("all", CategoriesPlaces.all.tr()),
+    CategoryEntity("cafe", CategoriesPlaces.cafe.tr()),
+    CategoryEntity("restaurant", CategoriesPlaces.restaurant.tr()),
+    CategoryEntity("park", CategoriesPlaces.park.tr()),
+    CategoryEntity("clinic", CategoriesPlaces.clinic.tr()),
+    CategoryEntity("pharmacy", CategoriesPlaces.pharmacy.tr()),
+    CategoryEntity("mall", CategoriesPlaces.mall.tr()),
+    CategoryEntity("hospital", CategoriesPlaces.hospital.tr()),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +65,7 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
               const BottomSheetHandle(),
               const SizedBox(height: 12),
               Text(
-                "Add New Place",
+                AccessiblePlaces.addPlace.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -71,27 +76,27 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
 
               CustomTextFieldPlaces(
                 controller: _nameController,
-                label: "Place Name",
+                label: AccessiblePlaces.placeName.tr(),
                 icon: Icons.place,
-                validator: (v) => v!.isEmpty ? "Enter name" : null,
+                validator: (v) => v!.isEmpty ? AccessiblePlaces.enterName.tr() : null,
               ),
               const SizedBox(height: 12),
 
               CustomTextFieldPlaces(
                 controller: _latController,
-                label: "Latitude",
+                label: AccessiblePlaces.latitude.tr(),
                 icon: Icons.map,
                 keyboardType: TextInputType.number,
-                validator: (v) => v!.isEmpty ? "Enter latitude" : null,
+                validator: (v) => v!.isEmpty ? AccessiblePlaces.enterLatitude.tr() : null,
               ),
               const SizedBox(height: 12),
 
               CustomTextFieldPlaces(
                 controller: _lngController,
-                label: "Longitude",
+                label: AccessiblePlaces.longitude.tr(),
                 icon: Icons.map_outlined,
                 keyboardType: TextInputType.number,
-                validator: (v) => v!.isEmpty ? "Enter longitude" : null,
+                validator: (v) => v!.isEmpty ? AccessiblePlaces.enterLongitude.tr() : null,
               ),
               const SizedBox(height: 12),
 
@@ -103,7 +108,7 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
               const SizedBox(height: 20),
 
               SaveButton(
-                label: "Save",
+                label: General.save.tr(),
                 icon: Icons.save,
                 onSave: () {
                   if (_formKey.currentState!.validate()) {

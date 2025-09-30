@@ -9,6 +9,8 @@ class CommentsInitial extends CommentsState {}
 
 class CommentsLoading extends CommentsState {}
 
+
+
 class CommentsLoaded extends CommentsState {
   final List<Map<String, dynamic>> comments;
   final bool hasMore;

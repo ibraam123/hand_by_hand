@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_option.dart';
+
+import '../../../../../core/config/app_keys_localization.dart';
 import '../../../../../core/config/routes.dart';
 import '../../logic/profile_cubit.dart';
 
@@ -65,8 +68,9 @@ class ProfileScreenBody extends StatelessWidget {
                 ),
                 SizedBox(height: 24.h),
 
+                // ✅ استخدم مفاتيح الـ abstract class مع .tr()
                 ProfileOptionTile(
-                  title: "Edit Profile",
+                  title: Profile.editProfile.tr(),
                   icon: Icons.edit,
                   onTap: () {
                     GoRouter.of(context).push(AppRoutes.kEditProfile);
@@ -75,7 +79,7 @@ class ProfileScreenBody extends StatelessWidget {
                 SizedBox(height: 15.h),
 
                 ProfileOptionTile(
-                  title: "Help & Support",
+                  title: Profile.helpSupport.tr(),
                   icon: Icons.help_outline,
                   onTap: () {
                     GoRouter.of(context).push(AppRoutes.kHelp);
@@ -84,7 +88,7 @@ class ProfileScreenBody extends StatelessWidget {
                 SizedBox(height: 15.h),
 
                 ProfileOptionTile(
-                  title: "Feedback",
+                  title: Profile.feedback.tr(),
                   icon: Icons.feedback_outlined,
                   onTap: () {
                     GoRouter.of(context).push(AppRoutes.kFeedback);

@@ -18,6 +18,8 @@ class PostsCubit extends Cubit<PostsState> {
   final AddPostUseCase addPostUseCase;
 
   StreamSubscription? _postsSubscription;
+  final Set<String> _likedPosts = {};
+  final Set<String> _commentedPosts = {};
 
   PostsCubit({
     required this.repo,
@@ -35,6 +37,7 @@ class PostsCubit extends Cubit<PostsState> {
 
     _postsSubscription = repo.getPostsStream().listen(
           (posts) {
+            if (isClosed) return; // ADD: Safety check
         emit(PostsLoaded(posts));
       },
       onError: (error) {
@@ -44,27 +47,45 @@ class PostsCubit extends Cubit<PostsState> {
   }
 
   Future<void> likePost(String postId) async {
-    final result = await addLikeUseCase(postId);
-    result.fold(
-          (failure) {
-        // ❌ Don’t replace PostsLoaded → instead notify user
-        // Maybe use a SnackBar or keep an error flag
-        emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
-      },
-          (_) {
-        // Stream handles update
-      },
-    );
+    // ADD: Prevent duplicate likes
+    if (_likedPosts.contains(postId)) return;
+    _likedPosts.add(postId);
+
+    try {
+      final result = await addLikeUseCase(postId);
+      result.fold(
+            (failure) {
+          if (state is PostsLoaded) {
+            emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
+          }
+        },
+            (_) {
+          // Stream handles update
+        },
+      );
+    } finally {
+      _likedPosts.remove(postId); // ADD: Always remove from tracking
+    }
   }
 
   Future<void> addComment(String postId, String comment) async {
-    final result = await addCommentUseCase(CommentParams(postId, comment));
-    result.fold(
-          (failure) {
-        emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
-      },
-          (_) {},
-    );
+    // ADD: Prevent duplicate comments
+    if (_commentedPosts.contains(postId)) return;
+    _commentedPosts.add(postId);
+
+    try {
+      final result = await addCommentUseCase(CommentParams(postId, comment));
+      result.fold(
+            (failure) {
+          if (state is PostsLoaded) {
+            emit(PostsActionError(failure.message, (state as PostsLoaded).posts));
+          }
+        },
+            (_) {},
+      );
+    } finally {
+      _commentedPosts.remove(postId);
+    }
   }
 
   Future<void> addPost(PostEntity post) async {

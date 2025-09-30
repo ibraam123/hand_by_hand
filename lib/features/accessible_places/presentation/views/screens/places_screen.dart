@@ -1,5 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
+import '../../../domain/entities/category_entitiy.dart';
 import '../../logic/place_cubit.dart';
 import '../widgets/add_bottom_sheet.dart';
 import '../widgets/category_chip.dart';
@@ -18,7 +21,7 @@ class AccessibleLocationScreen extends StatefulWidget {
 
 class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
   final MapController _mapController = MapController();
-  String selectedType = "all";
+  String selectedType = 'all';
 
   void _showAddPlaceBottomSheet(BuildContext context) {
     final theme = Theme.of(context);
@@ -35,15 +38,15 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
     );
   }
 
-  final List<String> categories = [
-    "all",
-    "cafe",
-    "restaurant",
-    "hospital",
-    "pharmacy",
-    "park",
-    "clinic",
-    "mall"
+  final List<CategoryEntity> categories = [
+    CategoryEntity("all", CategoriesPlaces.all.tr()),
+    CategoryEntity("cafe", CategoriesPlaces.cafe.tr()),
+    CategoryEntity("restaurant", CategoriesPlaces.restaurant.tr()),
+    CategoryEntity("park", CategoriesPlaces.park.tr()),
+    CategoryEntity("clinic", CategoriesPlaces.clinic.tr()),
+    CategoryEntity("pharmacy", CategoriesPlaces.pharmacy.tr()),
+    CategoryEntity("mall", CategoriesPlaces.mall.tr()),
+    CategoryEntity("hospital", CategoriesPlaces.hospital.tr()),
   ];
 
   @override
@@ -61,7 +64,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
           _showAddPlaceBottomSheet(context);
         },
         label: Text(
-          "Add Place",
+          Home.addPlace.tr(),
           style: TextStyle(color: theme.colorScheme.onSecondary),
         ),
         icon: Icon(Icons.add_location_alt,
@@ -71,7 +74,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
       appBar: AppBar( // Using theme for AppBar
         backgroundColor: theme.appBarTheme.backgroundColor,
         title: Text(
-          "Accessible Locations",
+          Home.accessiblePlaces.tr(),
           style: theme.appBarTheme.titleTextStyle,
         ),
         centerTitle: true,
@@ -103,7 +106,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
                 CategoryChips(
                   categories: categories,
                   selectedType: selectedType,
-                  onSelected: (cat) => setState(() => selectedType = cat),
+                  onSelected: (key) => setState(() => selectedType = key),
                 ),
 
                 // Places List

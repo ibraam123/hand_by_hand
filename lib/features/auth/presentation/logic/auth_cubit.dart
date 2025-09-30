@@ -22,6 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
   final GoogleSignIn _googleSignIn;
   bool rememberMe = false;
 
+
   Future<void> loadRememberMe() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     rememberMe = prefs.getBool("remember_me") ?? false;

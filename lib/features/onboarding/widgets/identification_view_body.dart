@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/features/onboarding/models/explanation_screen_model.dart';
 
 import '../../../core/config/app_colors.dart';
@@ -17,32 +19,21 @@ class IdentificationViewBody extends StatefulWidget {
 
 class _IdentificationViewBodyState extends State<IdentificationViewBody> {
   final List<ExplanationScreenModel> explanationScreenModels = [
-    const ExplanationScreenModel(
+     ExplanationScreenModel(
       imageAssets: Assets.imagesUpImage,
-      title: 'To Everyone Living with a Disability',
+      title: OnboardingKeys.toEveryone.tr(),
       description:
-          ' You are not alone💙  There are millions who share your journey, your strength, and your dreams. Check out our role models – people who prove every day that life with a disability can be powerful, inspiring, and full of possibilities. Together, we rise. Together, we thrive. 🌟learners.',
+         OnboardingKeys.screen1Description.tr()
     ),
-    const ExplanationScreenModel(
+     ExplanationScreenModel(
       imageAssets: Assets.imagesUpImage,
-      title: 'Never Do This',
-      description: """
-Disability ≠ Disease
-
-
-Don’t treat someone with a disability like a patient waiting to be cured.
-A patient needs treatment.  But a person with a disability needs to learn how to adapt and live fully.
-Don’t leave them isolated at home.  Take them out, include them, support them…"""
-
+      title: OnboardingKeys.screen2Title.tr(),
+      description: OnboardingKeys.screen2Description.tr()
     ),
-    const ExplanationScreenModel(
+     ExplanationScreenModel(
       imageAssets: Assets.imagesUpImage,
-      title: 'Thank You for Caring and Wanting to Learn!',
-      description:"""
-      People with disabilities often have the kindest and strongest souls. ❤️  They want to connect, engage, and share life – just like anyone else.
-Treat them with respect.  Give them equal chances.  Include them in laughter, conversations, and experiences – not pity.
-Because what they truly want is simple: To be seen as equals. To be treated as humans first. 🌟"
-      """
+      title: OnboardingKeys.screen3Title.tr(),
+      description: OnboardingKeys.screen3Description.tr()
     ),
   ];
   @override
@@ -53,7 +44,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
       child: Column(
         children: [
           Text(
-            'Choose your experience to get the best recommendations.',
+            OnboardingKeys.chooseExperience.tr(),
             style: theme.textTheme.titleMedium?.copyWith(
               fontSize: 16.sp,
             ),
@@ -61,7 +52,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
           ),
           SizedBox(height: 24.h),
           CustomButton(
-            text: 'Me 💪 Living with a disability',
+            text: OnboardingKeys.livingWithDisability.tr(),
             onTap: () {
               GoRouter.of(context).push(AppRoutes.kExplanationView,
                   extra: explanationScreenModels[0]);
@@ -71,7 +62,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
           ),
           SizedBox(height: 16.h),
           CustomButton(
-            text: 'I am a Regular User',
+            text: OnboardingKeys.regularUser.tr(),
             onTap: () {
               GoRouter.of(context).push(AppRoutes.kExplanationView,
                   extra: explanationScreenModels[1]);
@@ -81,7 +72,7 @@ Because what they truly want is simple: To be seen as equals. To be treated as
           ),
           SizedBox(height: 16.h),
           CustomButton(
-            text: 'I’m fine, just helping someone in my family 💖',
+            text: OnboardingKeys.helpingFamily.tr(),
             onTap: () {
               GoRouter.of(context).push(AppRoutes.kExplanationView , extra: explanationScreenModels [2]);
             },

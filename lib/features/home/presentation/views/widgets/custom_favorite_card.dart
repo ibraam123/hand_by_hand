@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 import 'package:hive/hive.dart';
 
@@ -28,7 +30,7 @@ class CustomFavoriteCard extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          "Location",
+          Favorites.location.tr(),
           style: TextStyle(
             color: theme.textTheme.bodyMedium!.color,
           ),
@@ -41,7 +43,7 @@ class CustomFavoriteCard extends StatelessWidget {
             );
             CustomSnackBar.show(
               context,
-              message: "Removed from favorites",
+              message: Favorites.removed.tr(),
               icon: Icons.remove_circle_outline,
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 2),

@@ -4,59 +4,61 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/features/home/presentation/logic/profile_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/custom_features_container.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../core/config/routes.dart';
 import '../../../../../generated/assets.dart';
 import '../../../domain/feature_model.dart';
+import '../../../../../core/config/app_keys_localization.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale;
+
     final List<FeatureModel> featuresData = [
       FeatureModel(
-        title: 'Accessible Places',
-        subtitle:
-        'Find places that are accessible for the disability community.',
+        title: Home.accessiblePlaces.tr(),
+        subtitle: Home.accessiblePlacesSub.tr(),
         image: Assets.imagesF1,
-        buttonText: "Explore Places",
+        buttonText: Home.explorePlaces.tr(),
         onPress: () {
           GoRouter.of(context).push(AppRoutes.kPlaces);
         },
       ),
       FeatureModel(
-        title: 'Sign Language Lessons',
-        subtitle:
-        'Start your journey into sign language with our comprehensive lessons.',
+        title: Home.signLessons.tr(),
+        subtitle: Home.signLessonsSub.tr(),
         image: Assets.imagesF2,
-        buttonText: "Start Learning",
+        buttonText: Home.startLearning.tr(),
         onPress: () {
           GoRouter.of(context).push(AppRoutes.kSignLanguage);
         },
       ),
       FeatureModel(
-        title: 'Role Models for Disability',
-        subtitle: 'Discover inspiring figures in the disability community.',
+        title: Home.roleModels.tr(),
+        subtitle: Home.roleModelsSub.tr(),
         image: Assets.imagesF3,
-        buttonText: "Get Inspired",
+        buttonText: Home.getInspired.tr(),
         onPress: () {
           GoRouter.of(context).push(AppRoutes.kRoleModels);
         },
       ),
       FeatureModel(
-        title: 'Community ',
-        subtitle:
-        'Communicate to the disability community and know about their rights.',
+        title: Home.community.tr(),
+        subtitle: Home.communitySub.tr(),
         image: Assets.imagesF5,
-        buttonText: "Join Community",
+        buttonText: Home.joinCommunity.tr(),
         onPress: () {
           GoRouter.of(context).push(AppRoutes.kCommunity);
         },
       ),
     ];
+
     context.read<ProfileCubit>().loadProfile();
+
     return Padding(
       padding: EdgeInsets.all(16.0.w),
       child: BlocBuilder<ProfileCubit, ProfileState>(
@@ -105,12 +107,13 @@ class HomeScreen extends StatelessWidget {
   Widget _buildWelcomeMessage(BuildContext context, String? firstNameUser) {
     String message;
     if (firstNameUser == null) {
-      message = "Loading...";
+      message = Home.loading.tr();
     } else if (firstNameUser == "Error") {
-      message = "Error loading profile";
+      message = Home.error.tr();
     } else {
-      message = "Welcome, $firstNameUser";
+      message = Home.welcome.tr(namedArgs: {"name": firstNameUser});
     }
+
     return Text(
       message,
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(

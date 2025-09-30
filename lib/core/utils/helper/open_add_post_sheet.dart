@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 
 import '../../../features/accessible_places/presentation/views/widgets/bottom_sheet_handle.dart';
 import '../../../features/accessible_places/presentation/views/widgets/custom_text_field.dart';
@@ -39,7 +41,7 @@ void openAddPostSheet(BuildContext context , User? user) {
                 const BottomSheetHandle(),
                 const SizedBox(height: 12),
                  Text(
-                  "Add New Post",
+                  General.newPost.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -49,13 +51,13 @@ void openAddPostSheet(BuildContext context , User? user) {
                 const SizedBox(height: 16),
                 CustomTextFieldPlaces(
                   controller: titleController,
-                  label: "Post Title",
+                  label: Community.postTitle.tr(),
                   icon: Icons.title,
-                  validator: (v) => v!.isEmpty ? "Enter title" : null,
+                  validator: (v) => v!.isEmpty ? Community.enterTitle.tr() : null,
                 ),
                 const SizedBox(height: 20),
                 SaveButton(
-                  label: "Add",
+                  label: General.add.tr(),
                   icon: Icons.add,
                   onSave: () {
                     if (formKey.currentState!.validate()) {

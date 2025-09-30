@@ -8,6 +8,7 @@ import '../../features/auth/presentation/views/sign_in_view.dart';
 import '../../features/auth/presentation/views/sign_up_view.dart';
 import '../../features/community/presenation/views/comunity_chat_screen.dart';
 import '../../features/community/presenation/views/posts_screen.dart';
+import '../../features/home/presentation/views/screens/language_setting_screen.dart';
 import '../../features/home/presentation/views/screens/main_screen.dart';
 import '../../features/home/presentation/views/widgets/feedback_screen.dart';
 import '../../features/onboarding/models/explanation_screen_model.dart';
@@ -42,6 +43,7 @@ class AppRoutes {
   static const String kCommunityPosts = '/communityPosts';
   static const String kPlaces = '/places';
   static const String kSignLanguageLessonVideo = '/signLanguageLessonVideo';
+  static const String kLanguageSettings = '/languageSettings';
 
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
@@ -134,7 +136,11 @@ class AppRoutes {
             description: SignLanguageEntity.description,
           );
         },
-      )
+      ),
+       GoRoute(
+         path: kLanguageSettings,
+         builder: (context, state) => const LanguageSettingsScreen(),
+       ),
     ],
   );
 }

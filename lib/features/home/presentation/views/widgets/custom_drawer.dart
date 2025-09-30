@@ -33,7 +33,7 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: MenuDrawerItems(isDarkMode: isDarkMode),
+              child: MenuDrawerItems(isDarkMode: isDarkMode , ),
             ),
             const LogoutDrawerItem(),
           ],

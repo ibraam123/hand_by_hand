@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../domain/entities/category_entitiy.dart';
 class CategoryChips extends StatelessWidget {
-  final List<String> categories;
+  final List<CategoryEntity> categories;
   final String selectedType;
   final ValueChanged<String> onSelected;
 
@@ -22,9 +23,9 @@ class CategoryChips extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ChoiceChip(
-              label: Text(cat.toUpperCase()),
-              selected: selectedType == cat,
-              onSelected: (_) => onSelected(cat),
+              label: Text(cat.label), // Show translated label
+              selected: selectedType == cat.key, // Compare using key
+              onSelected: (_) => onSelected(cat.key), // Return key
             ),
           );
         }).toList(),
