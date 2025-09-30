@@ -40,6 +40,7 @@ class PostsRemoteImpl implements PostsRemote {
     try {
       final snapshot = await firestore
           .collection("posts")
+          .limit(50)
           .orderBy("date", descending: true)
           .get();
 
@@ -67,9 +68,7 @@ class PostsRemoteImpl implements PostsRemote {
           .collection('posts')
           .doc(postId)
           .collection('comments')
-          .orderBy('createdAt', descending: true)
-          .limit(10);
-
+          .orderBy('createdAt', descending: true);
       if (lastDoc != null) {
         query = query.startAfterDocument(lastDoc);
       }
@@ -111,7 +110,7 @@ class PostsRemoteImpl implements PostsRemote {
         // Add new comment in subcollection
         final commentData = {
           "text": comment,
-          "userId": user?.uid ?? "guest",
+          "userId": user?.email ?? "guest",
           "createdAt": FieldValue.serverTimestamp(),
         };
 

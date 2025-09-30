@@ -3,6 +3,7 @@ import 'package:hand_by_hand/features/community/presenation/widgets/post_actions
 import 'package:hand_by_hand/features/community/presenation/widgets/post_header.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/services/tts_service.dart';
 import '../../domain/entities/post_entity.dart';
 import 'comments_bottom_sheet.dart';
 
@@ -26,6 +27,7 @@ class _PostCardState extends State<PostCard> {
   final currentUser = FirebaseAuth.instance.currentUser;
   late bool _hasLiked;
   int _localCommentCount = 0;
+
 
   @override
   void initState() {

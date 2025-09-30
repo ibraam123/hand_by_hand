@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class CommentTile extends StatelessWidget {
   final String comment;
   final DateTime? createdAt;
+  final String? email;
 
   const CommentTile({
     super.key,
     required this.comment,
     this.createdAt,
+    this.email,
   });
 
   @override
@@ -34,14 +36,25 @@ class CommentTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (createdAt != null)
-                  Text(
-                    _formatTime(createdAt!),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (email != null)
+                      Text(
+                        email!,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    if (createdAt != null)
+                      Text(
+                        _formatTime(createdAt!),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                  ],
+                ),
                 Text(
                   comment,
                   style: theme.textTheme.bodyMedium,
@@ -62,6 +75,8 @@ class CommentTile extends StatelessWidget {
     if (difference.inMinutes < 60) return "${difference.inMinutes}m ago";
     if (difference.inHours < 24) return "${difference.inHours}h ago";
     if (difference.inDays < 7) return "${difference.inDays}d ago";
+    if (difference.inDays < 365) return "${difference.inDays ~/ 7}w ago";
+
 
     return "${time.day}/${time.month}/${time.year}";
   }

@@ -7,7 +7,10 @@ abstract class CommentsState extends Equatable {
 
 class CommentsInitial extends CommentsState {}
 
-class CommentsLoading extends CommentsState {}
+class CommentsLoading extends CommentsState {
+  final bool isInitial;
+  CommentsLoading({this.isInitial = false});
+}
 
 
 
@@ -15,7 +18,7 @@ class CommentsLoaded extends CommentsState {
   final List<Map<String, dynamic>> comments;
   final bool hasMore;
 
-  CommentsLoaded(this.comments, {this.hasMore = true});
+  CommentsLoaded(this.comments, {this.hasMore = false});
 
   @override
   List<Object?> get props => [comments, hasMore];

@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../data/data_sources/remote/home_remote.dart';
@@ -12,43 +11,22 @@ class CommentsCubit extends Cubit<CommentsState> {
 
   CommentsCubit(this.postsRemote) : super(CommentsInitial());
 
-  DocumentSnapshot? _lastDoc;
-  bool _hasMore = true;
-  List<Map<String, dynamic>> _allComments = [];
+  Future<void> loadComments(String postId) async {
+    emit(CommentsLoading(isInitial: true));
 
-  Future<void> loadComments(String postId, {bool refresh = false}) async {
-    if (refresh) {
-      _lastDoc = null;
-      _hasMore = true;
-      _allComments = [];
-    }
-
-    if (!_hasMore) return;
-
-    emit(CommentsLoading());
-
-    final result = await postsRemote.getComments(postId, lastDoc: _lastDoc);
+    final result = await postsRemote.getComments(postId);
 
     result.fold(
           (failure) => emit(CommentsError(failure.message)),
           (comments) {
-        if (comments.isNotEmpty) {
-          // Extract the DocumentSnapshot for pagination
-          _lastDoc = comments.last["snapshot"] as DocumentSnapshot?;
+        // Clean snapshot if it exists
+        final cleanedComments = comments.map((comment) {
+          final cleaned = Map<String, dynamic>.from(comment);
+          cleaned.remove('snapshot');
+          return cleaned;
+        }).toList();
 
-          // Remove snapshot from the data before adding to list
-          final cleanedComments = comments.map((comment) {
-            final cleaned = Map<String, dynamic>.from(comment);
-            cleaned.remove('snapshot');
-            return cleaned;
-          }).toList();
-
-          _allComments.addAll(cleanedComments);
-        } else {
-          _hasMore = false;
-        }
-
-        emit(CommentsLoaded(List.from(_allComments), hasMore: _hasMore));
+        emit(CommentsLoaded(cleanedComments, hasMore: false));
       },
     );
   }
@@ -60,7 +38,7 @@ class CommentsCubit extends Cubit<CommentsState> {
           (failure) => emit(CommentsError(failure.message)),
           (_) {
         // Refresh comments after adding
-        loadComments(postId, refresh: true);
+        loadComments(postId);
       },
     );
   }

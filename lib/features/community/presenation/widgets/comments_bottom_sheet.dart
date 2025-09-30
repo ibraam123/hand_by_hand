@@ -7,7 +7,6 @@ import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import '../logic/comments_cubit.dart';
 import 'comment_tile.dart';
 
-
 class CommentsBottomSheet extends StatefulWidget {
   final String postId;
 
@@ -22,48 +21,43 @@ class CommentsBottomSheet extends StatefulWidget {
 
 class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  bool _isAddingComment = false; // ADD: Track comment state
-
+  bool _isAddingComment = false;
+  final currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-    // Load initial comments
-    context.read<CommentsCubit>().loadComments(widget.postId, refresh: true);
-
-    // Setup pagination
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 100) {
-        context.read<CommentsCubit>().loadComments(widget.postId);
-      }
-    });
+    // Load all comments (no pagination)
+    context.read<CommentsCubit>().loadComments(widget.postId);
   }
 
-  void _addComment() async {
+  Future<void> _addComment() async {
+    if (_isAddingComment) return;
 
-    if (_isAddingComment) return; // ADD: Prevent multiple calls
-    setState(() {
-      _isAddingComment = true;
-    });
+    setState(() => _isAddingComment = true);
 
     final text = _controller.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty) {
+      setState(() => _isAddingComment = false);
+      return;
+    }
 
     final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return;
+    if (currentUser == null) {
+      setState(() => _isAddingComment = false);
+      return;
+    }
 
     _controller.clear();
 
     // Use cubit to add comment
-    context.read<CommentsCubit>().addComment(widget.postId, text);
+    await context.read<CommentsCubit>().addComment(widget.postId, text);
 
+    setState(() => _isAddingComment = false);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -77,29 +71,32 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Text(
                   Community.comments.tr(),
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   onPressed: () => context
                       .read<CommentsCubit>()
-                      .loadComments(widget.postId, refresh: true),
+                      .loadComments(widget.postId),
                 ),
               ],
             ),
           ),
+
+          // Comments list
           Expanded(
             child: BlocBuilder<CommentsCubit, CommentsState>(
               buildWhen: (previous, current) => previous != current,
               builder: (context, state) {
-                if (state is CommentsLoading && state is! CommentsLoaded) {
+                if (state is CommentsLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
@@ -112,7 +109,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                         ElevatedButton(
                           onPressed: () => context
                               .read<CommentsCubit>()
-                              .loadComments(widget.postId, refresh: true),
+                              .loadComments(widget.postId),
                           child: const Text('Retry'),
                         ),
                       ],
@@ -126,16 +123,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   }
 
                   return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: state.comments.length + (state.hasMore ? 1 : 0),
+                    itemCount: state.comments.length,
                     itemBuilder: (context, index) {
-                      if (index >= state.comments.length) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-
                       final comment = state.comments[index];
                       final createdAt = comment['createdAt'];
                       DateTime? dateTime;
@@ -151,6 +140,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       return CommentTile(
                         comment: comment['text'] ?? '',
                         createdAt: dateTime,
+                        email: comment['userId']?.toString() ?? '',
                       );
                     },
                   );
@@ -160,6 +150,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
               },
             ),
           ),
+
+          // Add comment input
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -169,8 +161,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText: Community.addComment.tr(),
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                     ),
                     onSubmitted: (_) => _addComment(),
                   ),
@@ -188,4 +180,3 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     );
   }
 }
-
