@@ -10,7 +10,8 @@ final class ProfileLoading extends ProfileState {}
 final class ProfileLoaded extends ProfileState {
   final String firstName;
   final String lastName;
-  ProfileLoaded(this.firstName, this.lastName);
+  final String? email;
+  ProfileLoaded(this.firstName, this.lastName , this.email);
 }
 
 final class ProfileError extends ProfileState {

@@ -2,6 +2,7 @@
 class Assets {
   Assets._();
 
+  static const String assetsHandshakeBlue = 'assets/handshake_blue.json';
   static const String iconsIconApp = 'assets/icons/icon_app.png';
   static const String imagesF1 = 'assets/images/f1.png';
   static const String imagesF2 = 'assets/images/f2.png';

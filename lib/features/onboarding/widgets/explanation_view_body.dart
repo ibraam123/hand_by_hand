@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/features/onboarding/models/explanation_screen_model.dart';
 
@@ -61,7 +63,7 @@ class ExplanationViewBody extends StatelessWidget {
                       size.width * 0.05,
                     ), // Responsive padding
                     child: CustomButton(
-                      text: "Get Started",
+                      text: OnboardingKeys.getStarted.tr(),
                       color: AppColors.primary,
                       onTap: () {
                         GoRouter.of(context).go(AppRoutes.kMainScreen);

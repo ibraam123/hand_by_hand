@@ -8,6 +8,8 @@ import 'package:hand_by_hand/features/community/data/data_sources/remote/home_re
 import 'package:hand_by_hand/features/community/presenation/logic/comments_cubit.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/message_cubit.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/posts_cubit.dart';
+import 'package:hand_by_hand/features/home/presentation/logic/favorites_cubit.dart';
+import 'package:hand_by_hand/features/home/presentation/logic/notifications_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/logic/profile_cubit.dart';
 import 'package:hand_by_hand/features/notification/data/local_data_source/notification_local_data_source.dart';
 import 'package:hand_by_hand/features/notification/data/models/notification_model.dart';
@@ -23,6 +25,13 @@ import 'features/community/domain/repos/posts_repo.dart';
 import 'features/community/domain/usecases/add_comment_usecase.dart';
 import 'features/community/domain/usecases/add_like_usecase.dart';
 import 'features/community/domain/usecases/add_post_usecase.dart';
+import 'features/home/data/data_sources/local/profile_local_data_source.dart';
+import 'features/home/data/repo/favorites_repo_impl.dart';
+import 'features/home/data/repo/profile_repo_impl.dart';
+import 'features/home/domain/repo/favorites_repo.dart';
+import 'features/home/domain/repo/profile_repo.dart';
+import 'features/home/domain/usecases/get_profile_use_case.dart';
+import 'features/home/domain/usecases/save_profile_use_case.dart';
 import 'features/notification/firebase_api.dart';
 import 'features/role_model/data/data_sources/role_model_remote_data_source.dart';
 import 'features/role_model/data/repos/roole_model_repo_impl.dart';
@@ -31,6 +40,7 @@ import 'features/role_model/presenatation/logic/role_model_cubit.dart';
 import 'features/sign_language/data/data_sources/sign_language_remote_data_source.dart';
 import 'features/sign_language/data/repos/sign_lesson_repo_impl.dart';
 import 'features/sign_language/presentation/logic/sign_language_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt serviceLocator = GetIt.instance;
 
@@ -39,11 +49,18 @@ Future<void> init() async {
 
   Hive.registerAdapter(NotificationModelAdapter());
 
-  await Hive.openBox<bool>('favorites');
-  await Hive.openBox<NotificationModel>('notifications');
+  final favoritesBox = await Hive.openBox<bool>('favorites');
+  final notificationsBox = await Hive.openBox<NotificationModel>('notifications');
+
+  serviceLocator.registerLazySingleton<Box<bool>>(() => favoritesBox);
+  serviceLocator.registerLazySingleton<Box<NotificationModel>>(() => notificationsBox);
 
   serviceLocator.registerLazySingleton<NotificationLocalDataSource>(
     () => NotificationLocalDataSourceImpl(),
+  );
+
+  serviceLocator.registerLazySingleton<NotificationsCubit>(
+    () => NotificationsCubit(serviceLocator<NotificationRepository>()),
   );
 
 
@@ -111,7 +128,35 @@ Future<void> init() async {
     ),
   );
 
-  serviceLocator.registerLazySingleton<ProfileCubit>(() => ProfileCubit());
+
+  serviceLocator.registerLazySingleton<ProfileLocalDataSource>(
+    () => ProfileLocalDataSourceImpl(serviceLocator<SharedPreferences>()),
+  );
+
+  serviceLocator.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(serviceLocator<ProfileLocalDataSource>()),
+  );
+
+  serviceLocator.registerLazySingleton<GetProfileUseCase>(
+    () => GetProfileUseCase(serviceLocator<ProfileRepository>()),
+  );
+  serviceLocator.registerLazySingleton<SaveProfileUseCase>(
+    () => SaveProfileUseCase(serviceLocator<ProfileRepository>()),
+  );
+
+  serviceLocator.registerLazySingleton<ProfileCubit>(() => ProfileCubit(
+    getProfileUseCase: serviceLocator<GetProfileUseCase>(),
+    saveProfileUseCase: serviceLocator<SaveProfileUseCase>(),
+  ));
+
+
+  serviceLocator.registerLazySingleton<FavoritesRepository>(
+    () => FavoritesRepositoryImpl(serviceLocator<Box<bool>>()),
+  );
+
+  serviceLocator.registerFactory<FavoritesCubit>(
+    () => FavoritesCubit(serviceLocator<FavoritesRepository>()),
+  );
 
   serviceLocator.registerLazySingleton<PostsRemote>(
     () => PostsRemoteImpl(serviceLocator<FirebaseFirestore>()),
@@ -153,4 +198,9 @@ Future<void> init() async {
   serviceLocator.registerFactory<ThemeCubit>(
     () => ThemeCubit(),
   );
+
+  // SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  serviceLocator.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+
 }

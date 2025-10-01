@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/core/services/tts_service.dart';
 import '../../../data/models/role_model.dart';
 
@@ -47,13 +49,16 @@ class _RoleModelDetailsScreenState extends State<RoleModelDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                widget.roleModel.imageUrl,
-                width: double.infinity,
-                height: 220,
-                fit: BoxFit.cover,
+            Hero(
+              tag: "role_model_${widget.roleModel.id}", // unique tag
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CachedNetworkImage (
+                  imageUrl: widget.roleModel.imageUrl,
+                  width: double.infinity,
+                  height: 220.h,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -63,7 +68,7 @@ class _RoleModelDetailsScreenState extends State<RoleModelDetailsScreen> {
                   widget.roleModel.name,
                   style: TextStyle(
                     color: isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 24,
+                    fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -78,7 +83,7 @@ class _RoleModelDetailsScreenState extends State<RoleModelDetailsScreen> {
             Text(
               widget.roleModel.story,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
                 height: 1.6,
                 letterSpacing: 0.3,

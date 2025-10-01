@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/config/routes.dart';
 import '../../../domain/entities/role_model_entity.dart';
 
-
 class RoleModelCustomContainer extends StatelessWidget {
   const RoleModelCustomContainer({
     super.key,
@@ -28,7 +27,7 @@ class RoleModelCustomContainer extends StatelessWidget {
           );
         },
         child: Card(
-          elevation: 4.0, // Added elevation
+          elevation: 4.0,
           margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
@@ -40,50 +39,68 @@ class RoleModelCustomContainer extends StatelessWidget {
               color: theme.cardColor,
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Left side (text)
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        roleModel.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 100.h, // Match image height
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          roleModel.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      SizedBox(height: 6.h),
-                      Text(
-                        roleModel.story,
-                        maxLines: 3, // show only 4 lines
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14.sp, // Adjusted based on screen size if needed
-                          color: theme.textTheme.bodyMedium!.color,
+                        SizedBox(height: 6.h),
+                        Expanded( // Use Expanded here instead of Flexible
+                          child: Text(
+                            roleModel.story,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: theme.textTheme.bodyMedium!.color,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(width: 12.w),
                 // Right side (image)
                 Padding(
                   padding: EdgeInsets.all(8.w),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0.r),
-                    child: CachedNetworkImage(
-                      imageUrl: roleModel.imageUrl,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover, // Changed to contain to show the whole image
-                      placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(
-                          color: theme.colorScheme.primary,
+                  child: Hero(
+                    tag: "role_model_${roleModel.id}", // unique tag
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0.r),
+                      child: CachedNetworkImage(
+                        imageUrl: roleModel.imageUrl,
+                        width: 100.w,
+                        height: 100.w,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.broken_image,
+                          size: 80.w,
+                          color: theme.colorScheme.error,
                         ),
                       ),
-                      errorWidget: (context, url, error) => Icon(Icons.broken_image, size: 80.w, color: theme.colorScheme.error), // Adjusted size with screen util
                     ),
                   ),
                 ),

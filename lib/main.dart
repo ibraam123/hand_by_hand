@@ -8,11 +8,13 @@ import 'package:hand_by_hand/core/config/theme.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
 import 'package:hand_by_hand/core/utils/helper/theme_cubit.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/comments_cubit.dart';
+import 'package:hand_by_hand/features/home/presentation/logic/favorites_cubit.dart';
 import 'package:hand_by_hand/init_dependcies.dart';
 import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/community/presenation/logic/message_cubit.dart';
 import 'features/community/presenation/logic/posts_cubit.dart';
+import 'features/home/presentation/logic/notifications_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
 import 'features/notification/firebase_api.dart';
 import 'features/role_model/presenatation/logic/role_model_cubit.dart';
@@ -38,15 +40,14 @@ Future<void> main() async {
 
   await serviceLocator.allReady();
 
-  runApp(EasyLocalization(
+  runApp(
+    EasyLocalization(
       child: const MyApp(),
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-  ));
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -77,17 +78,21 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) => serviceLocator<PlaceCubit>()..fetchPlaces(),
             ),
-            BlocProvider(
-              create: (context) => serviceLocator<PostsCubit>(),
-            ),
-            BlocProvider(
-              create: (context) => serviceLocator<CommentsCubit>(),
-            ),
+            BlocProvider(create: (context) => serviceLocator<PostsCubit>()),
+            BlocProvider(create: (context) => serviceLocator<CommentsCubit>()),
             BlocProvider(
               create: (context) =>
                   serviceLocator<MessageCubit>()..loadMessages(),
             ),
-            BlocProvider(create: (context) => serviceLocator<ThemeCubit>()),
+            BlocProvider(
+                create: (context) => serviceLocator<ThemeCubit>()
+            ),
+            BlocProvider(
+                create: (context) => serviceLocator<FavoritesCubit>()
+            ),
+            BlocProvider(
+                create: (context) => serviceLocator<NotificationsCubit>()
+            ),
           ],
           child: const AppView(),
         );

@@ -26,6 +26,7 @@ class SignLanguageScreen extends StatelessWidget {
             return ListView.builder(
               padding: EdgeInsets.all(12.w),
               itemCount: state.signLessons.length,
+              itemExtent: 100.h,
               itemBuilder: (context, index) {
                 final signLesson = state.signLessons[index];
                 return SignLessonCustomContainer(signLessonModel: signLesson);

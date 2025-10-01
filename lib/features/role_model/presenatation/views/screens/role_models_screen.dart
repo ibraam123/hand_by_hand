@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/config/app_keys_localization.dart';
 import '../../logic/role_model_cubit.dart';
 import '../widgets/role_model_custom_container.dart';
@@ -28,15 +29,11 @@ class RoleModelsScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is RoleModelLoaded) {
             return ListView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.w),
               itemCount: state.roleModels.length,
               itemBuilder: (context, index) {
                 final roleModel = state.roleModels[index];
-                if (roleModel.imageUrl.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                } else {
-                  return RoleModelCustomContainer(roleModel: roleModel);
-                }
+                return RoleModelCustomContainer(roleModel: roleModel);
               },
             );
           } else if (state is RoleModelError) {

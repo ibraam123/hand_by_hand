@@ -1,18 +1,25 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
-import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
-import 'package:hive/hive.dart';
+
+import '../../logic/favorites_cubit.dart';
 
 class CustomFavoriteCard extends StatelessWidget {
-  final String keyBox;
-  final Box box;
-  const CustomFavoriteCard({super.key, required this.keyBox, required this.box});
+  final String id;
+  final String title;
+
+  const CustomFavoriteCard({
+    super.key,
+    required this.id,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Card(
       margin: EdgeInsets.only(bottom: 16.h),
       shape: RoundedRectangleBorder(
@@ -23,7 +30,7 @@ class CustomFavoriteCard extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.place, color: theme.colorScheme.secondary),
         title: Text(
-          keyBox,
+          title,
           style: TextStyle(
             color: theme.textTheme.bodyLarge!.color,
             fontWeight: FontWeight.bold,
@@ -38,15 +45,14 @@ class CustomFavoriteCard extends StatelessWidget {
         trailing: IconButton(
           icon: const Icon(Icons.favorite, color: Colors.red),
           onPressed: () {
-            box.delete(
-              keyBox,
-            );
-            CustomSnackBar.show(
-              context,
-              message: Favorites.removed.tr(),
-              icon: Icons.remove_circle_outline,
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 2),
+            context.read<FavoritesCubit>().removeFavorite(id);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(Favorites.removed.tr()),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+              ),
             );
           },
         ),

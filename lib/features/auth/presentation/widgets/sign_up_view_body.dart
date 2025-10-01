@@ -7,8 +7,6 @@ import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
-import 'package:hand_by_hand/features/auth/presentation/widgets/birth_date_selector.dart';
-import 'package:hand_by_hand/features/auth/presentation/widgets/gender_selector.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/message_second_option.dart';
 
 import '../../../../core/config/app_colors.dart';
@@ -30,20 +28,10 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  int? _day;
-  int? _month;
-  int? _year;
-  String? _gender;
   bool isObscure = true;
 
 
-  static const _monthMap = {
-    'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
-    'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
-  };
-  int convertMonthToInt(String month) {
-    return _monthMap[month]!;
-  }
+
 
   @override
   void dispose() {
@@ -145,7 +133,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                           ),
                           SizedBox(height: height * 0.02),
                           CustomTextFormField(
-                            hintText: "Password",
+                            hintText: AuthKeys.password.tr(),
                             controller: _passwordController,
                             obscureText: isObscure,
                             prefixIcon: Icons.lock,
@@ -170,43 +158,18 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               }
                             },
                           ),
-                          SizedBox(height: height * 0.015),
-                          BirthDateSelector(
-                            onChanged: (day, month, year) {
-                              _day = day;
-                              if (month != null) {
-                                _month = convertMonthToInt(month);
-                              }
-                              _year = year;
-                            },
-                          ),
-                          SizedBox(height: height * 0.015),
-                          GenderSelector(
-                            onChanged: (gender) => _gender = gender,
-                          ),
                           SizedBox(height: height * 0.03),
                           CustomButton(
                             text: AuthKeys.signUp.tr(),
                             width: width,
                             isLoading: isLoading,
                             onTap: () {
-                              if (_formKey.currentState!.validate() &&
-                                  _day != null &&
-                                  _month != null &&
-                                  _year != null &&
-                                  _gender != null) {
-                                final birthDate = DateTime(
-                                  _year!,
-                                  _month!,
-                                  _day!,
-                                );
+                              if (_formKey.currentState!.validate()) {
                                 context.read<AuthCubit>().signUpWithEmailAndPassword(
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                   firstName: _firstNameController.text,
                                   lastName: _lastNameController.text,
-                                  birthDate: birthDate,
-                                  gender: _gender!,
                                 );
                               } else {
                                 CustomSnackBar.show(

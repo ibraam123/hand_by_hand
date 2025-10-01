@@ -71,8 +71,6 @@ class AuthCubit extends Cubit<AuthState> {
           email: firebaseUser.email ?? '',
           firstName: parts.isNotEmpty ? parts.first : '',
           lastName: parts.length > 1 ? parts.sublist(1).join(' ') : '',
-          birthDate: DateTime.now(), // you may want to ask user later
-          gender: 'unspecified', // same here
         );
         await userDoc.set(newUser.toMap());
         final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -145,8 +143,6 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
     required String firstName,
     required String lastName,
-    required DateTime birthDate,
-    required String gender,
   }) async {
     emit(AuthLoading(
       action: AuthAction.signup
@@ -162,8 +158,6 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         firstName: firstName,
         lastName: lastName,
-        birthDate: birthDate,
-        gender: gender,
       );
 
       await _firestore.collection('users').doc(user.id).set(user.toMap());

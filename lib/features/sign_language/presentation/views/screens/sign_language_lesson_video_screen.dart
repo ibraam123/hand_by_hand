@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class SignLanguageLessonVideoScreen extends StatefulWidget {
@@ -21,6 +22,12 @@ class SignLanguageLessonVideoScreen extends StatefulWidget {
 class _SignLanguageLessonVideoScreenState
     extends State<SignLanguageLessonVideoScreen> {
   late YoutubePlayerController _controller;
+
+  @override
+  void deactivate() {
+    _controller.pause();
+    super.deactivate();
+  }
 
   @override
   void initState() {
@@ -57,7 +64,7 @@ class _SignLanguageLessonVideoScreenState
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

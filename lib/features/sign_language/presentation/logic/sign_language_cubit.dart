@@ -13,7 +13,6 @@ class SignLanguageCubit extends Cubit<SignLanguageState> {
     try {
       emit(SignLanguageLoading());
       final signLessons = await signLessonRepo.getSignLessons();
-      print(signLessons);
       emit(SignLanguageLoaded(signLessons));
     } catch (e) {
       emit(SignLanguageError('Failed to fetch sign lessons: $e'));

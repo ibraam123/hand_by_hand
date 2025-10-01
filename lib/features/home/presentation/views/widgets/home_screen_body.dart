@@ -8,117 +8,177 @@ import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../core/config/routes.dart';
 import '../../../../../generated/assets.dart';
-import '../../../domain/feature_model.dart';
+import '../../../domain/entities/feature_model.dart';
 import '../../../../../core/config/app_keys_localization.dart';
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final locale = context.locale;
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-    final List<FeatureModel> featuresData = [
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
+  late final List<FeatureModel> _features;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFeatures();
+    // Load once, not on every build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileCubit>().loadProfile();
+    });
+  }
+
+  void _initializeFeatures() {
+    _features = [
       FeatureModel(
-        title: Home.accessiblePlaces.tr(),
-        subtitle: Home.accessiblePlacesSub.tr(),
+        title: Home.accessiblePlaces,
+        subtitle: Home.accessiblePlacesSub,
         image: Assets.imagesF1,
-        buttonText: Home.explorePlaces.tr(),
-        onPress: () {
-          GoRouter.of(context).push(AppRoutes.kPlaces);
-        },
+        buttonText: Home.explorePlaces,
+        onPress: () => context.push(AppRoutes.kPlaces),
       ),
       FeatureModel(
-        title: Home.signLessons.tr(),
-        subtitle: Home.signLessonsSub.tr(),
-        image: Assets.imagesF2,
-        buttonText: Home.startLearning.tr(),
-        onPress: () {
-          GoRouter.of(context).push(AppRoutes.kSignLanguage);
-        },
+        title: Home.signLessons,
+        subtitle: Home.signLessonsSub,
+        image: Assets.imagesF7,
+        buttonText: Home.startLearning,
+        onPress: () => context.push(AppRoutes.kSignLanguage),
       ),
       FeatureModel(
-        title: Home.roleModels.tr(),
-        subtitle: Home.roleModelsSub.tr(),
+        title: Home.roleModels,
+        subtitle: Home.roleModelsSub,
         image: Assets.imagesF3,
-        buttonText: Home.getInspired.tr(),
-        onPress: () {
-          GoRouter.of(context).push(AppRoutes.kRoleModels);
-        },
+        buttonText: Home.getInspired,
+        onPress: () => context.push(AppRoutes.kRoleModels),
       ),
       FeatureModel(
-        title: Home.community.tr(),
-        subtitle: Home.communitySub.tr(),
+        title: Home.community,
+        subtitle: Home.communitySub,
         image: Assets.imagesF5,
-        buttonText: Home.joinCommunity.tr(),
-        onPress: () {
-          GoRouter.of(context).push(AppRoutes.kCommunity);
-        },
+        buttonText: Home.joinCommunity,
+        onPress: () => context.push(AppRoutes.kCommunity),
       ),
     ];
+  }
 
-    context.read<ProfileCubit>().loadProfile();
+  @override
+  bool get wantKeepAlive => true; // Keep state alive when switching tabs
 
-    return Padding(
-      padding: EdgeInsets.all(16.0.w),
-      child: BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, state) {
-          String? firstName;
-          if (state is ProfileLoading) {
-            firstName = null;
-          } else if (state is ProfileLoaded) {
-            firstName = state.firstName;
-          } else if (state is ProfileError) {
-            firstName = "Error";
-          }
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final locale = context.locale;
 
-          return ListView.builder(
-            itemCount: featuresData.length + 1, // 1 for welcome message
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+          sliver: SliverToBoxAdapter(
+            child: _WelcomeHeader(),
+          ),
+        ),
+        SliverPadding(
+          padding: EdgeInsets.all(16.w),
+          sliver: SliverList.separated(
+            itemCount: _features.length,
+            separatorBuilder: (_, __) => SizedBox(height: 16.h),
             itemBuilder: (context, index) {
-              if (index == 0) {
-                // Welcome message at the top
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildWelcomeMessage(context, firstName),
-                    SizedBox(height: 16.h),
-                  ],
-                );
-              }
-
-              final feature = featuresData[index - 1];
-              return Padding(
-                padding: EdgeInsets.only(bottom: 16.0.h),
-                child: CustomFeaturesContainer(
-                  title: feature.title,
-                  subtitle: feature.subtitle,
-                  image: feature.image,
-                  buttonText: feature.buttonText,
-                  onPress: feature.onPress,
-                ),
+              final feature = _features[index];
+              return CustomFeaturesContainer(
+                title: feature.title.tr(),
+                subtitle: feature.subtitle.tr(),
+                image: feature.image,
+                buttonText: feature.buttonText.tr(),
+                onPress: feature.onPress,
               );
             },
-          );
-        },
-      ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Separate widget for better performance
+class _WelcomeHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _buildContent(context, state),
+        );
+      },
     );
   }
 
-  Widget _buildWelcomeMessage(BuildContext context, String? firstNameUser) {
-    String message;
-    if (firstNameUser == null) {
-      message = Home.loading.tr();
-    } else if (firstNameUser == "Error") {
-      message = Home.error.tr();
-    } else {
-      message = Home.welcome.tr(namedArgs: {"name": firstNameUser});
+  Widget _buildContent(BuildContext context, ProfileState state) {
+    final theme = Theme.of(context);
+
+    if (state is ProfileLoading) {
+      return _buildMessage(
+        context,
+        Home.loading.tr(),
+        isLoading: true,
+      );
     }
 
-    return Text(
-      message,
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+    if (state is ProfileError) {
+      return _buildMessage(
+        context,
+        Home.error.tr(),
+        isError: true,
+      );
+    }
+
+    if (state is ProfileLoaded) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            Home.welcome.tr(namedArgs: {"name": state.firstName}),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 24.sp,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildMessage(
+      BuildContext context,
+      String message, {
+        bool isLoading = false,
+        bool isError = false,
+      }) {
+    final theme = Theme.of(context);
+
+    return Row(
+      children: [
+        if (isLoading)
+          SizedBox(
+            width: 16.w,
+            height: 16.h,
+            child: CircularProgressIndicator(strokeWidth: 2.w),
+          )
+        else if (isError)
+          Icon(Icons.error_outline, size: 20.sp, color: theme.colorScheme.error),
+        if (isLoading || isError) SizedBox(width: 8.w),
+        Text(
+          message,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: isError ? theme.colorScheme.error : null,
+          ),
+        ),
+      ],
     );
   }
 }
