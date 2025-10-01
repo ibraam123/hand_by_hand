@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Hand By Hand Logo](https://via.placeholder.com/150x150.png?text=🤝)
+<img src="assets/icons/icon_app.png" width="200" alt="Hand By Hand Logo">
 
 **Empowering the Disability Community Through Accessible Technology**
 
@@ -33,7 +33,10 @@ lib/
 ├── core/
 │   ├── config/          # Theme, routes, constants
 │   ├── utils/           # Helpers, extensions, validators
-│   └── dependencies/    # Service locator setup
+│   └── usecases/        # use case class
+|   |__ services/        # services
+|   |__ widgets/         # common widgets
+|   |__ errors/          # error handling
 ├── features/
 │   ├── auth/            # Authentication flow
 │   ├── home/            # Dashboard and main screen
@@ -42,7 +45,8 @@ lib/
 │   ├── sign_language/   # Learning modules
 │   ├── role_model/      # Inspirational stories
 │   └── notification/    # Push notifications
-└── cubits/              # State management
+│   └── know_about_us/   # knolodge about my app and my career
+│   └── onboarding/      # onboarding screen with good ui
 ```
 
 ## 🚀 Getting Started
@@ -58,7 +62,7 @@ lib/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/hand_by_hand.git
+   git clone https://github.com/ibraam123/hand_by_hand.git
    cd hand_by_hand
    ```
 
@@ -176,11 +180,11 @@ Each feature follows the clean architecture pattern:
 
 | Login Screen | Home Screen | Community Chat |
 |--------------|-------------|----------------|
-| <img src="https://via.placeholder.com/300x600.png?text=Login" width="200"> | <img src="https://via.placeholder.com/300x600.png?text=Home" width="200"> | <img src="https://via.placeholder.com/300x600.png?text=Chat" width="200"> |
+| <img src="assets/images/log_in.png" width="200"> | <img src="assets/images/home.png" width="200"> | <img src="assets/images/chat.png" width="200"> |
 
 | Sign Language | Accessible Places | Profile |
 |---------------|-------------------|---------|
-| <img src="https://via.placeholder.com/300x600.png?text=Sign+Language" width="200"> | <img src="https://via.placeholder.com/300x600.png?text=Places" width="200"> | <img src="https://via.placeholder.com/300x600.png?text=Profile" width="200"> |
+| <img src="assets/images/sign_language.png" width="200"> | <img src="assets/images/places.png" width="200"> | <img src="assets/images/profile.png" width="200"> |
 
 ## 🚀 Building for Production
 
