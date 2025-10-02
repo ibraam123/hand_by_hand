@@ -1,11 +1,10 @@
-
 import 'package:hand_by_hand/features/sign_language/domain/entities/sign_lesson_entitiy.dart';
 
 class SignLessonModel extends SignLessonEntitiy {
   SignLessonModel({
     required super.title,
     required super.description,
-    required super.videoUrl
+    required super.videoUrl,
   });
 
   @override
@@ -26,18 +25,23 @@ class SignLessonModel extends SignLessonEntitiy {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'titile': title,
-      'descreption': description,
-      'video_url': videoUrl
-    };
+    return {'titile': title, 'descreption': description, 'video_url': videoUrl};
   }
 
-  factory SignLessonModel.fromMap(Map<String, dynamic> map) {
+  factory SignLessonModel.fromMap(Map<String, dynamic> map, String langCode) {
+    String parseField(dynamic field) {
+      if (field == null) return '';
+      if (field is String) return field;
+      if (field is Map) {
+        return field[langCode] ?? field['en'] ?? field.values.first.toString();
+      }
+      return field.toString();
+    }
+
     return SignLessonModel(
-      title: map['titile'] ?? '',
-      description: map['descreption'] ?? '',
-      videoUrl: map['video_url'] ?? ''
+      title: parseField(map['title'] ?? map['titile']), // handle typo too
+      description: parseField(map['description'] ?? map['descreption']),
+      videoUrl: map['video_url'] ?? '',
     );
   }
 }

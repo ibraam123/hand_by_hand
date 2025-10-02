@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) =>
-                  serviceLocator<SignLanguageCubit>()..fetchSignLessons(),
+                  serviceLocator<SignLanguageCubit>(),
             ),
             BlocProvider(
               create: (context) => serviceLocator<PlaceCubit>()..fetchPlaces(),

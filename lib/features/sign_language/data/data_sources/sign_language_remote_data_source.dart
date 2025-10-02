@@ -3,7 +3,7 @@ import 'package:hand_by_hand/core/errors/error.dart';
 import 'package:hand_by_hand/features/sign_language/data/models/sign_lesson_model.dart';
 
 abstract class SignLanguageRemoteDataSource {
-  Future<List<SignLessonModel>> fetchSignLessons();
+  Future<List<SignLessonModel>> fetchSignLessons(String langCode);
 }
 
 class SignLanguageRemoteDataSourceImpl implements SignLanguageRemoteDataSource {
@@ -12,12 +12,12 @@ class SignLanguageRemoteDataSourceImpl implements SignLanguageRemoteDataSource {
   SignLanguageRemoteDataSourceImpl(this.firestore);
 
   @override
-  Future<List<SignLessonModel>> fetchSignLessons() async {
+  Future<List<SignLessonModel>> fetchSignLessons(String langCode) async {
     try {
       final snapshot = await firestore.collection('sign_language').get();
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs
-            .map((doc) => SignLessonModel.fromMap(doc.data()))
+            .map((doc) => SignLessonModel.fromMap(doc.data() , langCode ))
             .toList();
       } else {
         throw ServerFailure('No sign lessons found.');

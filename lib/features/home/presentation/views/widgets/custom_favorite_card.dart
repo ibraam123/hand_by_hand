@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
+import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
 
 import '../../logic/favorites_cubit.dart';
 
@@ -46,13 +47,12 @@ class CustomFavoriteCard extends StatelessWidget {
           icon: const Icon(Icons.favorite, color: Colors.red),
           onPressed: () {
             context.read<FavoritesCubit>().removeFavorite(id);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(Favorites.removed.tr()),
-                backgroundColor: Colors.red,
-                duration: const Duration(seconds: 2),
-                behavior: SnackBarBehavior.floating,
-              ),
+            CustomSnackBar.show(
+              context,
+              message: Favorites.removed.tr(),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              icon: Icons.delete_outline,
+              duration: const Duration(seconds: 2),
             );
           },
         ),

@@ -90,22 +90,9 @@ class _SignLanguageLessonVideoScreenState
                 // 📝 Lesson Description (if available)
                 if (widget.description != null &&
                     widget.description!.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.description!
-                        .split('.')
-                        .where((sentence) => sentence.trim().isNotEmpty)
-                        .toList()
-                        .asMap()
-                        .entries
-                        .map((entry) {
-                      int idx = entry.key;
-                      String sentence = entry.value;
-                      return Text(
-                        "${idx + 1}. ${sentence.trim()}.",
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
-                      );
-                    }).toList(),
+                  Text(
+                    widget.description!,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
               ],
             ),

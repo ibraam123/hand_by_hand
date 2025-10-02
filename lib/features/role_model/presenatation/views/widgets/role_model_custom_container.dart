@@ -43,15 +43,11 @@ class RoleModelCustomContainer extends StatelessWidget {
               children: [
                 // Left side (text)
                 Expanded(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: 100.h, // Match image height
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
                           roleModel.name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
@@ -61,20 +57,19 @@ class RoleModelCustomContainer extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 6.h),
-                        Expanded( // Use Expanded here instead of Flexible
-                          child: Text(
-                            roleModel.story,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: theme.textTheme.bodyMedium!.color,
-                            ),
+                      SizedBox(height: 6.h),
+                      Flexible(
+                        child: Text(
+                          roleModel.story,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: theme.textTheme.bodyMedium!.color,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(width: 12.w),

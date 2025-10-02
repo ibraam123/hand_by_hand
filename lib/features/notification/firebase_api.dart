@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../core/services/notification_service.dart';
 import 'data/local_data_source/notification_local_data_source.dart';
 import 'data/models/notification_model.dart';
 
@@ -14,8 +16,20 @@ class FirebaseApi {
   Future<void> initNotifications() async {
     // Request notification permissions
     final NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
     );
+    // Listen for token refresh
+    _firebaseMessaging.onTokenRefresh.listen((newToken) async {
+      print("New FCM Token: $newToken");
+      await _saveTokenToFirestore(newToken);
+    });
+
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
@@ -39,6 +53,7 @@ class FirebaseApi {
     final token = await _firebaseMessaging.getToken();
     if (token != null) {
       print('FCM Token: $token');
+      await _saveTokenToFirestore(token);
     }
   }
 
@@ -66,8 +81,22 @@ class FirebaseApi {
 
       // Save to Hive
       await localDataSource.saveNotification(notificationModel);
+
+      // 👉 Show as a real local notification
+      await NotificationService.showNotification(
+        title: notificationModel.title,
+        body: notificationModel.body,
+      );
     }
   }
+  Future<void> _saveTokenToFirestore(String token) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await FirebaseFirestore.instance.collection('user_tokens').doc(userId).set({
+      'token': token,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
 
   /// Initialize push notification listeners
   void initPushNotifications() {

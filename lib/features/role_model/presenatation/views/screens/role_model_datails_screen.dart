@@ -50,7 +50,7 @@ class _RoleModelDetailsScreenState extends State<RoleModelDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: "role_model_${widget.roleModel.id}", // unique tag
+              tag: "role_model_${widget.roleModel.id}",
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: CachedNetworkImage (

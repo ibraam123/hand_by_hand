@@ -142,7 +142,8 @@ class NotificationCard extends StatelessWidget {
           runSpacing: 4.h, // Vertical space between lines
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Flexible(
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: double.infinity),
               child: Text(
                 notification.body,
                 style: theme.textTheme.bodyMedium,

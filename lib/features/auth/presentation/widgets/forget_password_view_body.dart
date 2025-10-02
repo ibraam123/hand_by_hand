@@ -82,7 +82,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CustomTextFormField(
-                            hintText: AuthKeys.enterYourEmail.tr(), // ✅ hint text
+                            hintText: AuthKeys.email.tr(),
                             controller: _emailController,
                             prefixIcon: Icons.email,
                             validator: (value) {

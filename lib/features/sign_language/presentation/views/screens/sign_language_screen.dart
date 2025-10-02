@@ -8,8 +8,25 @@ import '../../logic/sign_language_cubit.dart';
 import '../widgets/sign_lesson_container.dart';
 
 
-class SignLanguageScreen extends StatelessWidget {
+class SignLanguageScreen extends StatefulWidget {
   const SignLanguageScreen({super.key});
+
+  @override
+  State<SignLanguageScreen> createState() => _SignLanguageScreenState();
+}
+
+class _SignLanguageScreenState extends State<SignLanguageScreen> {
+
+
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final langCode = context.locale.languageCode;
+    context.read<SignLanguageCubit>().fetchSignLessons(langCode);
+  }
+
 
   @override
   Widget build(BuildContext context) {

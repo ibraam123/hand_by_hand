@@ -95,11 +95,11 @@ class _PlacesListState extends State<PlacesList> {
                   onPressed: () {
                     if (isFavorite) {
                       favoritesBox.delete(key);
-                      _showTopMessage(context, "Removed from favorites",
+                      _showTopMessage(context, "${place.name} Removed from favorites",
                           background: theme.colorScheme.error);
                     } else {
                       favoritesBox.put(key, true);
-                      _showTopMessage(context, "Added to favorites",
+                      _showTopMessage(context, "${place.name} Added to favorites",
                           background: theme.colorScheme.primary);
                     }
                   },

@@ -9,10 +9,10 @@ part 'sign_language_state.dart';
 class SignLanguageCubit extends Cubit<SignLanguageState> {
   SignLanguageCubit(this.signLessonRepo) : super(SignLanguageInitial());
   final SignLessonRepo signLessonRepo;
-  Future<void> fetchSignLessons() async {
+  Future<void> fetchSignLessons(String langCode) async {
     try {
       emit(SignLanguageLoading());
-      final signLessons = await signLessonRepo.getSignLessons();
+      final signLessons = await signLessonRepo.getSignLessons(langCode);
       emit(SignLanguageLoaded(signLessons));
     } catch (e) {
       emit(SignLanguageError('Failed to fetch sign lessons: $e'));

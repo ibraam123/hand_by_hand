@@ -8,8 +8,8 @@ class SignLessonRepoImpl implements SignLessonRepo {
 
   SignLessonRepoImpl(this.remoteDataSource);
   @override
-  Future<List<SignLessonEntitiy>> getSignLessons() async {
-    final models = await remoteDataSource.fetchSignLessons();
+  Future<List<SignLessonEntitiy>> getSignLessons(String langCode) async {
+    final models = await remoteDataSource.fetchSignLessons(langCode);
     return models;
   }
 }
