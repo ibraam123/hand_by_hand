@@ -49,10 +49,10 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
     CategoryEntity("hospital", CategoriesPlaces.hospital.tr()),
   ];
 
+
   @override
   void initState() {
     super.initState();
-    context.read<PlaceCubit>().fetchPlaces();
   }
 
   @override
@@ -114,6 +114,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
                   child: PlacesList(
                     places: filteredPlaces,
                     mapController: _mapController,
+                    placesLoaded: state,
                   ),
                 ),
               ],

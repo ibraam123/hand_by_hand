@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand/features/accessible_places/presentation/views/widgets/custom_text_field.dart';
 import 'package:hand_by_hand/features/accessible_places/presentation/views/widgets/save_button.dart';
+import 'package:hand_by_hand/features/auth/presentation/logic/auth_cubit.dart';
 import '../../../../../core/config/app_keys_localization.dart';
+import '../../../../../core/widgets/custom_snackbar.dart';
+import '../../../../auth/data/models/user_progress.dart';
 import '../../../data/models/place_model.dart';
 import '../../../domain/entities/category_entitiy.dart';
 import '../../logic/place_cubit.dart';
 import 'bottom_sheet_handle.dart';
 import 'category_drop_menu.dart';
-
 
 class AddPlaceBottomSheet extends StatefulWidget {
   const AddPlaceBottomSheet({super.key});
@@ -23,6 +25,7 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
   final _nameController = TextEditingController();
   final _latController = TextEditingController();
   final _lngController = TextEditingController();
+
   String _type = "cafe";
 
   @override
@@ -43,7 +46,6 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
     CategoryEntity("mall", CategoriesPlaces.mall.tr()),
     CategoryEntity("hospital", CategoriesPlaces.hospital.tr()),
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +80,8 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
                 controller: _nameController,
                 label: AccessiblePlaces.placeName.tr(),
                 icon: Icons.place,
-                validator: (v) => v!.isEmpty ? AccessiblePlaces.enterName.tr() : null,
+                validator: (v) =>
+                    v!.isEmpty ? AccessiblePlaces.enterName.tr() : null,
               ),
               const SizedBox(height: 12),
 
@@ -87,7 +90,8 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
                 label: AccessiblePlaces.latitude.tr(),
                 icon: Icons.map,
                 keyboardType: TextInputType.number,
-                validator: (v) => v!.isEmpty ? AccessiblePlaces.enterLatitude.tr() : null,
+                validator: (v) =>
+                    v!.isEmpty ? AccessiblePlaces.enterLatitude.tr() : null,
               ),
               const SizedBox(height: 12),
 
@@ -96,7 +100,8 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
                 label: AccessiblePlaces.longitude.tr(),
                 icon: Icons.map_outlined,
                 keyboardType: TextInputType.number,
-                validator: (v) => v!.isEmpty ? AccessiblePlaces.enterLongitude.tr() : null,
+                validator: (v) =>
+                    v!.isEmpty ? AccessiblePlaces.enterLongitude.tr() : null,
               ),
               const SizedBox(height: 12),
 
@@ -112,32 +117,45 @@ class _AddPlaceBottomSheetState extends State<AddPlaceBottomSheet> {
                 icon: Icons.save,
                 onSave: () {
                   if (_formKey.currentState!.validate()) {
+                    final authState = context.read<AuthCubit>().state;
+
+                    if (authState is AuthError) {
+                      CustomSnackBar.show(
+                        context,
+                        message: authState.errorMessage,
+                        backgroundColor: theme.colorScheme.onError,
+                        textColor: theme.colorScheme.onErrorContainer,
+                        icon: Icons.error,
+                        duration: Duration(seconds: 2),
+                      );
+                      return;
+                    }
+                    final user = (authState as AuthSuccess).user;
+                    final progress = user?.progress ?? UserProgress(
+                      totalLessons: 0,
+                      completedLessons: 0,
+                      streakDays: 0,
+                      contributedPlaces: 0,
+                    );
+
                     final place = PlaceModel(
+                      id: '',
                       name: _nameController.text,
                       lat: double.parse(_latController.text),
                       lng: double.parse(_lngController.text),
                       type: _type,
                     );
 
-                    context.read<PlaceCubit>().addPlace(place);
+                    context.read<PlaceCubit>().addPlace(place , user!.id , progress);
                     Navigator.pop(context);
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "✅ Place added successfully",
-                          style: TextStyle(color: theme.colorScheme.onError),
-                        ),
-                        backgroundColor: Colors.green,
-                        behavior: SnackBarBehavior.floating,
-                        margin: const EdgeInsets.all(16),
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        duration: const Duration(seconds: 2),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
+                    CustomSnackBar.show(
+                      context,
+                      message: "✅ Place added successfully",
+                      backgroundColor: theme.colorScheme.primary,
+                      textColor: theme.colorScheme.onPrimary,
+                      icon: Icons.check_circle,
+                      duration: Duration(seconds: 2),
                     );
                   }
                 },

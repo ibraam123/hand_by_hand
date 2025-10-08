@@ -1,23 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hand_by_hand/features/community/data/models/post_model.dart';
 
 import '../../../../../core/errors/error.dart';
 
 abstract class PostsRemote {
   Future<Either<Failure, void>> addPost(Map<String, dynamic> post);
-  Future<Either<Failure, List<Map<String, dynamic>>>> getPosts();
+  Future<Either<Failure, List<PostModel>>> getPosts({
+    DocumentSnapshot? lastDoc,
+    required int limit,
+  });
   Future<Either<Failure, List<Map<String, dynamic>>>> getComments(
-      String postId, {
-        DocumentSnapshot? lastDoc,
-      });
+    String postId, {
+    DocumentSnapshot? lastDoc,
+  });
   Future<Either<Failure, void>> addComment(String postId, String comment);
-  Future<Either<Failure, int>> likePost(String postId);
+  Future<Either<Failure, Map<String, dynamic>>> likePost(String postId);
 }
 
 class PostsRemoteImpl implements PostsRemote {
   final FirebaseFirestore firestore;
-  PostsRemoteImpl(this.firestore);
+  final FirebaseAuth firebaseAuth;
+  PostsRemoteImpl(this.firestore, this.firebaseAuth);
 
   @override
   Future<Either<Failure, void>> addPost(Map<String, dynamic> post) async {
@@ -36,21 +41,28 @@ class PostsRemoteImpl implements PostsRemote {
   }
 
   @override
-  Future<Either<Failure, List<Map<String, dynamic>>>> getPosts() async {
+  Future<Either<Failure, List<PostModel>>> getPosts({
+    DocumentSnapshot? lastDoc,
+    required int limit,
+  }
+      ) async {
     try {
-      final snapshot = await firestore
-          .collection("posts")
-          .limit(50)
-          .orderBy("date", descending: true)
-          .get();
+      Query query = firestore.collection("posts").limit(limit).orderBy("date",descending: true);
 
-      final posts = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return {
-          "id": doc.id,
-          ...data,
-        };
-      }).toList();
+      if (lastDoc != null) {
+        query = query.startAfterDocument(lastDoc);
+      }
+
+      final snapshot = await query.get();
+
+      final posts = snapshot.docs
+          .map(
+            (doc) => PostModel.fromFirestore(
+          doc.data() as Map<String, dynamic>,
+          snapshot: doc,
+        ),
+      )
+          .toList();
 
       return Right(posts);
     } catch (e) {
@@ -60,9 +72,9 @@ class PostsRemoteImpl implements PostsRemote {
 
   @override
   Future<Either<Failure, List<Map<String, dynamic>>>> getComments(
-      String postId, {
-        DocumentSnapshot? lastDoc,
-      }) async {
+    String postId, {
+    DocumentSnapshot? lastDoc,
+  }) async {
     try {
       Query query = firestore
           .collection('posts')
@@ -95,11 +107,11 @@ class PostsRemoteImpl implements PostsRemote {
 
   @override
   Future<Either<Failure, void>> addComment(
-      String postId,
-      String comment,
-      ) async {
+    String postId,
+    String comment,
+  ) async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = firebaseAuth.currentUser;
 
       final postRef = firestore.collection("posts").doc(postId);
 
@@ -114,10 +126,7 @@ class PostsRemoteImpl implements PostsRemote {
           "createdAt": FieldValue.serverTimestamp(),
         };
 
-        transaction.set(
-          postRef.collection("comments").doc(),
-          commentData,
-        );
+        transaction.set(postRef.collection("comments").doc(), commentData);
 
         // Update commentCount in post doc
         final currentCount = snapshot["commentCount"] ?? 0;
@@ -131,12 +140,12 @@ class PostsRemoteImpl implements PostsRemote {
   }
 
   @override
-  Future<Either<Failure, int>> likePost(String postId) async {
+  Future<Either<Failure, Map<String, dynamic>>> likePost(String postId) async {
     try {
       final postRef = firestore.collection("posts").doc(postId);
-      final userEmail =
-          FirebaseAuth.instance.currentUser?.email ?? 'anonymous';
+      final userEmail = firebaseAuth.currentUser?.email ?? 'anonymous';
       int updatedLikes = 0;
+      bool isLiked = false;
 
       await firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(postRef);
@@ -144,15 +153,20 @@ class PostsRemoteImpl implements PostsRemote {
 
         final data = snapshot.data()!;
         final likedBy = List<String>.from(data["likedBy"] ?? []);
+        final currentLikes = data["likes"] ?? 0;
 
+        // ✅ If user already liked → Unlike (decrement)
         if (likedBy.contains(userEmail)) {
-          // Already liked
-          updatedLikes = data["likes"] ?? 0;
-          return;
+          likedBy.remove(userEmail);
+          updatedLikes = currentLikes > 0 ? currentLikes - 1 : 0;
+          isLiked = false;
         }
-
-        likedBy.add(userEmail);
-        updatedLikes = (data["likes"] ?? 0) + 1;
+        // ✅ Else → Like (increment)
+        else {
+          likedBy.add(userEmail);
+          updatedLikes = currentLikes + 1;
+          isLiked = true;
+        }
 
         transaction.update(postRef, {
           "likes": updatedLikes,
@@ -160,9 +174,16 @@ class PostsRemoteImpl implements PostsRemote {
         });
       });
 
-      return Right(updatedLikes);
+      return Right(
+        {
+          "likes": updatedLikes,
+          "isLiked": isLiked,
+        },
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+
 }

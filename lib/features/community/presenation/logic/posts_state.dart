@@ -9,7 +9,8 @@ final class PostsLoading extends PostsState {}
 
 final class PostsLoaded extends PostsState {
   final List<PostEntity> posts;
-  PostsLoaded(this.posts);
+  final bool hasMore;
+  PostsLoaded(this.posts , {this.hasMore = true});
 }
 class PostsActionError extends PostsState {
   final String message;

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PostEntity {
   final String id;
   final String title;
@@ -6,6 +8,8 @@ class PostEntity {
   final int likes;
   final int commentCount;
   final List<String> likedBy;
+  final DocumentSnapshot? firestoreDoc;
+
 
   PostEntity({
     required this.id,
@@ -15,6 +19,7 @@ class PostEntity {
     required this.likes,
     required this.commentCount,
     this.likedBy = const [],
+    this.firestoreDoc,
   });
 
   PostEntity copyWith({
@@ -25,6 +30,7 @@ class PostEntity {
     int? likes,
     int? commentCount,
     List<String>? likedBy,
+    DocumentSnapshot? firestoreDoc,
   }) {
     return PostEntity(
       id: id ?? this.id,
@@ -34,6 +40,7 @@ class PostEntity {
       likes: likes ?? this.likes,
       commentCount: commentCount ?? this.commentCount,
       likedBy: likedBy ?? this.likedBy,
+      firestoreDoc: firestoreDoc ?? this.firestoreDoc,
     );
   }
 }

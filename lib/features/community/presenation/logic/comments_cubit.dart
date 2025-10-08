@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../data/data_sources/remote/home_remote.dart';
+import '../../data/data_sources/remote/posts_remote.dart';
 
 part 'comments_state.dart';
 

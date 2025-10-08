@@ -8,11 +8,38 @@ import '../../../../core/utils/helper/open_add_post_sheet.dart';
 import '../logic/posts_cubit.dart';
 import '../widgets/post_card.dart';
 
-class PostsScreen extends StatelessWidget {
+class PostsScreen extends StatefulWidget {
   const PostsScreen({super.key});
 
+  @override
+  State<PostsScreen> createState() => _PostsScreenState();
+}
+
+class _PostsScreenState extends State<PostsScreen> {
+  final ScrollController _scrollController = ScrollController();
   User? get user => FirebaseAuth.instance.currentUser;
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _scrollController.dispose();
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<PostsCubit>().loadPosts();
+    _scrollController.addListener(() {
+      _onScroll();
+    });
+  }
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        0.7 * _scrollController.position.maxScrollExtent) {
+      context.read<PostsCubit>().loadMorePosts();
+    }
+  }
 
 
   @override
@@ -94,20 +121,29 @@ class PostsScreen extends StatelessWidget {
                 context.read<PostsCubit>().refreshPosts();
               },
               child: ListView.separated(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(16),
-                itemCount: posts.length,
+                itemCount: state.hasMore ? posts.length + 1 : posts.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final post = posts[index];
-                  return PostCard(
-                    post: post,
-                    onLike: () {
-                      context.read<PostsCubit>().likePost(post.id);
-                    },
-                    onAddComment: (comment) {
-                      context.read<PostsCubit>().addComment(post.id, comment);
-                    },
-                  );
+                  if (index < posts.length) {
+                    final post = posts[index];
+                    return PostCard(
+                      post: post,
+                      onLike: () => context.read<PostsCubit>().likePost(post.id),
+                      onAddComment: (comment) =>
+                          context.read<PostsCubit>().addComment(post.id, comment),
+                    );
+                  } else {
+                    // 👇 show loading indicator if more posts available
+                    final hasMore = state.hasMore;
+                    return hasMore
+                        ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    )
+                        : const SizedBox.shrink();
+                  }
                 },
               ),
             );

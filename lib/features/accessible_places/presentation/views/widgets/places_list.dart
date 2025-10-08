@@ -1,18 +1,27 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../domain/entities/place_entitiy.dart';
+import '../../logic/place_cubit.dart';
 
 class PlacesList extends StatefulWidget {
   final List<PlaceEntitiy> places;
   final MapController mapController;
+  final bool isLoadingMore;
+  final PlacesLoaded placesLoaded;
+
+
 
   const PlacesList({
     super.key,
     required this.places,
     required this.mapController,
+    this.isLoadingMore = false,
+    required this.placesLoaded,
   });
 
   @override
@@ -21,12 +30,32 @@ class PlacesList extends StatefulWidget {
 
 class _PlacesListState extends State<PlacesList> {
   late final Box<bool> favoritesBox;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _scrollController.dispose();
+  }
+
 
   @override
   void initState() {
     super.initState();
     favoritesBox = Hive.box<bool>('favorites');
+    _scrollController.addListener(() {
+      _onScroll();
+    });
   }
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        0.7 * _scrollController.position.maxScrollExtent) {
+      final langCode = context.locale.languageCode;
+      context.read<PlaceCubit>().fetchMorePlaces(langCode: langCode);
+    }
+  }
+
 
   String _placeKey(PlaceEntitiy place) {
     return (place.name.toString().trim().isNotEmpty == true)
@@ -71,50 +100,60 @@ class _PlacesListState extends State<PlacesList> {
       valueListenable: favoritesBox.listenable(),
       builder: (context, box, _) {
         return ListView.builder(
-          key: ValueKey('places_list_${widget.places.length}_${widget.places.hashCode}'),
-          itemCount: widget.places.length,
+          controller: _scrollController,
+          itemCount: widget.placesLoaded.hasMore ? widget.places.length + 1 : widget.places.length,
           itemBuilder: (context, index) {
-            final place = widget.places[index];
-            final key = _placeKey(place);
-            final isFavorite = box.get(key, defaultValue: false) ?? false;
 
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: ListTile(
-                key: ValueKey('place_${place.name}_${place.lat}_${place.lng}'),
-                leading: Icon(Icons.place, color: theme.colorScheme.secondary),
-                title: Text(place.name),
-                subtitle: Text("Type: ${place.type}"),
-                trailing: IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite
-                        ? Colors.red
-                        : theme.iconTheme.color,
+            if(index < widget.places.length){
+              final place = widget.places[index];
+              final key = _placeKey(place);
+              final isFavorite = box.get(key, defaultValue: false) ?? false;
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: ListTile(
+                  leading: Icon(Icons.place, color: theme.colorScheme.secondary),
+                  title: Text(place.name),
+                  subtitle: Text("Type: ${place.type}"),
+                  trailing: IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite
+                          ? Colors.red
+                          : theme.iconTheme.color,
+                    ),
+                    onPressed: () {
+                      if (isFavorite) {
+                        favoritesBox.delete(key);
+                        _showTopMessage(context, "${place.name} Removed from favorites",
+                            background: theme.colorScheme.error);
+                      } else {
+                        favoritesBox.put(key, true);
+                        _showTopMessage(context, "${place.name} Added to favorites",
+                            background: theme.colorScheme.primary);
+                      }
+                    },
                   ),
-                  onPressed: () {
-                    if (isFavorite) {
-                      favoritesBox.delete(key);
-                      _showTopMessage(context, "${place.name} Removed from favorites",
-                          background: theme.colorScheme.error);
-                    } else {
-                      favoritesBox.put(key, true);
-                      _showTopMessage(context, "${place.name} Added to favorites",
-                          background: theme.colorScheme.primary);
-                    }
+                  onTap: () {
+                    final latLng = LatLng(place.lat, place.lng);
+                    widget.mapController.move(latLng, 15);
+                    _showTopMessage(
+                      context,
+                      "Centered on ${place.name}",
+                      background: theme.colorScheme.secondary,
+                    );
                   },
                 ),
-                onTap: () {
-                  final latLng = LatLng(place.lat, place.lng);
-                  widget.mapController.move(latLng, 15);
-                  _showTopMessage(
-                    context,
-                    "Centered on ${place.name}",
-                    background: theme.colorScheme.secondary,
-                  );
-                },
-              ),
-            );
+              );
+            }else{
+              final hasMore = widget.placesLoaded.hasMore;
+              return hasMore ?
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              )
+                  : const SizedBox.shrink();
+            }
+
           },
         );
       },

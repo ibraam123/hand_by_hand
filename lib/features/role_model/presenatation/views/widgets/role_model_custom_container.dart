@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 import '../../../../../core/config/routes.dart';
 import '../../../domain/entities/role_model_entity.dart';
@@ -85,9 +86,20 @@ class RoleModelCustomContainer extends StatelessWidget {
                         width: 100.w,
                         height: 100.w,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(
-                            color: theme.colorScheme.primary,
+                        placeholder: (context, url) => Shimmer(
+                          duration: const Duration(seconds: 2),
+                          interval: const Duration(seconds: 1),
+                          color: theme.colorScheme.onSurfaceVariant,
+                          colorOpacity: 0.3,
+                          enabled: true,
+                          direction: const ShimmerDirection.fromLTRB(),
+                          child: Container(
+                            width: 100.w,
+                            height: 100.w,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(10.0.r),
+                            ),
                           ),
                         ),
                         errorWidget: (context, url, error) => Icon(

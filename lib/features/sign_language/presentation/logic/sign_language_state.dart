@@ -9,7 +9,16 @@ final class SignLanguageLoading extends SignLanguageState {}
 
 final class SignLanguageLoaded extends SignLanguageState {
   final List<SignLessonEntitiy> signLessons;
-  SignLanguageLoaded(this.signLessons);
+  final bool hasMore;
+  final DocumentSnapshot? lastDocument;
+  final bool isLoadingMore;
+
+  SignLanguageLoaded(
+      this.signLessons, {
+        this.lastDocument,
+        this.hasMore = true,
+        this.isLoadingMore = false,
+      });
 }
 
 final class SignLanguageError extends SignLanguageState {

@@ -144,9 +144,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                 });
                               },
                               icon: Icon(
-                                isObscure
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                                isObscure ? Icons.visibility : Icons.visibility_off,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),

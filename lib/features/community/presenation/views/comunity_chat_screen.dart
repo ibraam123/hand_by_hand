@@ -67,6 +67,7 @@ class ChatScreenBody extends StatelessWidget {
                         final msg = messages[index];
                         final isMe =
                             msg.id == FirebaseAuth.instance.currentUser?.email;
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
                         return Align(
                           alignment: isMe
                               ? Alignment.centerRight
@@ -85,8 +86,10 @@ class ChatScreenBody extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: isMe
-                                  ? Colors.deepPurpleAccent
-                                  : Colors.blue,
+                                  ? (isDark ? Colors.deepPurpleAccent : Colors.blue)
+                                  : (isDark
+                                      ? Colors.grey[850]
+                                      : Colors.grey[200]),
                               borderRadius: BorderRadius.only(
                                 topLeft: const Radius.circular(16),
                                 topRight: const Radius.circular(16),
@@ -101,17 +104,21 @@ class ChatScreenBody extends StatelessWidget {
                               children: [
                                 Text(
                                   msg.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white70,
+                                    color: isMe || isDark
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   msg.text,
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: isMe || isDark
+                                        ? Colors.white
+                                        : Colors.black,
                                     fontSize: constraints.maxWidth < 600
                                         ? 14
                                         : 16,

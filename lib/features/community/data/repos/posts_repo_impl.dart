@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/error.dart';
 import '../../domain/entities/post_entity.dart';
 import '../../domain/repos/posts_repo.dart';
-import '../data_sources/remote/home_remote.dart';
+import '../data_sources/remote/posts_remote.dart';
 import '../models/post_model.dart';
 
 class PostsRepoImpl implements PostsRepo {
@@ -26,41 +26,28 @@ class PostsRepoImpl implements PostsRepo {
   }
 
   @override
-  Future<Either<Failure, List<PostEntity>>> getPosts() async {
-    final result = await remote.getPosts();
-    return result.fold((failure) => Left(failure), (posts) {
-      final entities = posts.map((post) {
-        return PostModel.fromJson(post, post["id"]);
-      }).toList();
-      return Right(entities);
-    });
+  Future<Either<Failure, List<PostEntity>>> getPosts({
+    required int limit,
+    DocumentSnapshot? lastDoc,
+  }
+      ) async {
+    final posts = await remote.getPosts(
+      lastDoc: lastDoc,
+      limit: limit,
+    );
+    return posts.fold(
+      (failure) => Left(failure),
+      (posts) => Right(posts),
+    );
   }
 
-  @override
-  Stream<List<PostEntity>> getPostsStream() {
-    return FirebaseFirestore.instance
-        .collection('posts')
-        .orderBy('date', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) {
-      final data = doc.data();
-      return PostEntity(
-        id: doc.id,
-        title: data['title'] ?? '',
-        email: data['email'] ?? '',
-        date: data['date'] ?? '',
-        likes: data['likes'] ?? 0,
-        commentCount: data['commentCount'] ?? 0,
-      );
-    }).toList());
-  }
   @override
   Future<Either<Failure, void>> addComment(String postId, String comment) {
     return remote.addComment(postId, comment);
   }
 
   @override
-  Future<Either<Failure, int>> likePost(String postId) {
+  Future<Either<Failure, Map<String, dynamic>>> likePost(String postId) {
     return remote.likePost(postId);
   }
 }

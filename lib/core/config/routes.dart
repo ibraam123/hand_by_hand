@@ -22,6 +22,7 @@ import '../../features/sign_language/presentation/views/screens/sign_language_le
 import '../../features/sign_language/presentation/views/screens/sign_language_screen.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
 import '../../features/know_about_us/presenatation/views/know_about_us _view.dart';
+import '../widgets/full_screen_add.dart';
 
 class AppRoutes {
   static const String kSplashView = '/';
@@ -44,6 +45,7 @@ class AppRoutes {
   static const String kPlaces = '/places';
   static const String kSignLanguageLessonVideo = '/signLanguageLessonVideo';
   static const String kLanguageSettings = '/languageSettings';
+  static const String kFullScreenAds = '/fullScreenAds';
 
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
@@ -141,6 +143,10 @@ class AppRoutes {
          path: kLanguageSettings,
          builder: (context, state) => const LanguageSettingsScreen(),
        ),
+      GoRoute(
+        path: kFullScreenAds,
+        builder: (context, state) => const FullScreenAd(),
+      ),
     ],
   );
 }

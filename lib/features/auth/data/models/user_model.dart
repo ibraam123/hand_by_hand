@@ -1,14 +1,18 @@
+import 'package:hand_by_hand/features/auth/data/models/user_progress.dart';
+
 class UserModel {
   final String id;
   final String email;
   final String firstName;
   final String lastName;
+  final UserProgress? progress;
 
   UserModel({
     required this.id,
     required this.email,
     required this.firstName,
     required this.lastName,
+    this.progress,
   }) {
     // ADD: Input validation
     if (id.isEmpty) throw ArgumentError("User ID cannot be empty");
@@ -24,6 +28,7 @@ class UserModel {
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
+      'progress': progress?.toMap(),
     };
   }
 
@@ -34,6 +39,9 @@ class UserModel {
         email: map['email'] as String,
         firstName: map['firstName'] as String,
         lastName: map['lastName'] as String,
+          progress: map['progress'] != null
+              ? UserProgress.fromMap(map['progress'])
+              : null
       );
     } catch (e) {
       throw FormatException("Invalid user data: $e");
@@ -49,14 +57,14 @@ class UserModel {
     String? email,
     String? firstName,
     String? lastName,
-    DateTime? birthDate,
-    String? gender,
+    UserProgress? progress,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
+      progress: progress ?? this.progress,
     );
   }
   List<Object?> get props => [id, email, firstName, lastName];

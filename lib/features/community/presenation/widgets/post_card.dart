@@ -3,7 +3,6 @@ import 'package:hand_by_hand/features/community/presenation/widgets/post_actions
 import 'package:hand_by_hand/features/community/presenation/widgets/post_header.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../../core/services/tts_service.dart';
 import '../../domain/entities/post_entity.dart';
 import 'comments_bottom_sheet.dart';
 
@@ -78,13 +77,17 @@ class _PostCardState extends State<PostCard> {
             ),
             const SizedBox(height: 12),
             PostActions(
+              theme: theme,
+              color: theme.iconTheme.color,
               hasLiked: _hasLiked,
               likes: widget.post.likes,
               comments: _localCommentCount,
               onLike: () {
-                if (!_hasLiked && widget.onLike != null) {
-                  setState(() => _hasLiked = true);
-                  widget.onLike!();
+                if (widget.onLike != null) {
+                  setState(() {
+                    _hasLiked = !_hasLiked; // toggle like/unlike instantly
+                  });
+                  widget.onLike!(); // notify Cubit to update Firestore
                 }
               },
               onCommentTap: () => _openCommentsSheet(context),

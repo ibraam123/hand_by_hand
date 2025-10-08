@@ -12,6 +12,9 @@ final class AuthLoading extends AuthState {
   const AuthLoading({this.action});
 }
 
+final class AuthUnauthenticated extends AuthState {}
+
+
 final class AuthSuccess extends AuthState {
   final UserModel? user;
   const AuthSuccess({this.user});

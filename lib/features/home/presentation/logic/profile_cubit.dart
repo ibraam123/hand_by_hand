@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/entities/user_profile.dart';
 import '../../domain/usecases/get_profile_use_case.dart';
@@ -29,6 +28,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileError("Failed to load profile"));
     }
   }
+
 
   Future<void> saveProfile(String firstName, String lastName) async {
     emit(ProfileLoading());

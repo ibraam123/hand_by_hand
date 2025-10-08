@@ -6,6 +6,9 @@ class PostActions extends StatelessWidget {
   final int comments;
   final VoidCallback? onLike;
   final VoidCallback? onCommentTap;
+  final theme;
+  final color;
+
 
   const PostActions({
     super.key,
@@ -14,19 +17,19 @@ class PostActions extends StatelessWidget {
     required this.comments,
     this.onLike,
     this.onCommentTap,
+    required this.theme,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = theme.iconTheme.color;
 
     return Row(
       children: [
         IconButton(
           icon: Icon(
-            Icons.favorite ,
-            color: color,
+            hasLiked ? Icons.favorite : Icons.favorite_border,
+            color: hasLiked ? Colors.red : color,
           ),
           onPressed: onLike,
         ),

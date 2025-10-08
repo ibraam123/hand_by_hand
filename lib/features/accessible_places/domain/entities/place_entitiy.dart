@@ -1,5 +1,6 @@
 // entities/place.dart
 class PlaceEntitiy {
+
   final String name;
   final double lat;
   final double lng;

@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hand_by_hand/core/utils/helper/theme_cubit.dart';
+import 'package:hand_by_hand/features/accessible_places/data/data_sources/remote_data_source/places_remote.dart';
 import 'package:hand_by_hand/features/accessible_places/domain/repos/place_repo.dart';
-import 'package:hand_by_hand/features/community/data/data_sources/remote/home_remote.dart';
+import 'package:hand_by_hand/features/auth/data/repo/user_repo.dart';
+import 'package:hand_by_hand/features/community/data/data_sources/remote/posts_remote.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/comments_cubit.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/message_cubit.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/posts_cubit.dart';
@@ -16,8 +19,10 @@ import 'package:hand_by_hand/features/notification/data/models/notification_mode
 import 'package:hand_by_hand/features/sign_language/domain/repos/sign_lesson_repo.dart';
 import 'package:hive_flutter/adapters.dart';
 
+import 'core/services/progress_service.dart';
 import 'features/accessible_places/data/repos/place_repo_impl.dart';
 import 'features/accessible_places/presentation/logic/place_cubit.dart';
+import 'features/auth/domain/repo/user_repo_impl.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/community/data/repos/messages_repo.dart';
 import 'features/community/data/repos/posts_repo_impl.dart';
@@ -48,12 +53,17 @@ Future<void> init() async {
   await Hive.initFlutter();
 
   Hive.registerAdapter(NotificationModelAdapter());
+  await MobileAds.instance.initialize();
 
   final favoritesBox = await Hive.openBox<bool>('favorites');
-  final notificationsBox = await Hive.openBox<NotificationModel>('notifications');
+  final notificationsBox = await Hive.openBox<NotificationModel>(
+    'notifications',
+  );
 
   serviceLocator.registerLazySingleton<Box<bool>>(() => favoritesBox);
-  serviceLocator.registerLazySingleton<Box<NotificationModel>>(() => notificationsBox);
+  serviceLocator.registerLazySingleton<Box<NotificationModel>>(
+    () => notificationsBox,
+  );
 
   serviceLocator.registerLazySingleton<NotificationLocalDataSource>(
     () => NotificationLocalDataSourceImpl(),
@@ -62,7 +72,6 @@ Future<void> init() async {
   serviceLocator.registerLazySingleton<NotificationsCubit>(
     () => NotificationsCubit(serviceLocator<NotificationRepository>()),
   );
-
 
   serviceLocator.registerLazySingleton<NotificationRepository>(
     () => NotificationRepository(localDataSource: serviceLocator()),
@@ -115,19 +124,25 @@ Future<void> init() async {
     () => SignLessonRepoImpl(serviceLocator<SignLanguageRemoteDataSource>()),
   );
 
-  serviceLocator.registerLazySingleton<PlaceRepository>(
-    () => PlaceRepositoryImpl(serviceLocator<FirebaseFirestore>()),
+  serviceLocator.registerLazySingleton<PlacesRemote>(
+    () => PlacesRemoteImpl(serviceLocator<FirebaseFirestore>()),
   );
 
-  // ✅ Cubits / Blocs
+  serviceLocator.registerLazySingleton<PlaceRepository>(
+    () => PlaceRepositoryImpl(serviceLocator<PlacesRemote>()),
+  );
+
+  serviceLocator.registerLazySingleton<UserRepository>(
+    () => UserRepositoryImpl(serviceLocator<FirebaseFirestore>()),
+  );
+
   serviceLocator.registerFactory<AuthCubit>(
     () => AuthCubit(
       serviceLocator<FirebaseAuth>(),
-      serviceLocator<FirebaseFirestore>(),
       serviceLocator<GoogleSignIn>(),
+      serviceLocator<UserRepository>(),
     ),
   );
-
 
   serviceLocator.registerLazySingleton<ProfileLocalDataSource>(
     () => ProfileLocalDataSourceImpl(serviceLocator<SharedPreferences>()),
@@ -144,11 +159,12 @@ Future<void> init() async {
     () => SaveProfileUseCase(serviceLocator<ProfileRepository>()),
   );
 
-  serviceLocator.registerLazySingleton<ProfileCubit>(() => ProfileCubit(
-    getProfileUseCase: serviceLocator<GetProfileUseCase>(),
-    saveProfileUseCase: serviceLocator<SaveProfileUseCase>(),
-  ));
-
+  serviceLocator.registerLazySingleton<ProfileCubit>(
+    () => ProfileCubit(
+      getProfileUseCase: serviceLocator<GetProfileUseCase>(),
+      saveProfileUseCase: serviceLocator<SaveProfileUseCase>(),
+    ),
+  );
 
   serviceLocator.registerLazySingleton<FavoritesRepository>(
     () => FavoritesRepositoryImpl(serviceLocator<Box<bool>>()),
@@ -159,7 +175,10 @@ Future<void> init() async {
   );
 
   serviceLocator.registerLazySingleton<PostsRemote>(
-    () => PostsRemoteImpl(serviceLocator<FirebaseFirestore>()),
+    () => PostsRemoteImpl(
+      serviceLocator<FirebaseFirestore>(),
+      serviceLocator<FirebaseAuth>(),
+    ),
   );
   serviceLocator.registerLazySingleton<PostsRepo>(
     () => PostsRepoImpl(serviceLocator<PostsRemote>()),
@@ -187,20 +206,29 @@ Future<void> init() async {
     () => RoleModelCubit(serviceLocator<RoleModelRepository>()),
   );
 
+  serviceLocator.registerLazySingleton<ProgressService>(
+    () => ProgressService(serviceLocator<UserRepository>()),
+  );
+
   serviceLocator.registerFactory<SignLanguageCubit>(
-    () => SignLanguageCubit(serviceLocator<SignLessonRepo>()),
+    () => SignLanguageCubit(
+      serviceLocator<SignLessonRepo>(),
+      serviceLocator<ProgressService>(),
+    ),
   );
 
   serviceLocator.registerFactory<PlaceCubit>(
-    () => PlaceCubit(serviceLocator<PlaceRepository>()),
+    () => PlaceCubit(
+      serviceLocator<PlaceRepository>(),
+      serviceLocator<ProgressService>(),
+    ),
   );
 
-  serviceLocator.registerFactory<ThemeCubit>(
-    () => ThemeCubit(),
-  );
+  serviceLocator.registerFactory<ThemeCubit>(() => ThemeCubit());
 
   // SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
-  serviceLocator.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-
+  serviceLocator.registerLazySingleton<SharedPreferences>(
+    () => sharedPreferences,
+  );
 }

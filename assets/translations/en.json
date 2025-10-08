@@ -5,6 +5,14 @@
   "choose_language": "Choose your language",
 
 
+  "categories_lessons": {
+    "all" : "All",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "hard": "Hard",
+    "very_hard": "Very Hard"
+  },
+
   "categories_places" : {
     "all" : "all" ,
     "cafe" : "cafe" ,

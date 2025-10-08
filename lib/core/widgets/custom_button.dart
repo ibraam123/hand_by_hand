@@ -9,6 +9,8 @@ class CustomButton extends StatelessWidget {
     this.isLoading = false,
     this.width,
     required this.color, this.iconAssets,
+    this.textColor,
+    this.borderColor,
   });
 
   final String text;
@@ -17,6 +19,8 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final Color color;
   final String? iconAssets;
+  final Color? textColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {

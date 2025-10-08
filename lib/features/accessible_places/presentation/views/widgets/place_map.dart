@@ -29,7 +29,7 @@ class PlacesMap extends StatelessWidget {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate:"https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key=R9IARqJDkGKr7KsRjDOQ",
             userAgentPackageName: 'com.hand_by_hand.name',
           ),
           MarkerLayer(

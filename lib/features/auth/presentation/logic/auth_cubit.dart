@@ -1,30 +1,72 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hand_by_hand/core/config/app_constant.dart';
 import 'package:hand_by_hand/core/errors/error.dart';
 import 'package:hand_by_hand/features/auth/data/models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../data/models/user_progress.dart';
+import '../../data/repo/user_repo.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(
     this._auth,
-    this._firestore,
     this._googleSignIn,
-  ) : super(AuthInitial());
+      this._userRepository
+  ) : super(AuthInitial()){
+    checkAuthStatus();
+  }
 
   final FirebaseAuth _auth;
-  final FirebaseFirestore _firestore;
   final GoogleSignIn _googleSignIn;
+  final UserRepository _userRepository;
+  SharedPreferences? _prefs;
   bool rememberMe = false;
 
 
+  Future<void> checkAuthStatus() async {
+    emit(AuthLoading());
+    try {
+      // Check if user is already signed in with Firebase
+      final currentUser = _auth.currentUser;
+
+      if (currentUser != null) {
+        // User is signed in with Firebase, get user data
+        final user = await _userRepository.getUser(currentUser.uid);
+        emit(AuthSuccess(user: user));
+      } else {
+        // No user signed in, check if we have cached data (for "Remember Me")
+        final prefs = await _getPrefs();
+        final remembered = prefs.getBool("remember_me") ?? false;
+
+        if (remembered) {
+          // Try to get cached user data
+          final cachedFirstName = prefs.getString('firstName');
+          final cachedLastName = prefs.getString('lastName');
+
+          if (cachedFirstName != null && cachedLastName != null) {
+            // We have cached data but no Firebase user - user needs to sign in again
+            emit(AuthUnauthenticated()); // We need to add this state
+          } else {
+            emit(AuthInitial());
+          }
+        } else {
+          emit(AuthInitial());
+        }
+      }
+    } catch (e) {
+      emit(AuthError(FailureHandler.mapException(e)));
+    }
+  }
+
+
   Future<void> loadRememberMe() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await _getPrefs();
     rememberMe = prefs.getBool("remember_me") ?? false;
     emit(RememberMe(isSelected: rememberMe));
   }
@@ -32,25 +74,31 @@ class AuthCubit extends Cubit<AuthState> {
 
 
   Future<void> toggleRememberMe(bool value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await _getPrefs();
     await prefs.setBool("remember_me", value);
     rememberMe = value;
     emit(RememberMe(isSelected: value));
   }
 
+  Future<SharedPreferences> _getPrefs() async => _prefs ??= await SharedPreferences.getInstance();
+
+  Future<void> _cacheUser(UserModel user) async {
+    final prefs = await _getPrefs();
+    await prefs.setString('firstName', user.firstName);
+    await prefs.setString('lastName', user.lastName);
+    await prefs.setString('email', user.email);
+  }
+
 
   Future<void> signInWithGoogle() async {
-    emit(AuthLoading(
-      action: AuthAction.google
-    ));
+    emit(AuthLoading(action: AuthAction.google));
     try {
       UserCredential userCred;
 
       // Mobile/Desktop: google_sign_in v7
       await _googleSignIn.initialize(
-        clientId:
-            "1015696421423-th7o6o7iekmqanad9c9oood4jktnsp82.apps.googleusercontent.com",
-      ); // for iOS: pass clientId
+        clientId: "1015696421423-th7o6o7iekmqanad9c9oood4jktnsp82.apps.googleusercontent.com",
+      );
 
       final account = await _googleSignIn.authenticate();
       final idToken = (account.authentication).idToken;
@@ -60,40 +108,39 @@ class AuthCubit extends Cubit<AuthState> {
       userCred = await _auth.signInWithCredential(credential);
 
       final firebaseUser = userCred.user!;
-      final userDoc = _firestore.collection('users').doc(firebaseUser.uid);
+      UserModel user;
 
-      // If first login, create Firestore doc
-      final snapshot = await userDoc.get();
-      if (!snapshot.exists) {
+      try {
+        // ✅ حاول تجيب اليوزر من الريبو
+        user = await _userRepository.getUser(firebaseUser.uid);
+      } catch (_) {
+        // لو مش موجود، أنشئ واحد جديد
         final parts = (firebaseUser.displayName ?? '').trim().split(' ');
-        final newUser = UserModel(
+        user = UserModel(
           id: firebaseUser.uid,
           email: firebaseUser.email ?? '',
           firstName: parts.isNotEmpty ? parts.first : '',
           lastName: parts.length > 1 ? parts.sublist(1).join(' ') : '',
         );
-        await userDoc.set(newUser.toMap());
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('firstName', newUser.firstName);
-        await prefs.setString('lastName', newUser.lastName);
-        await prefs.setString('email', newUser.email);
-        emit(AuthSuccess(user: newUser));
-      } else {
-        // Load existing user from Firestore
-        final data = snapshot.data()!;
-        final existingUser = UserModel.fromMap(data);
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('firstName', existingUser.firstName);
-        await prefs.setString('lastName', existingUser.lastName);
-        await prefs.setString('email', existingUser.email);
-        emit(AuthSuccess(user: existingUser));
+        await _userRepository.updateUser(user);
+
+        // Initialize empty progress
+        final initProgress = UserProgress(
+          totalLessons: AppConstant.totalLessonsCount,
+          completedLessons: 0,
+          streakDays: 0,
+          contributedPlaces: 0,
+        );
+        await _userRepository.updateProgress(user.id, initProgress);
       }
+
+      await _cacheUser(user);
+      emit(AuthSuccess(user: user));
     } catch (e) {
-      emit(AuthError(
-        FailureHandler.mapException(e)
-      ));
+      emit(AuthError(FailureHandler.mapException(e)));
     }
   }
+
 
   Future<void> sendPasswordResetEmail(String email) async {
     emit(ForgotPasswordLoading());
@@ -124,12 +171,9 @@ class AuthCubit extends Cubit<AuthState> {
       final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
       final uid = cred.user!.uid;
 
-      final doc = await _firestore.collection('users').doc(uid).get();
-      final user = UserModel.fromMap(doc.data()!);
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('firstName', user.firstName);
-      await prefs.setString('lastName', user.lastName);
-      await prefs.setString('email', user.email);
+
+      final user = await _userRepository.getUser(uid);
+      await _cacheUser(user);
       emit(AuthSuccess(user: user));
     } catch (e) {
       emit(AuthError(
@@ -159,12 +203,17 @@ class AuthCubit extends Cubit<AuthState> {
         firstName: firstName,
         lastName: lastName,
       );
+      await _userRepository.updateUser(user);
+      final initProgress = UserProgress(
+        totalLessons: AppConstant.totalLessonsCount,
+        completedLessons: 0,
+        streakDays: 0,
+        contributedPlaces: 0,
+      );
 
-      await _firestore.collection('users').doc(user.id).set(user.toMap());
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('firstName', user.firstName);
-      await prefs.setString('lastName', user.lastName);
-      await prefs.setString('email', user.email);
+      await _userRepository.updateProgress(user.id, initProgress);
+
+      await _cacheUser(user);
       emit(AuthSuccess(user: user));
     } catch (e) {
       emit(AuthError(
@@ -173,16 +222,21 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> _clearUserCache() async {
+    final prefs = await _getPrefs();
+    await prefs.remove('firstName');
+    await prefs.remove('lastName');
+    await prefs.remove('email');
+  }
+
   Future<void> signOut() async {
     emit(AuthLoading(
       action: AuthAction.logout
     ));
     try {
       await _auth.signOut();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.remove('firstName');
-      await prefs.remove('lastName');
-      await prefs.remove('email');
+      await _googleSignIn.signOut();
+      await _clearUserCache();
       emit(AuthLogout());
     } catch (e) {
       emit(AuthError(

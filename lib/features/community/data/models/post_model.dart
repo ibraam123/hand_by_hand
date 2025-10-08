@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/post_entity.dart';
 
 
 class PostModel extends PostEntity {
+
   PostModel({
     required super.id,
     required super.title,
@@ -10,6 +13,7 @@ class PostModel extends PostEntity {
     required super.likes,
     required super.commentCount,
     super.likedBy = const [],
+    super.firestoreDoc,
   });
 
   /// Factory to create model from Firebase/JSON
@@ -25,6 +29,21 @@ class PostModel extends PostEntity {
     );
   }
 
+  factory PostModel.fromFirestore(
+      Map<String, dynamic> data,
+      {DocumentSnapshot? snapshot}
+      ){
+    return PostModel(
+      id: snapshot?.id ?? '',
+      title: data['title'] ?? '',
+      email: data['email'] ?? '',
+      date: data['date'] ?? '',
+      likes: data['likes'] ?? 0,
+      commentCount: data['commentCount'] ?? 0,
+      likedBy: List<String>.from(data['likedBy'] ?? []),
+      firestoreDoc: snapshot,
+    );
+  }
   /// Convert PostModel back to JSON (for saving in Firestore/API)
   Map<String, dynamic> toJson() {
     return {

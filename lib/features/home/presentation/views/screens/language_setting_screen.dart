@@ -8,6 +8,7 @@ class LanguageSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = context.locale;
     return Scaffold(
       appBar: AppBar(
         title: Text("language".tr()), // Use localization key
@@ -58,14 +59,6 @@ class LanguageSettingsScreen extends StatelessWidget {
                   ],
                 ),
 
-                // Loading overlay
-                if (state.isLoading)
-                  Container(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
               ],
             );
           },

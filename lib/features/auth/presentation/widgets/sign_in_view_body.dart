@@ -15,6 +15,7 @@ import 'package:hand_by_hand/features/auth/presentation/widgets/remember_and_for
 
 import '../../../../core/config/routes.dart';
 import '../../../../generated/assets.dart';
+import '../../../home/presentation/logic/profile_cubit.dart';
 import '../logic/auth_cubit.dart';
 
 class SignInViewBody extends StatefulWidget {
@@ -175,6 +176,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
       );
     }
     if (state is AuthSuccess) {
+      context.read<ProfileCubit>().loadProfile();
       GoRouter.of(context).go(AppRoutes.kIdentificationView);
     }
   }

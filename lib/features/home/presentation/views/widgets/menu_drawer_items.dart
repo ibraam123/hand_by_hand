@@ -45,12 +45,21 @@ class MenuDrawerItems extends StatelessWidget {
           context.read<ThemeCubit>().toggleTheme();
         },
       ),
+
+
       // ℹ️ About
       ListTile(
         leading: const Icon(Icons.info, color: Colors.blue),
         title: Text(tr(Profile.about)),
         onTap: () {
           GoRouter.of(context).push(AppRoutes.kKnowAboutUs);
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.ad_units, color: Colors.blue),
+        title: Text(tr(Profile.about)),
+        onTap: () {
+          GoRouter.of(context).push(AppRoutes.kFullScreenAds);
         },
       ),
       // ⭐ Rate Us

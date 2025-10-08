@@ -18,7 +18,7 @@ class CategoryDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       dropdownColor: theme.colorScheme.surface,
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(

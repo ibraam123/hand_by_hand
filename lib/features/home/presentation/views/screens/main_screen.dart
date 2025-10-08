@@ -136,6 +136,8 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildBottomNav() {
     final theme = Theme.of(context);
+    final width = MediaQuery.of(context).size.width;
+    final showText = width > 360;
 
     return Container(
       decoration: BoxDecoration(
@@ -164,8 +166,8 @@ class _MainScreenState extends State<MainScreen> {
             : Color.alphaBlend(
             theme.colorScheme.primary.withAlpha(26),
             Colors.transparent),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        gap: 8.w,
+        padding: EdgeInsets.symmetric(horizontal: showText ? 16.w : 10.w, vertical: 12.h),
+        gap: showText ? 8.w : 0,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         tabMargin: EdgeInsets.symmetric(horizontal: 4.w),
         onTabChange: _onTabChanged,

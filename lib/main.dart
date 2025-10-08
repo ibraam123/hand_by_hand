@@ -10,6 +10,7 @@ import 'package:hand_by_hand/core/utils/helper/theme_cubit.dart';
 import 'package:hand_by_hand/features/community/presenation/logic/comments_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/logic/favorites_cubit.dart';
 import 'package:hand_by_hand/init_dependcies.dart';
+import 'core/config/bloc_observer.dart';
 import 'features/accessible_places/presentation/logic/place_cubit.dart';
 import 'features/auth/presentation/logic/auth_cubit.dart';
 import 'features/community/presenation/logic/message_cubit.dart';
@@ -23,6 +24,8 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  Bloc.observer = AppBlocObserver();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await EasyLocalization.ensureInitialized();
@@ -65,7 +68,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => serviceLocator<AuthCubit>()),
             BlocProvider(
               create: (context) =>
-                  serviceLocator<ProfileCubit>()..loadProfile(),
+                  serviceLocator<ProfileCubit>(),
             ),
             BlocProvider(
               create: (context) =>

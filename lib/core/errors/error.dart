@@ -26,6 +26,17 @@ class ServerFailure extends Failure {
     return ServerFailure('Oops, there was an error. Please try again.');
   }
 
+  factory ServerFailure.fromFirestoreError(dynamic error) {
+    if (error is FirebaseException && error.code == 'permission-denied') {
+      return ServerFailure('You do not have permission to access this data.');
+    } else if (error is FirebaseException && error.code == 'unavailable') {
+      return ServerFailure('Firestore service temporarily unavailable.');
+    } else {
+      return ServerFailure('An unexpected Firestore error occurred.');
+    }
+  }
+
+
   factory ServerFailure.fromAuthError(dynamic error) {
     if (error is FirebaseAuthException) {
       switch (error.code) {
@@ -45,7 +56,7 @@ class ServerFailure extends Failure {
           return ServerFailure(error.message ?? 'Authentication failed.');
       }
     } else if (error is FirebaseException) {
-      return ServerFailure(error.message ?? 'A Firebase service error occurred.');
+      return ServerFailure(error.message ?? 'Authentication failed.');
     } else if (error is Exception) {
       return ServerFailure(error.toString().replaceFirst('Exception: ', ''));
     } else {

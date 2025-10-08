@@ -238,6 +238,14 @@ abstract class CategoriesPlaces {
   static const String hospital = 'categories_places.hospital';
 }
 
+abstract class CategoriesSignLanguage{
+  static const String all = 'categories_lessons.all';
+  static const String beginner = 'categories_lessons.beginner';
+  static const String intermediate = 'categories_lessons.intermediate';
+  static const String hard = 'categories_lessons.hard';
+  static const String veryHard = 'categories_lessons.very_hard';
+}
+
 abstract class AccessiblePlaces {
   static const String title = 'accessible_places.title';
   static const String searchPlaces = 'accessible_places.search_places';
