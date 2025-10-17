@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/features/sign_language/presentation/views/widgets/sign_lesson_container.dart';
 
 import '../../../domain/entities/sign_lesson_entitiy.dart';
@@ -28,7 +30,7 @@ class LessonsList extends StatelessWidget {
                 size: 64, color: Colors.grey.shade400),
             SizedBox(height: 12.h),
             Text(
-              "No lessons available",
+              "${General.noLessonsAvailable.tr()}",
               style: TextStyle(
                 fontSize: 16.sp,
                 color: Colors.grey.shade600,

@@ -52,14 +52,14 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
         image: Assets.imagesF3,
         buttonText: Home.getInspired,
         onPress: () => context.push(AppRoutes.kRoleModels),
-      ),
+      ),/*
       FeatureModel(
         title: Home.community,
         subtitle: Home.communitySub,
         image: Assets.imagesF5,
         buttonText: Home.joinCommunity,
         onPress: () => context.push(AppRoutes.kCommunity),
-      ),
+      ),*/
     ];
   }
 

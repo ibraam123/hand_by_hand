@@ -17,21 +17,23 @@ class SignLanguageScreen extends StatefulWidget {
 
 class _SignLanguageScreenState extends State<SignLanguageScreen> {
   final ScrollController _scrollController = ScrollController();
-  final List<CategoryLessonEntity> categories = [
-    CategoryLessonEntity("all", CategoriesSignLanguage.all.tr()),
-    CategoryLessonEntity("beginner", CategoriesSignLanguage.beginner.tr()),
-    CategoryLessonEntity(
-      "intermediate",
-      CategoriesSignLanguage.intermediate.tr(),
-    ),
-    CategoryLessonEntity("hard", CategoriesSignLanguage.hard.tr()),
-    CategoryLessonEntity("very hard", CategoriesSignLanguage.veryHard.tr()),
-  ];
+  late final List<CategoryLessonEntity> categories;
+
   String selectedType = "all";
 
   @override
   void initState() {
     super.initState();
+    categories = [
+      CategoryLessonEntity("all", CategoriesSignLanguage.all.tr()),
+      CategoryLessonEntity("beginner", CategoriesSignLanguage.beginner.tr()),
+      CategoryLessonEntity(
+        "intermediate",
+        CategoriesSignLanguage.intermediate.tr(),
+      ),
+      CategoryLessonEntity("hard", CategoriesSignLanguage.hard.tr()),
+      CategoryLessonEntity("very hard", CategoriesSignLanguage.veryHard.tr()),
+    ];
     _scrollController.addListener(() {
       _onScroll();
     });

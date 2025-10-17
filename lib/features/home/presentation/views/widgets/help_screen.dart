@@ -6,7 +6,6 @@ import 'package:hand_by_hand/features/home/presentation/views/widgets/section_he
 
 import 'contact_us_card.dart';
 
-
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
 
@@ -17,10 +16,13 @@ class HelpSupportScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(Profile.helpSupport.tr() , style: TextStyle(color: isDarkMode ? Colors.white : Colors.black  , fontWeight: FontWeight.bold) ,),
-        elevation: 0,
-        backgroundColor: theme.scaffoldBackgroundColor,
-        foregroundColor: isDarkMode ? Colors.white : Colors.black,
+        title: Text(
+          Profile.helpSupport.tr(),
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Padding(
@@ -30,24 +32,20 @@ class HelpSupportScreen extends StatelessWidget {
             SectionHelpTitle(title: HelpSupport.faq.tr()),
             const SizedBox(height: 16),
             FaqHelpItem(
-              question: HelpSupport.faq1.tr() ,
-              answer:
-                HelpSupport.freq1desc.tr(),
+              question: HelpSupport.faq1.tr(),
+              answer: HelpSupport.freq1desc.tr(),
             ),
             FaqHelpItem(
-              question: HelpSupport.faq2.tr() ,
-              answer:
-                  HelpSupport.freq2desc.tr(),
+              question: HelpSupport.faq2.tr(),
+              answer: HelpSupport.freq2desc.tr(),
             ),
             FaqHelpItem(
-              question: HelpSupport.faq3.tr() ,
-              answer:
-                  HelpSupport.freq3desc.tr(),
+              question: HelpSupport.faq3.tr(),
+              answer: HelpSupport.freq3desc.tr(),
             ),
             FaqHelpItem(
-              question: HelpSupport.faq4.tr() ,
-              answer:
-                  HelpSupport.freq4desc.tr(),
+              question: HelpSupport.faq4.tr(),
+              answer: HelpSupport.freq4desc.tr(),
             ),
             const SizedBox(height: 24),
             SectionHelpTitle(title: HelpSupport.contactSupport.tr()),
@@ -73,22 +71,23 @@ class HelpSupportScreen extends StatelessWidget {
               title: HelpSupport.facebook.tr(),
               subtitle: "Visit our Facebook page",
               uri: Uri(
-                    scheme: 'https',
-                    host: 'www.facebook.com',
-                    path: '/ibraam.magdy.848247', // Replace with your actual page
-                  ),
+                scheme: 'https',
+                host: 'www.facebook.com',
+                path: '/ibraam.magdy.848247', // Replace with your actual page
+              ),
               errorMessage: 'Could not launch Facebook',
             ),
             const SizedBox(height: 24),
             Text(
               HelpSupport.supportMessage.tr(),
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(color: isDarkMode ? Colors.grey[400] : Colors.grey[600]),
-            )
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
 }

@@ -8,6 +8,7 @@ part 'notifications_state.dart';
 
 class NotificationsCubit extends Cubit<NotificationsState> {
   final NotificationRepository repository;
+  int numOfNotifications = 0;
 
   NotificationsCubit(this.repository) : super(NotificationsInitial());
 
@@ -16,6 +17,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     try {
       final notifications = repository.getNotifications()
         ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      numOfNotifications = notifications.length;
       emit(NotificationsLoaded(notifications));
     } catch (e) {
       emit(NotificationsError(e.toString()));

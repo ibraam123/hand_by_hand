@@ -7,7 +7,6 @@ import 'package:hand_by_hand/core/errors/error.dart';
 import 'package:hand_by_hand/features/auth/data/models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../data/models/user_progress.dart';
 import '../../data/repo/user_repo.dart';
 

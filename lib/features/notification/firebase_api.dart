@@ -7,15 +7,17 @@ import 'data/local_data_source/notification_local_data_source.dart';
 import 'data/models/notification_model.dart';
 
 class FirebaseApi {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging firebaseMessaging;
   final NotificationLocalDataSource localDataSource;
 
-  FirebaseApi({required this.localDataSource});
+  FirebaseApi({required this.localDataSource , required this.firebaseMessaging});
 
   /// Initialize FCM notifications
   Future<void> initNotifications() async {
     // Request notification permissions
-    final NotificationSettings settings = await _firebaseMessaging.requestPermission(
+
+
+    final NotificationSettings settings = await firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -25,7 +27,7 @@ class FirebaseApi {
       sound: true,
     );
     // Listen for token refresh
-    _firebaseMessaging.onTokenRefresh.listen((newToken) async {
+    firebaseMessaging.onTokenRefresh.listen((newToken) async {
       print("New FCM Token: $newToken");
       await _saveTokenToFirestore(newToken);
     });
@@ -41,16 +43,13 @@ class FirebaseApi {
     await localDataSource.init();
 
     // Foreground notification options (iOS)
-    await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+    await firebaseMessaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
-    await _firebaseMessaging.requestPermission(
-      
-    );
     // Get FCM token
-    final token = await _firebaseMessaging.getToken();
+    final token = await firebaseMessaging.getToken();
     if (token != null) {
       print('FCM Token: $token');
       await _saveTokenToFirestore(token);
@@ -99,13 +98,20 @@ class FirebaseApi {
 
 
   /// Initialize push notification listeners
-  void initPushNotifications() {
-    // App in foreground
+  Future<void> initPushNotifications() async {
+    // App launched by tapping notification
+    final initialMessage = await firebaseMessaging.getInitialMessage();
+    if (initialMessage != null) {
+      await handleNotifications(initialMessage);
+    }
+
+    // Foreground
     FirebaseMessaging.onMessage.listen(handleNotifications);
 
-    // App opened from background
+    // Background / when user taps notification
     FirebaseMessaging.onMessageOpenedApp.listen(handleNotifications);
   }
+
 }
 class NotificationRepository {
   final NotificationLocalDataSource localDataSource;

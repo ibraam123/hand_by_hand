@@ -33,32 +33,40 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return BlocConsumer<NotificationsCubit, NotificationsState>(
-      listener: (context, state) {
-        if (state is NotificationsError) {
-          CustomSnackBar.show(
-            context,
-            message: state.message,
-            backgroundColor: Theme.of(context).colorScheme.error,
-            icon: Icons.error_outline,
-          );
-        }
-      },
-      builder: (context, state) {
-        if (state is NotificationsLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is NotificationsLoaded) {
-          if (state.notifications.isEmpty) {
-            return _buildEmptyState();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(Notifications.notifications.tr() , style: TextStyle(
+          fontWeight: FontWeight.w600,
+        ),),
+        centerTitle: true,
+      ),
+      body: BlocConsumer<NotificationsCubit, NotificationsState>(
+        listener: (context, state) {
+          if (state is NotificationsError) {
+            CustomSnackBar.show(
+              context,
+              message: state.message,
+              backgroundColor: Theme.of(context).colorScheme.error,
+              icon: Icons.error_outline,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is NotificationsLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
 
-          return _buildNotificationsList(state.notifications);
-        }
+          if (state is NotificationsLoaded) {
+            if (state.notifications.isEmpty) {
+              return _buildEmptyState();
+            }
 
-        return const SizedBox.shrink();
-      },
+            return _buildNotificationsList(state.notifications);
+          }
+
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 

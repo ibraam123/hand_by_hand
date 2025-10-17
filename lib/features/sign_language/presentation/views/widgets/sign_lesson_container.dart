@@ -10,9 +10,7 @@ import 'package:hand_by_hand/features/sign_language/presentation/views/widgets/c
 
 import '../../../../../core/config/routes.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
-import '../../../../auth/data/models/user_progress.dart';
 import '../../../domain/entities/sign_lesson_entitiy.dart';
-import '../../logic/sign_language_cubit.dart';
 
 
 class SignLessonCustomContainer extends StatelessWidget {
@@ -38,14 +36,6 @@ class SignLessonCustomContainer extends StatelessWidget {
       );
       return;
     }
-    final user = (authState as AuthSuccess).user;
-    final progress = user?.progress ?? UserProgress(
-      totalLessons: 0,
-      completedLessons: 0,
-      streakDays: 0,
-      contributedPlaces: 0,
-    );
-    context.read<SignLanguageCubit>().completeLesson(user!.id, progress);
     GoRouter.of(context).push(
         AppRoutes.kSignLanguageLessonVideo, extra: signLessonModel);
   }
@@ -66,22 +56,14 @@ class SignLessonCustomContainer extends StatelessWidget {
         child: Row(
           children: [
 
-            /// --- Left: Text Content
             Expanded(
               flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    signLessonModel.title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  _buildProgressIndicator(context),
-                ],
+              child: Text(
+                signLessonModel.title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
 
@@ -100,22 +82,4 @@ class SignLessonCustomContainer extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressIndicator(BuildContext context) {
-    // You can add a small progress indicator here if you track individual lesson completion
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: Colors.green.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Text(
-        'New',
-        style: TextStyle(
-          fontSize: 10.sp,
-          color: Colors.green,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
 }

@@ -10,7 +10,7 @@ class AboutUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final sections = [
+    const sections = [
       AboutUsSection(
         icon: Icons.flag_rounded,
         title: "Our Mission",

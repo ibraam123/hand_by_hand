@@ -244,6 +244,22 @@
     "success": "Success",
     "submit": "Submit",
     "thanksFeedback" : "Thank you for your feedback!",
-    "enter_your_feedback" : "Please enter your feedback"
+    "enter_your_feedback" : "Please enter your feedback",
+    "added_to_favorites" : "Added to favorites",
+    "removed_from_favorites" : "Removed from favorites",
+    "center" : "Centered on",
+    "type" : "Type",
+    "dismiss" : "DISMISS",
+    "no_lessons_available" : "No lessons available"
+
+  },
+
+  "lessons": {
+    "lesson_completed": "✅ Lesson completed! Progress updated",
+    "progress_updated": "Progress updated",
+    "lesson": "Lesson",
+    "lesson_details": "Lesson Details",
+    "progress_saved": "Your progress is automatically saved when you complete 90% of the video"
   }
+
 }

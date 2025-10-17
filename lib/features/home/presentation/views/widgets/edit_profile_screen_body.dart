@@ -1,9 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hand_by_hand/core/config/app_keys_localization.dart';
-import '../../logic/profile_cubit.dart';
 
+/*
 class EditProfileScreenBody extends StatefulWidget {
   const EditProfileScreenBody({super.key});
 
@@ -19,16 +15,8 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
   @override
   void initState() {
     super.initState();
-    final state = context.read<ProfileCubit>().state;
-    if (state is ProfileLoaded || state is ProfileEdit) {
-      _firstNameController =
-          TextEditingController(text: (state as dynamic).firstName);
-      _lastNameController =
-          TextEditingController(text: (state as dynamic).lastName);
-    } else {
-      _firstNameController = TextEditingController();
-      _lastNameController = TextEditingController();
-    }
+    _firstNameController = TextEditingController();
+    _lastNameController = TextEditingController();
   }
 
   @override
@@ -44,17 +32,32 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
         _firstNameController.text.trim(),
         _lastNameController.text.trim(),
       );
-      Navigator.pop(context); // Go back to profile screen
+      Navigator.pop(context);
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    final state = context.read<ProfileCubit>().state;
+    if (state is ProfileLoaded || state is ProfileEdit) {
+      _firstNameController =
+          TextEditingController(text: (state as dynamic).firstName);
+      _lastNameController =
+          TextEditingController(text: (state as dynamic).lastName);
+    } else {
+      _firstNameController = TextEditingController();
+      _lastNameController = TextEditingController();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           Profile.editProfile.tr(),
@@ -134,3 +137,4 @@ class _EditProfileScreenBodyState extends State<EditProfileScreenBody> {
     );
   }
 }
+*/

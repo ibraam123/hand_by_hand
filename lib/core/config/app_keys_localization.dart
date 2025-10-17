@@ -217,7 +217,23 @@ abstract class General {
   static const String submit = 'general.submit';
   static const String thanksFeedback = 'general.thanksFeedback';
   static const String enterYourFeedback = 'general.enter_your_feedback';
+  static const String addToFavorites = 'general.added_to_favorites';
+  static const String removeFromFavorites = 'general.removed_from_favorites';
+  static const String center = 'general.center';
+  static const String type = 'general.type';
+  static const String dismiss = 'general.dismiss';
+  static const String noLessonsAvailable = 'general.no_lessons_available';
 }
+
+
+abstract class Lessons {
+  static const String lessonCompleted = 'lessons.lesson_completed';
+  static const String progressUpdated = 'lessons.progress_updated';
+  static const String lesson = 'lessons.lesson';
+  static const String lessonDetails = 'lessons.lesson_details';
+  static const String progressSaved = 'lessons.progress_saved';
+}
+
 
 abstract class RoleModels {
   static const String title = 'role_models.title';

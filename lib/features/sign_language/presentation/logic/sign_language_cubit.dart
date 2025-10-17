@@ -16,9 +16,9 @@ class SignLanguageCubit extends Cubit<SignLanguageState> {
 
 
 
-  Future<void> completeLesson(String userId, UserProgress currentProgress) async {
+  Future<void> completeLesson(String userId, UserProgress currentProgress , String lessonId) async {
     try {
-      await progressService.completeLesson(userId, currentProgress);
+      await progressService.completeLesson(userId, currentProgress , lessonId);
     } catch (e) {
       emit(SignLanguageError('Failed to complete lesson: $e'));
     }
@@ -28,7 +28,7 @@ class SignLanguageCubit extends Cubit<SignLanguageState> {
 
   Future<void> fetchSignLessons({
     required String langCode,
-    int limit = 10,
+    int limit = 30,
   }) async {
     try {
       emit(SignLanguageLoading());

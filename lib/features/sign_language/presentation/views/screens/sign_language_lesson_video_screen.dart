@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/core/config/app_constant.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../../../../core/widgets/custom_snackbar.dart';
@@ -15,11 +17,13 @@ class SignLanguageLessonVideoScreen extends StatefulWidget {
     required this.videoUrl,
     required this.title,
     this.description,
+    required this.lessonId,
   });
 
   final String videoUrl;
   final String title;
   final String? description;
+  final String lessonId;
 
   @override
   State<SignLanguageLessonVideoScreen> createState() =>
@@ -29,8 +33,7 @@ class SignLanguageLessonVideoScreen extends StatefulWidget {
 class _SignLanguageLessonVideoScreenState
     extends State<SignLanguageLessonVideoScreen> {
   late YoutubePlayerController _controller;
-  bool _isCompleted = false;
-  bool _hasListenerAdded = false;
+  late final ValueNotifier<bool> _isCompleted;
 
   @override
   void deactivate() {
@@ -41,6 +44,8 @@ class _SignLanguageLessonVideoScreenState
   @override
   void initState() {
     super.initState();
+    _isCompleted = ValueNotifier(false);
+    _isCompleted.addListener(_onCompletionStateChanged);
 
     final videoId = YoutubePlayer.convertUrlToId(widget.videoUrl);
 
@@ -51,24 +56,32 @@ class _SignLanguageLessonVideoScreenState
         mute: false,
       ),
     );
+
+    _controller.addListener(_videoProgressListener);
   }
 
-  void _checkVideoCompletion() {
+  void _onCompletionStateChanged() {
+    if (_isCompleted.value) {
+      _markLessonAsCompleted();
+    }
+  }
+
+  void _videoProgressListener() {
     final duration = _controller.metadata.duration;
     final currentPosition = _controller.value.position;
 
     // Mark as completed when user watches 90% of the video
-    if (duration.inSeconds > 0 &&
-        currentPosition.inSeconds >= (duration.inSeconds * 0.9) &&
-        !_isCompleted) {
-      _markLessonAsCompleted();
-    }
+    if (!_isCompleted.value &&
+        duration.inSeconds > 0 &&
+        currentPosition.inSeconds >= (duration.inSeconds * 0.9)) {
+      _isCompleted.value = true;
+     }
   }
 
   void _markLessonAsCompleted() {
     final authState = context.read<AuthCubit>().state;
 
-    if (authState is AuthSuccess && !_isCompleted) {
+    if (authState is AuthSuccess) {
       final user = authState.user;
       final progress = user?.progress;
 
@@ -77,15 +90,29 @@ class _SignLanguageLessonVideoScreenState
         completedLessons: 0,
         streakDays: 0,
         contributedPlaces: 0,
+        completedLessonsIds: [],
+        lastLessonCompletion: null,
       );
 
-      context.read<SignLanguageCubit>().completeLesson(user!.id, progressToUse);
-      _isCompleted = true;
+      // Check if lesson is already completed
+      if (progressToUse.completedLessonsIds.contains(widget.lessonId)) {
+        // Already completed, show info or do nothing
+        CustomSnackBar.show(
+          context,
+          message: "${Lessons.lessonCompleted.tr()}",
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          icon: Icons.info,
+        );
+        return;
+      }
+
+      context.read<SignLanguageCubit>().completeLesson(user!.id, progressToUse , widget.lessonId);
 
       // Show completion message
       CustomSnackBar.show(
         context,
-        message: "✅ Lesson completed! Progress updated",
+        message: "${Lessons.lessonCompleted.tr()}",
         backgroundColor: Colors.green,
         textColor: Colors.white,
         icon: Icons.check_circle,
@@ -95,10 +122,8 @@ class _SignLanguageLessonVideoScreenState
 
   @override
   void dispose() {
-    // Remove listener to prevent memory leaks
-    if (_hasListenerAdded) {
-      _controller.removeListener(_checkVideoCompletion);
-    }
+    _controller.removeListener(_videoProgressListener);
+    _isCompleted.removeListener(_onCompletionStateChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -116,17 +141,9 @@ class _SignLanguageLessonVideoScreenState
           bufferedColor: Theme.of(context).colorScheme.primary.withAlpha(100),
           backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(100),
         ),
-        onReady: () {
-          // Add listener only once when player is ready
-          if (!_hasListenerAdded) {
-            _controller.addListener(_checkVideoCompletion);
-            _hasListenerAdded = true;
-          }
-        },
         onEnded: (data) {
-          // Also mark as completed when video ends
-          if (!_isCompleted) {
-            _markLessonAsCompleted();
+          if (!_isCompleted.value) {
+            _isCompleted.value = true;
           }
         },
       ),
@@ -134,24 +151,13 @@ class _SignLanguageLessonVideoScreenState
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              "Lesson: ${widget.title}",
+              "${Lessons.lesson.tr()}: ${widget.title}",
               style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold
               ),
             ),
             centerTitle: true,
-            actions: [
-              // Manual completion button
-              IconButton(
-                icon: Icon(
-                  _isCompleted ? Icons.check_circle : Icons.check_circle_outline,
-                  color: _isCompleted ? Colors.green : null,
-                ),
-                onPressed: _isCompleted ? null : _markLessonAsCompleted,
-                tooltip: 'Mark as completed',
-              ),
-            ],
           ),
           body: Column(
             children: [
@@ -170,33 +176,6 @@ class _SignLanguageLessonVideoScreenState
                           child: player,
                         ),
                       ),
-                      SizedBox(height: 16.h),
-
-                      // Completion Status
-                      if (_isCompleted)
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.green),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.check_circle, color: Colors.green, size: 16.w),
-                              SizedBox(width: 8.w),
-                              Text(
-                                'Lesson Completed',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                     ],
                   ),
                 ),
@@ -220,7 +199,7 @@ class _SignLanguageLessonVideoScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Lesson Details',
+                          '${Lessons.lessonDetails.tr()}',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -265,7 +244,7 @@ class _SignLanguageLessonVideoScreenState
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: Text(
-                                  'Your progress is automatically saved when you complete 90% of the video',
+                                  '${Lessons.progressSaved.tr()}',
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     color: Theme.of(context).colorScheme.primary,

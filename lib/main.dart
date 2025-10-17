@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,10 +18,25 @@ import 'features/community/presenation/logic/message_cubit.dart';
 import 'features/community/presenation/logic/posts_cubit.dart';
 import 'features/home/presentation/logic/notifications_cubit.dart';
 import 'features/home/presentation/logic/profile_cubit.dart';
+import 'features/notification/data/local_data_source/notification_local_data_source.dart';
 import 'features/notification/firebase_api.dart';
 import 'features/role_model/presenatation/logic/role_model_cubit.dart';
 import 'features/sign_language/presentation/logic/sign_language_cubit.dart';
 import 'firebase_options.dart';
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  final localDataSource = NotificationLocalDataSourceImpl();
+  await localDataSource.init();
+
+  final api = FirebaseApi(
+    localDataSource: localDataSource,
+    firebaseMessaging: FirebaseMessaging.instance,
+  );
+  await api.handleNotifications(message);
+}
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +44,9 @@ Future<void> main() async {
   Bloc.observer = AppBlocObserver();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await EasyLocalization.ensureInitialized();
 
   await init();
@@ -94,7 +113,7 @@ class MyApp extends StatelessWidget {
                 create: (context) => serviceLocator<FavoritesCubit>()
             ),
             BlocProvider(
-                create: (context) => serviceLocator<NotificationsCubit>()
+                create: (context) => serviceLocator<NotificationsCubit>()..loadNotifications()
             ),
           ],
           child: const AppView(),

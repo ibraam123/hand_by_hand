@@ -5,6 +5,7 @@ class SignLessonModel extends SignLessonEntitiy {
   final DocumentSnapshot? snapshot; // keep a reference for pagination
 
   SignLessonModel({
+    required super.id,
     required super.title,
     required super.description,
     required super.videoUrl,
@@ -18,6 +19,8 @@ class SignLessonModel extends SignLessonEntitiy {
     return other is SignLessonModel &&
         other.title == title &&
         other.description == description &&
+        other.type == type &&
+        other.id == id &&
         other.videoUrl == videoUrl;
   }
 
@@ -30,7 +33,7 @@ class SignLessonModel extends SignLessonEntitiy {
   }
 
   Map<String, dynamic> toMap() {
-    return {'titile': title, 'descreption': description, 'video_url': videoUrl};
+    return {'titile': title, 'descreption': description, 'video_url': videoUrl , 'type': type , 'id': id};
   }
 
   factory SignLessonModel.fromMap(Map<String, dynamic> map, String langCode , {DocumentSnapshot? snapshot}) {
@@ -48,6 +51,7 @@ class SignLessonModel extends SignLessonEntitiy {
       description: parseField(map['description'] ?? map['descreption']),
       videoUrl: map['video_url'] ?? '',
       type: map['type'] ?? '',
+      id: map['id'] ?? '',
       snapshot: snapshot,
     );
   }

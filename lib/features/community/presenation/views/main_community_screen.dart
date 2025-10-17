@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/config/routes.dart';
@@ -10,37 +11,29 @@ class MainCommunityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title:  Text(
-          NavigationKeys.community.tr(),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Center(
-          child: Column(
-            children: [
-              CustomOptionCommunityContainer(
-                title: Community.chatMessaging.tr(),
-                subtitle: Community.chatDesc.tr(),
-                icon: Icons.chat_bubble_outline_rounded,
-                onTap: () {
-                  GoRouter.of(context).push(AppRoutes.kCommunityChat);
-                },
-              ),
-              CustomOptionCommunityContainer(
-                title: Community.socialFeed.tr(),
-                subtitle: Community.socialDesc.tr(),
-                icon: Icons.group_work_outlined,
-                onTap: () {
-                  GoRouter.of(context).push(AppRoutes.kCommunityPosts);
-                },
-              ),
-            ],
-          ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 10.h),
+            CustomOptionCommunityContainer(
+              title: Community.chatMessaging.tr(),
+              subtitle: Community.chatDesc.tr(),
+              icon: Icons.chat_bubble_outline_rounded,
+              onTap: () {
+                GoRouter.of(context).push(AppRoutes.kCommunityChat);
+              },
+            ),
+            CustomOptionCommunityContainer(
+              title: Community.socialFeed.tr(),
+              subtitle: Community.socialDesc.tr(),
+              icon: Icons.group_work_outlined,
+              onTap: () {
+                GoRouter.of(context).push(AppRoutes.kCommunityPosts);
+              },
+            ),
+          ],
         ),
       ),
     );

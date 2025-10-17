@@ -1,12 +1,9 @@
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:hand_by_hand/features/home/presentation/logic/notifications_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_option.dart';
 import 'package:hand_by_hand/features/auth/presentation/logic/auth_cubit.dart';
 
@@ -14,12 +11,17 @@ import '../../../../../core/config/app_keys_localization.dart';
 import '../../../../../core/config/routes.dart';
 import '../../../../auth/data/models/user_progress.dart';
 
-class ProfileScreenBody extends StatelessWidget {
+class ProfileScreenBody extends StatefulWidget  {
   const ProfileScreenBody({super.key});
 
+  @override
+  State<ProfileScreenBody> createState() => _ProfileScreenBodyState();
+}
 
+class _ProfileScreenBodyState extends State<ProfileScreenBody> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -144,15 +146,30 @@ class ProfileScreenBody extends StatelessWidget {
                 SizedBox(height: 24.h),
 
                 // Profile Options
-                ProfileOptionTile(
+                /*ProfileOptionTile(
                   title: Profile.editProfile.tr(),
                   icon: Icons.edit,
                   onTap: () {
                     GoRouter.of(context).push(AppRoutes.kEditProfile);
                   },
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: 15.h),*/
+                BlocBuilder<NotificationsCubit, NotificationsState>(
+                  builder: (context, state) {
+                    final cubit = context.read<NotificationsCubit>();
+                    final count = cubit.numOfNotifications;
 
+                    return ProfileOptionTile(
+                      title: NavigationKeys.notifications.tr(),
+                      icon: count > 0 ? Icons.notifications : Icons.notifications_none,
+                      notificationCount: count, // 👈 badge count
+                      onTap: () {
+                        GoRouter.of(context).push(AppRoutes.kNotification);
+                      },
+                    );
+                  },
+                ),
+                SizedBox(height: 15.h),
                 ProfileOptionTile(
                   title: Profile.helpSupport.tr(),
                   icon: Icons.help_outline,
@@ -355,7 +372,20 @@ class ProfileScreenBody extends StatelessWidget {
       ],
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
+
+
+
+
+
+
+
+
+
 
 /*
 

@@ -64,12 +64,15 @@ class _RoleModelDetailsScreenState extends State<RoleModelDetailsScreen> {
             const SizedBox(height: 20),
             Row(
               children: [
-                Text(
-                  widget.roleModel.name,
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    widget.roleModel.name,
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const Spacer(),

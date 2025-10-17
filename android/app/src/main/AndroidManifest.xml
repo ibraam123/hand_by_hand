@@ -22,6 +22,9 @@
 
         <!-- Add these meta-data tags for Google services -->
         <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3470953542788459~5475997697"/>
+        <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         ...

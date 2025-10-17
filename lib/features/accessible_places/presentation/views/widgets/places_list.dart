@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -81,7 +82,7 @@ class _PlacesListState extends State<PlacesList> {
         actions: [
           TextButton(
             onPressed: () => messenger.hideCurrentMaterialBanner(),
-            child: const Text("DISMISS", style: TextStyle(color: Colors.white)),
+            child: Text(General.dismiss.tr() , style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -92,6 +93,30 @@ class _PlacesListState extends State<PlacesList> {
       messenger.hideCurrentMaterialBanner();
     });
   }
+
+  String _getTranslatedType(String type) {
+    switch (type) {
+      case 'cafe':
+        return CategoriesPlaces.cafe.tr();
+      case 'restaurant':
+        return CategoriesPlaces.restaurant.tr();
+      case 'park':
+        return CategoriesPlaces.park.tr();
+      case 'clinic':
+        return CategoriesPlaces.clinic.tr();
+      case 'pharmacy':
+        return CategoriesPlaces.pharmacy.tr();
+      case 'mall':
+        return CategoriesPlaces.mall.tr();
+      case 'hospital':
+        return CategoriesPlaces.hospital.tr();
+      case 'all':
+        return CategoriesPlaces.all.tr();
+      default:
+        return type; // fallback if unknown
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +138,7 @@ class _PlacesListState extends State<PlacesList> {
                 child: ListTile(
                   leading: Icon(Icons.place, color: theme.colorScheme.secondary),
                   title: Text(place.name),
-                  subtitle: Text("Type: ${place.type}"),
+                  subtitle: Text("${General.type.tr()}: ${_getTranslatedType(place.type)}"),
                   trailing: IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -124,11 +149,11 @@ class _PlacesListState extends State<PlacesList> {
                     onPressed: () {
                       if (isFavorite) {
                         favoritesBox.delete(key);
-                        _showTopMessage(context, "${place.name} Removed from favorites",
+                        _showTopMessage(context, "${place.name} ${General.removeFromFavorites.tr()}",
                             background: theme.colorScheme.error);
                       } else {
                         favoritesBox.put(key, true);
-                        _showTopMessage(context, "${place.name} Added to favorites",
+                        _showTopMessage(context, "${place.name} ${General.addToFavorites.tr()}",
                             background: theme.colorScheme.primary);
                       }
                     },
@@ -138,8 +163,8 @@ class _PlacesListState extends State<PlacesList> {
                     widget.mapController.move(latLng, 15);
                     _showTopMessage(
                       context,
-                      "Centered on ${place.name}",
-                      background: theme.colorScheme.secondary,
+                      "${General.center.tr()} ${place.name}",
+                      background: Colors.green,
                     );
                   },
                 ),

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hand_by_hand/features/community/presenation/views/main_community_screen.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_screen_body.dart';
 import '../../logic/profile_cubit.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/favorites_screen_body.dart';
 import '../widgets/home_screen_body.dart';
-import '../widgets/notification_screen_body.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../../../../../core/config/app_keys_localization.dart'; // فيه NavigationKeys
+import '../../../../../core/config/app_keys_localization.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _screens = [
     HomeScreen(),
     FavoritesScreen(),
-    NotificationsScreen(),
+    MainCommunityScreen(),
     ProfileScreenBody(),
   ];
 
@@ -66,7 +66,9 @@ class _MainScreenState extends State<MainScreen> {
       children: [
         NavigationRail(
           selectedIndex: _currentIndex,
-          onDestinationSelected: _onTabChanged,
+          onDestinationSelected: (index){
+            _onNavItemTapped(index);
+          },
           labelType: NavigationRailLabelType.all,
           destinations: _getNavDestinations(),
         ),
@@ -82,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildMobileLayout() {
     return PageView(
       controller: _pageController,
-      onPageChanged: _onTabChanged,
+      onPageChanged: _onPageChanged,
       children: _screens,
     );
   }
@@ -170,7 +172,7 @@ class _MainScreenState extends State<MainScreen> {
         gap: showText ? 8.w : 0,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         tabMargin: EdgeInsets.symmetric(horizontal: 4.w),
-        onTabChange: _onTabChanged,
+        onTabChange: _onNavItemTapped,
         tabs: _getNavTabs(),
       ),
     );
@@ -178,12 +180,25 @@ class _MainScreenState extends State<MainScreen> {
 
   List<GButton> _getNavTabs() {
     return [
-      GButton(icon: Icons.home_outlined, text: NavigationKeys.home.tr()),
-      GButton(icon: Icons.favorite_border, text: NavigationKeys.favorites.tr()),
-      GButton(icon: Icons.notifications_outlined, text: NavigationKeys.notifications.tr()),
-      GButton(icon: Icons.person_outline, text: NavigationKeys.profile.tr()),
+      GButton(
+        icon: _currentIndex == 0 ? Icons.home : Icons.home_outlined,
+        text: NavigationKeys.home.tr(),
+      ),
+      GButton(
+        icon: _currentIndex == 1 ? Icons.favorite : Icons.favorite_border,
+        text: NavigationKeys.favorites.tr(),
+      ),
+      GButton(
+        icon: _currentIndex == 2 ? Icons.people : Icons.people_outline,
+        text: Home.community.tr(),
+      ),
+      GButton(
+        icon: _currentIndex == 3 ? Icons.person : Icons.person_outline,
+        text: NavigationKeys.profile.tr(),
+      ),
     ];
   }
+
 
   List<NavigationRailDestination> _getNavDestinations() {
     return [
@@ -197,10 +212,15 @@ class _MainScreenState extends State<MainScreen> {
         selectedIcon: const Icon(Icons.favorite),
         label: Text(NavigationKeys.favorites.tr()),
       ),
-      NavigationRailDestination(
+      /*NavigationRailDestination(
         icon: const Icon(Icons.notifications_outlined),
         selectedIcon: const Icon(Icons.notifications),
         label: Text(NavigationKeys.notifications.tr()),
+      ),*/
+      NavigationRailDestination(
+        icon: const Icon(Icons.people_outline),
+        selectedIcon: const Icon(Icons.people),
+        label: Text(NavigationKeys.favorites.tr()),
       ),
       NavigationRailDestination(
         icon: const Icon(Icons.person_outline),
@@ -217,7 +237,7 @@ class _MainScreenState extends State<MainScreen> {
       case 1:
         return NavigationKeys.favorites.tr();
       case 2:
-        return NavigationKeys.notifications.tr();
+        return Home.community.tr();
       case 3:
         return NavigationKeys.profile.tr();
       default:
@@ -225,11 +245,17 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _onTabChanged(int index) {
-    setState(() => _currentIndex = index);
-    if (_pageController.hasClients) {
-      _pageController.jumpToPage(index); // immediate switch
+
+  void _onNavItemTapped(int index) {
+    if ((index - _currentIndex).abs() > 1) {
+      _pageController.jumpToPage(index);
+    } else {
+      _pageController.animateToPage(index, duration: Duration(milliseconds: 250), curve: Curves.easeInOut);
     }
+  }
+
+  void _onPageChanged(int index) {
+    setState(() => _currentIndex = index);
   }
 }
 

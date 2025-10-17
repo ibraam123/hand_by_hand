@@ -18,7 +18,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FavoritesCubit>().loadFavorites();

@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
-import 'package:hand_by_hand/features/community/presenation/views/main_community_screen.dart';
-import 'package:hand_by_hand/features/home/presentation/views/widgets/edit_profile_screen_body.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/help_screen.dart';
+import 'package:hand_by_hand/features/home/presentation/views/widgets/notification_screen_body.dart';
 import '../../features/accessible_places/presentation/views/screens/places_screen.dart';
 import '../../features/auth/presentation/views/forget_password_view.dart';
 import '../../features/auth/presentation/views/sign_in_view.dart';
@@ -46,9 +45,10 @@ class AppRoutes {
   static const String kSignLanguageLessonVideo = '/signLanguageLessonVideo';
   static const String kLanguageSettings = '/languageSettings';
   static const String kFullScreenAds = '/fullScreenAds';
+  static const String kNotification = '/notification';
+
 
   static final GoRouter router = GoRouter(
-    debugLogDiagnostics: true,
     routes: <GoRoute>[
       GoRoute(
         path: kSplashView,
@@ -81,13 +81,17 @@ class AppRoutes {
         path: kMainScreen,
         builder: (context, state) => const MainScreen(),
       ),
-      GoRoute(
+      /*GoRoute(
         path: kEditProfile,
         builder: (context, state) => const EditProfileScreenBody(),
-      ),
+      ),*/
       GoRoute(
         path: kFeedback,
         builder: (context, state) => const FeedbackScreen(),
+      ),
+      GoRoute(
+        path: kNotification,
+        builder: (context, state) => const NotificationsScreen(),
       ),
       GoRoute(
         path: kHelp,
@@ -113,10 +117,6 @@ class AppRoutes {
         builder: (context, state) => const AboutUsScreen(),
       ),
       GoRoute(
-        path: kCommunity,
-        builder: (context, state) => const MainCommunityScreen(),
-      ),
-      GoRoute(
         path: kCommunityChat,
         builder: (context, state) => const CommunityChatScreen(),
       ),
@@ -136,10 +136,11 @@ class AppRoutes {
             videoUrl: SignLanguageEntity.videoUrl,
             title: SignLanguageEntity.title,
             description: SignLanguageEntity.description,
+            lessonId: SignLanguageEntity.id,
           );
         },
       ),
-       GoRoute(
+      GoRoute(
          path: kLanguageSettings,
          builder: (context, state) => const LanguageSettingsScreen(),
        ),

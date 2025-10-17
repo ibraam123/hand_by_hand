@@ -4,6 +4,15 @@
   "language": "اللغة",
   "choose_language": "اختر لغتك",
 
+  "categories_lessons": {
+    "all" : "الكل",
+    "beginner": "مبتدئ",
+    "intermediate": "متوسط",
+    "hard": "صعب",
+    "very_hard": "صعب جدًا"
+  },
+
+
   "auth": {
     "join_us": "انضم إلينا",
     "first_name": "الاسم الأول",
@@ -239,6 +248,22 @@
     "success": "نجاح",
     "submit": "إرسال",
     "thanksFeedback" : "شكرًا لك على ملاحظاتك!",
-    "enter_your_feedback" : "من فضلك أدخل ملاحظتك"
+    "enter_your_feedback" : "من فضلك أدخل ملاحظتك",
+    "added_to_favorites" : "تمت الإضافة إلى المفضلة",
+    "removed_from_favorites" : "تمت الإزالة من المفضلة",
+    "center" : "متمركز على",
+    "type" : "النوع" ,
+    "dismiss" : "تجاهل",
+    "no_lessons_available" : "لا توجد دروس متاحة"
+
+  },
+
+  "lessons": {
+    "lesson_completed": "✅ تم إكمال الدرس! تم تحديث التقدم",
+    "progress_updated": "تم تحديث التقدم",
+    "lesson": "الدرس",
+    "lesson_details": "تفاصيل الدرس",
+    "progress_saved": "يتم حفظ تقدمك تلقائيًا عند إكمال 90٪ من الفيديو"
   }
+
 }

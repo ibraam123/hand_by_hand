@@ -5,7 +5,7 @@ class AboutUsSection {
   final String title;
   final String content;
 
-  AboutUsSection({
+  const AboutUsSection({
     required this.icon,
     required this.title,
     required this.content,
