@@ -8,7 +8,7 @@ import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
-import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/message_second_option.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/remember_and_forget_message.dart';
@@ -28,9 +28,17 @@ class SignInViewBody extends StatefulWidget {
 class _SignInViewBodyState extends State<SignInViewBody> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
   bool isObscure = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -42,35 +50,37 @@ class _SignInViewBodyState extends State<SignInViewBody> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final height = size.height;
     final width = size.width;
 
     return SafeArea(
-      child: Stack(
-        children: [
-          CustomMessageContainer(
-            width: width,
-            height: height,
-            message: AuthKeys.welcomeBack.tr(),
-          ),
-          SingleChildScrollView(
+      child: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
             child: Form(
               key: _formKey,
-              child: SizedBox(
-                height: height,
-                width: width,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.1),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: height * 0.02),
-                        child: SvgPicture.asset(Assets.imagesLoginImage),
-                      ),
-                      // Email Field
-                      CustomTextFormField(
-                        hintText: AuthKeys.email.tr(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 20.h),
+                  SvgPicture.asset(
+                    Assets.imagesLoginImage,
+                    height: 200.h,
+                  ),
+                  SizedBox(height: 32.h),
+                  Text(
+                    AuthKeys.welcomeBack.tr(),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 32.h),
+
+                  CustomTextFormField(
+                    hintText: AuthKeys.email.tr(),
                         controller: _emailController,
                         prefixIcon: Icons.email,
                         validator: (value) {
@@ -83,9 +93,9 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                           }
                         },
                       ),
-                      SizedBox(height: height * 0.02),
-                      // Password Field
-                      CustomTextFormField(
+                  SizedBox(height: 16.h),
+                  // Password Field
+                  CustomTextFormField(
                         hintText: AuthKeys.password.tr(),
                         controller: _passwordController,
                         obscureText: isObscure,
@@ -109,11 +119,11 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                           }
                         },
                       ),
-                      SizedBox(height: height * 0.01),
-                      const RememberAndForgetMessage(),
-                      SizedBox(height: height * 0.02),
+                  SizedBox(height: 8.h),
+                  const RememberAndForgetMessage(),
+                  SizedBox(height: 32.h),
 
-                      // BlocConsumer handles both login + google buttons
+                  // BlocConsumer handles both login + google buttons
                       BlocConsumer<AuthCubit, AuthState>(
                         listener: _authListener,
                         builder: (context, state) {
@@ -121,6 +131,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                           final isGoogleLoading = state is AuthLoading && state.action == AuthAction.google;
 
                           return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               CustomButton(
                                 isLoading: isEmailLoading,
@@ -129,23 +140,30 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                                 onTap: _signInWithEmailAndPassword,
                                 color: AppColors.primary,
                               ),
-                              SizedBox(height: height * 0.01),
+                              SizedBox(height: 16.h),
                               MessageSecondOption(
                                 message: AuthKeys.dontHaveAccount.tr(),
                                 buttonText: AuthKeys.signUp.tr(),
                                 onTap: _navigateToSignUp,
                               ),
-                              SizedBox(height: height * 0.015),
-                              Text(
-                                AuthKeys.or.tr(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(color: AppColors.greyDark),
+                              SizedBox(height: 24.h),
+                              Row(
+                                children: [
+                                  const Expanded(child: Divider(thickness: 1)),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                    child: Text(
+                                      AuthKeys.or.tr(),
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.greyDark),
+                                    ),
+                                  ),
+                                  const Expanded(child: Divider(thickness: 1)),
+                                ],
                               ),
-                              SizedBox(height: height * 0.015),
+                              SizedBox(height: 24.h),
                               CustomButton(
-                                isLoading: isGoogleLoading, text: AuthKeys.continueWithGoogle.tr(),
+                                isLoading: isGoogleLoading, 
+                                text: AuthKeys.continueWithGoogle.tr(),
                                 width: width,
                                 onTap: _signInWithGoogle,
                                 color: AppColors.primary,
@@ -155,15 +173,14 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                           );
                         },
                       ),
+
                     ],
                   ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
-    );
+      );
   }
 
   void _authListener(BuildContext context, AuthState state) {

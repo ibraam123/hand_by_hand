@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../logic/favorites_cubit.dart';
 import 'custom_favorite_card.dart';
 

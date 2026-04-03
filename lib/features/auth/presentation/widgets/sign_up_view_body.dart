@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
-import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
 import 'package:hand_by_hand/features/auth/presentation/widgets/message_second_option.dart';
 
@@ -45,7 +45,6 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final height = size.height;
     final width = size.width;
 
     return SafeArea(
@@ -68,25 +67,28 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
         builder: (context, state) {
           final isLoading = state is AuthLoading;
 
-          return Stack(
-            children: [
-              CustomMessageContainer(
-                width: width,
-                height: height,
-                message: AuthKeys.joinUs.tr(),
-              ),
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: SizedBox(
-                    height: height,
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.1),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
+          return SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: 20.h),
+                        Text(
+                          AuthKeys.joinUs.tr(),
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 32.h),
+                        Row(
                             children: [
                               Expanded(
                                 child: CustomTextFormField(
@@ -101,7 +103,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                   },
                                 ),
                               ),
-                              SizedBox(width: width * 0.05),
+                              SizedBox(width: 16.w),
                               Expanded(
                                 child: CustomTextFormField(
                                   hintText: AuthKeys.lastName.tr(),
@@ -117,7 +119,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               ),
                             ],
                           ),
-                          SizedBox(height: height * 0.02),
+                          SizedBox(height: 16.h),
                           CustomTextFormField(
                             hintText: AuthKeys.email.tr(),
                             controller: _emailController,
@@ -131,7 +133,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               }
                             },
                           ),
-                          SizedBox(height: height * 0.02),
+                          SizedBox(height: 16.h),
                           CustomTextFormField(
                             hintText: AuthKeys.password.tr(),
                             controller: _passwordController,
@@ -144,7 +146,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                                 });
                               },
                               icon: Icon(
-                                isObscure ? Icons.visibility : Icons.visibility_off,
+                                isObscure ? Icons.visibility_off : Icons.visibility,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
@@ -156,7 +158,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                               }
                             },
                           ),
-                          SizedBox(height: height * 0.03),
+                          SizedBox(height: 32.h),
                           CustomButton(
                             text: AuthKeys.signUp.tr(),
                             width: width,
@@ -181,7 +183,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                             },
                             color: AppColors.primary,
                           ),
-                          SizedBox(height: height * 0.01),
+                          SizedBox(height: 16.h),
                           MessageSecondOption(
                             message: AuthKeys.alreadyHaveAccount.tr(),
                             buttonText: AuthKeys.logIn.tr(),
@@ -196,7 +198,6 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                   ),
                 ),
               ),
-            ],
           );
         },
       ),

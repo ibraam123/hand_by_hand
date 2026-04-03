@@ -17,9 +17,7 @@ class AuthCubit extends Cubit<AuthState> {
     this._auth,
     this._googleSignIn,
       this._userRepository
-  ) : super(AuthInitial()){
-    checkAuthStatus();
-  }
+  ) : super(AuthInitial());
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
@@ -136,7 +134,9 @@ class AuthCubit extends Cubit<AuthState> {
       await _cacheUser(user);
       emit(AuthSuccess(user: user));
     } catch (e) {
-      emit(AuthError(FailureHandler.mapException(e)));
+      emit(AuthError(
+        "An error occurred while signing in with Google. Please try again."
+      ));
     }
   }
 

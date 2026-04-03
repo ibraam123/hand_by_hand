@@ -7,7 +7,7 @@ class UserModel {
   final String lastName;
   final UserProgress? progress;
 
-  UserModel({
+   UserModel({
     required this.id,
     required this.email,
     required this.firstName,

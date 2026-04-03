@@ -4,6 +4,7 @@ class Assets {
 
   static const String assetsHandshakeBlue = 'assets/handshake_blue.json';
   static const String iconsIconApp = 'assets/icons/icon_app.png';
+  static const String imagesChat = 'assets/images/chat.png';
   static const String imagesF1 = 'assets/images/f1.png';
   static const String imagesF2 = 'assets/images/f2.png';
   static const String imagesF3 = 'assets/images/f3.png';
@@ -13,8 +14,14 @@ class Assets {
   static const String imagesF7 = 'assets/images/f7.png';
   static const String imagesGoogleSvg = 'assets/images/google-svg.svg';
   static const String imagesHandshakeSvgrepoCom = 'assets/images/handshake-svgrepo-com.svg';
+  static const String imagesHome = 'assets/images/home.png';
+  static const String imagesLogIn = 'assets/images/log_in.png';
   static const String imagesLoginImage = 'assets/images/login_image.svg';
   static const String imagesLogoImage = 'assets/images/logo_image.png';
+  static const String imagesPlaces = 'assets/images/places.png';
+  static const String imagesProfile = 'assets/images/profile.png';
+  static const String imagesSignLanguage = 'assets/images/sign_language.png';
+  static const String imagesSignUp = 'assets/images/sign_up.png';
   static const String imagesUpImage = 'assets/images/upImage.png';
   static const String translationsAr = 'assets/translations/ar.json';
   static const String translationsEn = 'assets/translations/en.json';

@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/core/widgets/custom_button.dart';
 import 'package:hand_by_hand/core/widgets/custom_snackbar.dart';
-import 'package:hand_by_hand/core/widgets/custom_welcome_message_container.dart';
+
 import 'package:hand_by_hand/features/auth/presentation/widgets/custom_form_text_field.dart';
 import '../../../../core/config/app_keys_localization.dart';
 import '../../../../core/config/routes.dart';
@@ -35,7 +35,6 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final height = size.height;
     final width = size.width;
 
     return SafeArea(
@@ -63,24 +62,35 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
         builder: (context, state) {
           final isLoading = state is ForgotPasswordLoading;
 
-          return Stack(
-            children: [
-              CustomMessageContainer(
-                width: width,
-                height: height,
-                message: AuthKeys.forgotPassword.tr(), // ✅ from AppKeys
-              ),
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: SizedBox(
-                    height: height,
-                    width: width,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.1),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+          return SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: 20.h),
+                        Text(
+                          AuthKeys.forgotPassword.tr(),
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          AuthKeys.enterYourEmail.tr(),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: Colors.grey,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 32.h),
                           CustomTextFormField(
                             hintText: AuthKeys.email.tr(),
                             controller: _emailController,
@@ -95,7 +105,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                               }
                             },
                           ),
-                          SizedBox(height: height * 0.03),
+                          SizedBox(height: 32.h),
                           CustomButton(
                             isLoading: isLoading,
                             text: AuthKeys.sendResetLink.tr(), // ✅ button text
@@ -118,7 +128,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                             },
                             color: AppColors.primary,
                           ),
-                          SizedBox(height: height * 0.02),
+                          SizedBox(height: 24.h),
                           GestureDetector(
                             onTap: () {
                               GoRouter.of(context)
@@ -131,6 +141,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ],
@@ -139,7 +150,6 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                   ),
                 ),
               ),
-            ],
           );
         },
       ),
