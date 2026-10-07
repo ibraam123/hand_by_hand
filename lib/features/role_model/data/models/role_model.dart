@@ -17,7 +17,6 @@ class RoleModel extends RoleModelEntity {
       imageUrl: json['image_url'] ?? '',
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'name': name,

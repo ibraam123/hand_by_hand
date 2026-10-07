@@ -31,6 +31,7 @@ class CustomTextFormField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       onChanged: onChanged,
       style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold ,           color: isDarkMode ? Colors.white : Colors.black,
       ),

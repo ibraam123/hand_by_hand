@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../core/services/notification_service.dart';
 import 'data/local_data_source/notification_local_data_source.dart';
@@ -18,25 +19,24 @@ class FirebaseApi {
 
 
     final NotificationSettings settings = await firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
     );
     // Listen for token refresh
     firebaseMessaging.onTokenRefresh.listen((newToken) async {
-      print("New FCM Token: $newToken");
+      if (kDebugMode) {
+        print("New FCM Token: $newToken");
+      }
       await _saveTokenToFirestore(newToken);
     });
 
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
+      if (kDebugMode) {
+        print('User granted permission');
+      }
     } else {
-      print('User declined or has not accepted permission');
+      if (kDebugMode) {
+        print('User declined or has not accepted permission');
+      }
     }
 
     // Initialize local data source
@@ -51,7 +51,9 @@ class FirebaseApi {
     // Get FCM token
     final token = await firebaseMessaging.getToken();
     if (token != null) {
-      print('FCM Token: $token');
+      if (kDebugMode) {
+        print('FCM Token: $token');
+      }
       await _saveTokenToFirestore(token);
     }
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-class CustomButton extends StatelessWidget {
+class CustomButton extends StatefulWidget {
   const CustomButton({
     super.key,
     required this.text,
@@ -23,30 +23,63 @@ class CustomButton extends StatelessWidget {
   final Color? borderColor;
 
   @override
+  State<CustomButton> createState() => _CustomButtonState();
+}
+
+class _CustomButtonState extends State<CustomButton> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    if (widget.onTap != null && !widget.isLoading) {
+      setState(() => _isPressed = true);
+    }
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    if (widget.onTap != null && !widget.isLoading) {
+      setState(() => _isPressed = false);
+    }
+  }
+
+  void _handleTapCancel() {
+    if (widget.onTap != null && !widget.isLoading) {
+      setState(() => _isPressed = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r))
-      ),
-      child: FractionallySizedBox(
-        widthFactor: width == null
-            ? 1
-            : null, // Occupy full width if no specific width is provided
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedScale(
+        scale: _isPressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+        child: ElevatedButton(
+          onPressed: widget.onTap,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r))
+          ),
+          child: FractionallySizedBox(
+            widthFactor: widget.width == null
+                ? 1
+                : null, // Occupy full width if no specific width is provided
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 8.w),
-          width: width,
+          width: widget.width,
           height: 50.h, // Adjusted height for better responsiveness
           decoration: BoxDecoration(
-            color: onTap == null ? theme.colorScheme.secondaryContainer : color,
+            color: widget.onTap == null ? theme.colorScheme.secondaryContainer : widget.color,
             borderRadius: BorderRadius.circular(25.r), // Adjusted border radius
           ),
           child: Center(
-            child: isLoading
+            child: widget.isLoading
                 ? SizedBox(
                     height: 24.h,
                     width: 24.w,
@@ -58,18 +91,18 @@ class CustomButton extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (iconAssets != null)
-                        iconAssets == 'icon_location'
+                        if (widget.iconAssets != null)
+                        widget.iconAssets == 'icon_location'
                             ? Icon(Icons.location_on_outlined,
-                                color: onTap == null ? theme.colorScheme.onSecondaryContainer : theme.colorScheme.onPrimary)
-                            : SvgPicture.asset(iconAssets!)
+                                color: widget.onTap == null ? theme.colorScheme.onSecondaryContainer : theme.colorScheme.onPrimary)
+                            : SvgPicture.asset(widget.iconAssets!)
                         else
                           const SizedBox.shrink(),
                         SizedBox(width: 8.w),
                         Text(
-                          text,
+                          widget.text,
                           style: theme.textTheme.titleLarge!.copyWith(
-                            color: onTap == null ? theme.colorScheme.onSecondaryContainer :theme.colorScheme.onPrimary,
+                            color: widget.onTap == null ? theme.colorScheme.onSecondaryContainer :theme.colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ), // Adjusted font size
                         ),
@@ -79,6 +112,7 @@ class CustomButton extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+     ),
+    )
+    );  }
 }

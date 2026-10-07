@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hand_by_hand/core/config/app_keys_localization.dart';
 import '../../../domain/entities/category_entitiy.dart';
 import '../../logic/place_cubit.dart';
-import '../widgets/add_bottom_sheet.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/place_map.dart';
 import '../widgets/places_list.dart';
@@ -22,7 +21,7 @@ class AccessibleLocationScreen extends StatefulWidget {
 class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
   final MapController _mapController = MapController();
   String selectedType = 'all';
-
+/*
   void _showAddPlaceBottomSheet(BuildContext context) {
     final theme = Theme.of(context);
     showModalBottomSheet(
@@ -36,7 +35,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
         return const AddPlaceBottomSheet();
       },
     );
-  }
+  }*/
 
   final List<CategoryEntity> categories = [
     CategoryEntity("all", CategoriesPlaces.all.tr()),
@@ -59,7 +58,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
+      /*floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _showAddPlaceBottomSheet(context);
         },
@@ -70,7 +69,7 @@ class _AccessibleLocationScreenState extends State<AccessibleLocationScreen> {
         icon: Icon(Icons.add_location_alt,
             color: theme.colorScheme.onSecondary),
         backgroundColor: theme.colorScheme.secondary,
-      ),
+      ),*/
       appBar: AppBar( // Using theme for AppBar
         backgroundColor: theme.appBarTheme.backgroundColor,
         title: Text(

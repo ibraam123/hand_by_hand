@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hand_by_hand/features/home/presentation/logic/profile_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/custom_features_container.dart';
+import 'package:hand_by_hand/core/widgets/shimmer_loading.dart';
 import 'package:easy_localization/easy_localization.dart';
-
 import '../../../../../core/config/routes.dart';
 import '../../../../../generated/assets.dart';
 import '../../../domain/entities/feature_model.dart';
@@ -120,18 +120,22 @@ class _WelcomeHeader extends StatelessWidget {
     final theme = Theme.of(context);
 
     if (state is ProfileLoading) {
-      return _buildMessage(
-        context,
-        Home.loading.tr(),
-        isLoading: true,
-      );
+      return ShimmerLoading(width: 200.w, height: 28.h);
     }
 
     if (state is ProfileError) {
-      return _buildMessage(
-        context,
-        Home.error.tr(),
-        isError: true,
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, size: 20.sp, color: theme.colorScheme.error),
+          SizedBox(width: 8.w),
+          Text(
+            Home.error.tr(),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.error,
+            ),
+          ),
+        ],
       );
     }
 
@@ -151,34 +155,5 @@ class _WelcomeHeader extends StatelessWidget {
     }
 
     return const SizedBox.shrink();
-  }
-
-  Widget _buildMessage(
-      BuildContext context,
-      String message, {
-        bool isLoading = false,
-        bool isError = false,
-      }) {
-    final theme = Theme.of(context);
-
-    return Row(
-      children: [
-        if (isLoading)
-          SizedBox(
-            width: 16.w,
-            height: 16.h,
-            child: CircularProgressIndicator(strokeWidth: 2.w),
-          )
-        else if (isError)
-          Icon(Icons.error_outline, size: 20.sp, color: theme.colorScheme.error),
-        if (isLoading || isError) SizedBox(width: 8.w),
-        Text(
-          message,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: isError ? theme.colorScheme.error : null,
-          ),
-        ),
-      ],
-    );
   }
 }

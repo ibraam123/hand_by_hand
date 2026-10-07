@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hand_by_hand/core/config/app_colors.dart';
 
 class AppTheme {
   // Light Theme
@@ -149,12 +150,11 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: Color(0xFF4D94FF),
       secondary: Color(0xFF69F0AE), // Example secondary color for dark theme
-      surface: Color(0xFF2D2D2D),
       error: Color(0xFFFF5252),
     ),
+
     scaffoldBackgroundColor: const Color(0xFF121212),
     cardColor: const Color(0xFF2D2D2D),
-
     // Text Theme
     textTheme: const TextTheme(
       displayLarge: TextStyle(

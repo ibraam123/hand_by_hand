@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:hand_by_hand/features/home/presentation/logic/notifications_cubit.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_option.dart';
 import 'package:hand_by_hand/features/auth/presentation/logic/auth_cubit.dart';
+import 'package:hand_by_hand/core/widgets/shimmer_loading.dart';
 
 import '../../../../../core/config/app_keys_localization.dart';
 import '../../../../../core/config/routes.dart';
@@ -34,32 +35,45 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> with AutomaticKee
 
           // Show loading only for specific states, not for AuthSuccess
           if (authState is AuthLoading || authState is AuthInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return _buildProfileSkeleton(context);
           }
 
           if (authState is AuthError) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 64.r, color: Colors.red),
-                  SizedBox(height: 16.h),
-                  Text(
-                    'Authentication Error',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    authState.errorMessage,
-                    style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 24.h),
-                  ElevatedButton(
-                    onPressed: () => context.read<AuthCubit>().checkAuthStatus(),
-                    child: Text('Retry'),
-                  ),
-                ],
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.wifi_off_rounded, size: 80.r, color: theme.colorScheme.error.withValues(alpha: 0.8)),
+                    SizedBox(height: 24.h),
+                    Text(
+                      'Oops, Connection Lost',
+                      style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      authState.errorMessage,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 32.h),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                      ),
+                      onPressed: () => context.read<AuthCubit>().checkAuthStatus(),
+                      icon: Icon(Icons.refresh, color: theme.colorScheme.onPrimaryContainer),
+                      label: Text(
+                        'Try Again',
+                        style: TextStyle(color: theme.colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -108,12 +122,10 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> with AutomaticKee
                     children: [
                       CircleAvatar(
                         radius: 45.r,
-                        backgroundColor: isDark
-                            ? theme.colorScheme.surface
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                        backgroundColor: Colors.transparent,
                         child: Icon(
                           Icons.person,
-                          size: 60.sp,
+                          size: 80.sp,
                           color: theme.colorScheme.onSurface,
                         ),
                       ),
@@ -187,10 +199,12 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> with AutomaticKee
                   },
                 ),
 
+                /*
                 if (progress != null) ...[
                   SizedBox(height: 24.h),
                   _buildProgressCard(context, progress),
                 ],
+                */
               ],
             );
           } else {
@@ -369,6 +383,35 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> with AutomaticKee
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildProfileSkeleton(BuildContext context) {
+    final theme = Theme.of(context);
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.all(16.w),
+      children: [
+        Center(
+          child: Column(
+            children: [
+              ShimmerLoading(width: 90.r, height: 90.r, borderRadius: 45.r),
+              SizedBox(height: 16.h),
+              ShimmerLoading(width: 150.w, height: 24.h),
+              SizedBox(height: 8.h),
+              ShimmerLoading(width: 200.w, height: 16.h),
+            ],
+          ),
+        ),
+        SizedBox(height: 32.h),
+        ShimmerLoading(width: double.infinity, height: 60.h, borderRadius: 12.r),
+        SizedBox(height: 16.h),
+        ShimmerLoading(width: double.infinity, height: 60.h, borderRadius: 12.r),
+        SizedBox(height: 16.h),
+        ShimmerLoading(width: double.infinity, height: 60.h, borderRadius: 12.r),
+        SizedBox(height: 32.h),
+        ShimmerLoading(width: double.infinity, height: 180.h, borderRadius: 16.r),
       ],
     );
   }

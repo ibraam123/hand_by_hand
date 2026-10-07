@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:animations/animations.dart';
+import 'package:hand_by_hand/core/config/app_colors.dart';
 import 'package:hand_by_hand/features/community/presenation/views/main_community_screen.dart';
 import 'package:hand_by_hand/features/home/presentation/views/widgets/profile_screen_body.dart';
 import '../../logic/profile_cubit.dart';
@@ -21,7 +22,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  late final PageController _pageController;
 
   static const List<Widget> _screens = [
     HomeScreen(),
@@ -33,28 +33,27 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     // Load profile through Cubit, not directly here
     context.read<ProfileCubit>().loadProfile();
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return LayoutBuilder(
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth > 600;
-
         return Scaffold(
           drawer: isTablet ? null : _buildDrawer(),
           appBar: _buildAppBar(isTablet),
           body: isTablet ? _buildTabletLayout() : _buildMobileLayout(),
-          bottomNavigationBar: isTablet ? null : _buildBottomNav(),
+          bottomNavigationBar: isTablet ? null : _buildBottomNav(isDarkMode),
         );
       },
     );
@@ -66,26 +65,29 @@ class _MainScreenState extends State<MainScreen> {
       children: [
         NavigationRail(
           selectedIndex: _currentIndex,
-          onDestinationSelected: (index){
+          onDestinationSelected: (index) {
             _onNavItemTapped(index);
           },
           labelType: NavigationRailLabelType.all,
           destinations: _getNavDestinations(),
         ),
         const VerticalDivider(width: 1),
-        Expanded(
-          child: _screens[_currentIndex],
-        ),
+        Expanded(child: _screens[_currentIndex]),
       ],
     );
   }
 
   // Mobile layout with bottom navigation
   Widget _buildMobileLayout() {
-    return PageView(
-      controller: _pageController,
-      onPageChanged: _onPageChanged,
-      children: _screens,
+    return PageTransitionSwitcher(
+      transitionBuilder: (child, animation, secondaryAnimation) {
+        return FadeThroughTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          child: child,
+        );
+      },
+      child: _screens[_currentIndex],
     );
   }
 
@@ -101,23 +103,23 @@ class _MainScreenState extends State<MainScreen> {
       ),
       actions: isTablet
           ? [
-        BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileLoaded) {
-              return Padding(
-                padding: EdgeInsets.only(right: 16.w),
-                child: Center(
-                  child: Text(
-                    state.firstName,
-                    style: TextStyle(fontSize: 16.sp),
-                  ),
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-      ]
+              BlocBuilder<ProfileCubit, ProfileState>(
+                builder: (context, state) {
+                  if (state is ProfileLoaded) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 16.w),
+                      child: Center(
+                        child: Text(
+                          state.firstName,
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ]
           : null,
     );
   }
@@ -126,79 +128,23 @@ class _MainScreenState extends State<MainScreen> {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         if (state is ProfileLoaded) {
-          return CustomDrawer(
-            name: state.fullName,
-            email: state.email ?? '',
-          );
+          return CustomDrawer(name: state.fullName, email: state.email ?? '');
         }
         return const CustomDrawer(name: 'Guest', email: '');
       },
     );
   }
 
-  Widget _buildBottomNav() {
-    final theme = Theme.of(context);
-    final width = MediaQuery.of(context).size.width;
-    final showText = width > 360;
 
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 20,
-            color: theme.colorScheme.shadow.withValues(alpha: .1),
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: GNav(
-        selectedIndex: _currentIndex,
-        color: theme.bottomNavigationBarTheme.unselectedItemColor ??
-            Color.alphaBlend(
-                theme.colorScheme.onSurface.withAlpha(153), Colors.transparent),
-        activeColor:
-        theme.bottomNavigationBarTheme.selectedItemColor ??
-            theme.colorScheme.primary,
-        tabBackgroundColor:
-        theme.bottomNavigationBarTheme.selectedItemColor != null
-            ? Color.alphaBlend(
-            theme.bottomNavigationBarTheme.selectedItemColor!
-                .withAlpha(26),
-            Colors.transparent)
-            : Color.alphaBlend(
-            theme.colorScheme.primary.withAlpha(26),
-            Colors.transparent),
-        padding: EdgeInsets.symmetric(horizontal: showText ? 16.w : 10.w, vertical: 12.h),
-        gap: showText ? 8.w : 0,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        tabMargin: EdgeInsets.symmetric(horizontal: 4.w),
-        onTabChange: _onNavItemTapped,
-        tabs: _getNavTabs(),
-      ),
+  Widget _buildBottomNav(bool isDarkMode) {
+    return NavigationBar(
+      indicatorColor: isDarkMode ? Colors.white : Colors.lightBlueAccent,
+      selectedIndex: _currentIndex,
+      onDestinationSelected: _onNavItemTapped,
+      destinations: _getBottomNavDestinations(),
+      labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
     );
   }
-
-  List<GButton> _getNavTabs() {
-    return [
-      GButton(
-        icon: _currentIndex == 0 ? Icons.home : Icons.home_outlined,
-        text: NavigationKeys.home.tr(),
-      ),
-      GButton(
-        icon: _currentIndex == 1 ? Icons.favorite : Icons.favorite_border,
-        text: NavigationKeys.favorites.tr(),
-      ),
-      GButton(
-        icon: _currentIndex == 2 ? Icons.people : Icons.people_outline,
-        text: Home.community.tr(),
-      ),
-      GButton(
-        icon: _currentIndex == 3 ? Icons.person : Icons.person_outline,
-        text: NavigationKeys.profile.tr(),
-      ),
-    ];
-  }
-
 
   List<NavigationRailDestination> _getNavDestinations() {
     return [
@@ -230,6 +176,31 @@ class _MainScreenState extends State<MainScreen> {
     ];
   }
 
+  List<NavigationDestination> _getBottomNavDestinations() {
+    return [
+      NavigationDestination(
+        icon: const Icon(Icons.home_outlined),
+        selectedIcon: const Icon(Icons.home),
+        label: NavigationKeys.home.tr(),
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.favorite_border),
+        selectedIcon: const Icon(Icons.favorite),
+        label: NavigationKeys.favorites.tr(),
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.people_outline),
+        selectedIcon: const Icon(Icons.people),
+        label: Home.community.tr(),
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.person_outline),
+        selectedIcon: const Icon(Icons.person),
+        label: NavigationKeys.profile.tr(),
+      ),
+    ];
+  }
+
   String _getTitle(int index) {
     switch (index) {
       case 0:
@@ -245,16 +216,7 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-
   void _onNavItemTapped(int index) {
-    if ((index - _currentIndex).abs() > 1) {
-      _pageController.jumpToPage(index);
-    } else {
-      _pageController.animateToPage(index, duration: Duration(milliseconds: 250), curve: Curves.easeInOut);
-    }
-  }
-
-  void _onPageChanged(int index) {
     setState(() => _currentIndex = index);
   }
 }

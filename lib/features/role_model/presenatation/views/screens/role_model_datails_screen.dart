@@ -54,6 +54,12 @@ class _RoleModelDetailsScreenState extends State<RoleModelDetailsScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: CachedNetworkImage (
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[300],
+                    height: 220.h,
+                    width: double.infinity,
+                    child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                  ),
                   imageUrl: widget.roleModel.imageUrl,
                   width: double.infinity,
                   height: 220.h,

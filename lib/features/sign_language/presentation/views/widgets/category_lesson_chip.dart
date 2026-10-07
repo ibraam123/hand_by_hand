@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../domain/entities/category_lesson_entitiy.dart';
 
-
 class CategoryLessonChips extends StatelessWidget {
   final List<CategoryLessonEntity> categories;
   final String selectedType;
@@ -27,7 +26,7 @@ class CategoryLessonChips extends StatelessWidget {
           final isSelected = selectedType == cat.key;
 
           return ChoiceChip(
-            checkmarkColor: Theme.of(context).colorScheme.onPrimary ,
+            checkmarkColor: Theme.of(context).colorScheme.onPrimary,
             label: Text(
               cat.label,
               style: TextStyle(
@@ -37,10 +36,26 @@ class CategoryLessonChips extends StatelessWidget {
                     : Theme.of(context).colorScheme.onSurface,
               ),
             ),
+            color: WidgetStateProperty.resolveWith<Color?>((states) {
+              final colorScheme = Theme.of(context).colorScheme;
+
+              if (states.contains(WidgetState.selected)) {
+                return colorScheme.primary;
+              }
+
+              if (states.contains(WidgetState.pressed)) {
+                return colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.5,
+                );
+              }
+
+              return colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
+            }),
             selected: isSelected,
-            selectedColor: Theme.of(context).colorScheme.primary,
-            backgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            selectedShadowColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             elevation: isSelected ? 4 : 0,
             pressElevation: 2,
             shape: RoundedRectangleBorder(
